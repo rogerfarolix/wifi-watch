@@ -16,6 +16,13 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 - **⏱️ Watchdog & SLA Heartbeat pour Actifs Critiques** : Étiquetage d'équipements clés (serveurs AD, passerelles, NAS) avec déclenchement d'alertes prioritaires vocales et webhooks en cas de rupture de disponibilité.
 - **⚡ Moteur de Benchmark SLA & Stabilité** : Évaluation complète de la qualité de connexion (gigue, min/moy/max ping, perte de paquets, latence DNS et HTTPS) avec attribution d'une note SLA certifiée (`A+` à `F`).
 - **📶 Analyseur de Spectre Wi-Fi & Congestion** : Cartographie des canaux 2.4 GHz et 5 GHz et calcul de l'indice de saturation pour recommander les canaux optimaux.
+- **📺 Mur Vidéo SOC & Cyber War Room (Grand Écran Salle de Réunion)** : Mode plein écran immersif sans défilement (`F11` ou `[📺 Mur SOC]`) pour vidéoprojecteurs et écrans 4K de salle de crise, avec radar rotatif 360°, jauge de menace DEFCON 1-5 calculée en continu, double horloge militaire (Locale & ZULU UTC) et bandeau télétype temps réel.
+- **🌐 Moteur Threat Intelligence & Intégration de 5 APIs Publiques** :
+  - *Shodan InternetDB* : Audit d'exposition WAN 100% gratuit, détection des ports ouverts et failles CVEs publiques sans clé d'API.
+  - *IP-API* : Détection de l'IP publique WAN, géolocalisation (ville/pays), FAI et ASN.
+  - *AbuseIPDB* : Analyse de réputation et indice de malveillance d'IP.
+  - *ThreatFox (Abuse.ch)* : Détection d'indicateurs botnet C2 et malwares en temps réel.
+  - *MACVendors API* : Résolution OUI en ligne de secours pour les nouveaux fabricants de puces réseau.
 
 ### 🛡️ Sécurité & Conformité
 - **Rapports d'Audit NIS2 & ISO 27001** : Évaluation automatisée sur l'Article 21 de la directive européenne NIS2 et l'ISO 27001:2022 (contrôles A.8.1, A.8.8, A.8.20).

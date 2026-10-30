@@ -30,6 +30,7 @@ const Honeypot = require('./network/honeypot');
 const DhcpAuditor = require('./network/dhcpAuditor');
 const SpectrumAnalyzer = require('./network/spectrumAnalyzer');
 const SpeedBenchmark = require('./network/speedBenchmark');
+const ThreatIntelligenceApis = require('./network/threatIntelligenceApis');
 
 let mainWindow = null;
 let tray = null;
@@ -747,4 +748,34 @@ ipcMain.on('window:close', () => {
     } else {
         if (mainWindow) mainWindow.close();
     }
+});
+
+// Threat Intelligence & Public APIs
+ipcMain.handle('threat:get-wan', async () => {
+    return await ThreatIntelligenceApis.getPublicIpAndIsp();
+});
+
+ipcMain.handle('threat:audit-wan', async (_, ip) => {
+    return await ThreatIntelligenceApis.auditWanWithShodan(ip);
+});
+
+ipcMain.handle('threat:check-ip', async (_, ip, apiKey) => {
+    return await ThreatIntelligenceApis.checkIpReputationAbuse(ip, apiKey);
+});
+
+ipcMain.handle('threat:check-c2', async (_, indicator) => {
+    return await ThreatIntelligenceApis.checkThreatFox(indicator);
+});
+
+ipcMain.handle('threat:lookup-mac', async (_, mac) => {
+    return await ThreatIntelligenceApis.lookupMacOnline(mac);
+});
+
+ipcMain.handle('window:toggle-fullscreen', () => {
+    if (mainWindow) {
+        const isFS = mainWindow.isFullScreen();
+        mainWindow.setFullScreen(!isFS);
+        return !isFS;
+    }
+    return false;
 });

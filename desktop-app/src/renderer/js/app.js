@@ -29,7 +29,11 @@ let appState = {
     voiceSentinel: null,
     spyResults: null,
     ruviewVisualizer: null,
-    ruviewRunning: false
+    ruviewRunning: false,
+    wallboardRadar: null,
+    wanInfo: null,
+    shodanAudit: null,
+    wallboardClockInterval: null
 };
 
 // ─── Synthétiseur Audio d'Alertes (Web Audio API) ───────────────────────────
@@ -83,6 +87,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     initLanguageAndThemeEvents();
     initHoneypotEvents();
     initDhcpEvents();
+    initToastSystem();
+    initCommandPalette();
+    initWallboardEvents();
 
     // Chargement initial des données
     await refreshAll();
@@ -160,6 +167,7 @@ function switchView(viewName) {
             toggleRuViewFeed(true);
         }
     }
+    if (viewName === 'wallboard') refreshWallboard();
 
     if (window.lucide) window.lucide.createIcons();
 }
@@ -1092,6 +1100,19 @@ function initModal() {
     closeBtn?.addEventListener('click', closeModal);
     cancelBtn?.addEventListener('click', closeModal);
 
+    // Gestion des Onglets Intuitifs du Modal
+    const tabs = modal.querySelectorAll('.modal-tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.getAttribute('data-tab');
+            tabs.forEach(t => t.classList.toggle('active', t === tab));
+            modal.querySelectorAll('.modal-tab-pane').forEach(p => {
+                p.classList.toggle('active', p.id === `modal-pane-${target}`);
+            });
+            if (window.lucide) window.lucide.createIcons();
+        });
+    });
+
     saveBtn?.addEventListener('click', async () => {
         const mac = document.getElementById('modal-device-mac').value;
         const customName = document.getElementById('modal-device-custom-name').value;
@@ -1116,6 +1137,7 @@ function initModal() {
                 notes
             });
             closeModal();
+            window.showToast('Propriétés de l\'équipement sauvegardées.', 'success');
             await refreshDevices();
         }
     });
@@ -1127,6 +1149,7 @@ function initModal() {
             const isBlocked = !dev.isBlocked;
             await window.api.updateDevice(mac, { isBlocked, isTrusted: isBlocked ? false : dev.isTrusted });
             closeModal();
+            window.showToast(isBlocked ? `Équipement ${dev.ip} bloqué et placé sur liste noire.` : `Équipement ${dev.ip} débloqué.`, isBlocked ? 'warning' : 'success');
             await refreshDevices();
         }
     });
@@ -1142,7 +1165,7 @@ function initModal() {
         if (!ip || ip === '--') return;
 
         btn.disabled = true;
-        btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Scan...`;
+        btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Scan en cours...`;
         if (window.lucide) window.lucide.createIcons();
 
         try {
@@ -1152,21 +1175,23 @@ function initModal() {
 
             if (ports.length === 0) {
                 listEl.innerHTML = `<span style="font-size: 11px; color: var(--accent-green); padding: 4px 0; display: block;">✅ Aucun port vulnérable courant exposé.</span>`;
+                window.showToast(`Audit terminé : aucun port critique exposé sur ${ip}.`, 'success');
             } else {
                 listEl.innerHTML = ports.map(p => `
-                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
                         <span><strong style="color: var(--accent-cyan); font-family: monospace;">Port ${p.port}</strong> (${p.service})</span>
                         <span class="badge ${p.risk === 'CRITICAL' || p.risk === 'HIGH' ? 'badge-blocked' : (p.risk === 'MEDIUM' ? 'badge-unknown' : 'badge-trusted')}">
                             ${p.risk}
                         </span>
                     </div>
                 `).join('');
+                window.showToast(`${ports.length} port(s) ouvert(s) identifiés sur ${ip}.`, ports.some(p => p.risk === 'CRITICAL' || p.risk === 'HIGH') ? 'danger' : 'warning');
             }
         } catch (err) {
-            alert('Erreur port scan: ' + err);
+            window.showToast('Erreur scan de ports : ' + err, 'danger');
         } finally {
             btn.disabled = false;
-            btn.innerHTML = `<i data-lucide="scan"></i> <span>Tester Ports</span>`;
+            btn.innerHTML = `<i data-lucide="scan"></i> <span>Lancer Audit Ports</span>`;
             if (window.lucide) window.lucide.createIcons();
         }
     });
@@ -1177,9 +1202,9 @@ function initModal() {
         if (!mac) return;
         try {
             await window.api.wakeOnLan(mac);
-            alert(`Paquet Magique Wake-on-LAN transmis avec succès à ${mac} !`);
+            window.showToast(`Paquet Magique Wake-on-LAN transmis avec succès à ${mac} !`, 'success');
         } catch (err) {
-            alert(`Échec de l'envoi Wake-on-LAN : ${err}`);
+            window.showToast(`Échec Wake-on-LAN : ${err}`, 'danger');
         }
     });
 
@@ -1199,14 +1224,14 @@ function initModal() {
                 if (appState.voiceSentinel) {
                     appState.voiceSentinel.announceSpyDevice(report.detectedBrand, report.ip);
                 }
-                alert(`🚨 ALERTE SURVEILLANCE DÉTECTÉE !\n\nAppareil : ${report.detectedBrand || 'Caméra/Micro'}\nType : ${report.equipmentType}\nMenace : ${report.threatLevel}\nRaison : ${report.riskReason}\nPorts vidéo : ${report.openSurveillancePorts.map(p => p.port).join(', ') || 'N/A'}\nFlux RTSP : ${report.streamUrls.join('\n') || 'Non exposé'}`);
+                window.showToast(`Alerte Surveillance : Caméra/Micro ${report.detectedBrand || ''} détecté sur ${dev.ip} !`, 'danger', 'ALERTE ESPION');
             } else {
-                alert(`✅ Aucune signature de caméra ou de micro espion détectée sur ${dev.ip}.`);
+                window.showToast(`Aucune signature d'espionnage détectée sur ${dev.ip}.`, 'success');
             }
         } catch (err) {
-            alert(`Erreur lors de l'audit espion : ${err}`);
+            window.showToast(`Erreur audit espion : ${err}`, 'danger');
         } finally {
-            btn.innerHTML = `<i data-lucide="video"></i> <span>Audit Espion</span>`;
+            btn.innerHTML = `<i data-lucide="video"></i> <span>Auditer</span>`;
             if (window.lucide) window.lucide.createIcons();
         }
     });
@@ -1223,7 +1248,7 @@ function initModal() {
         if (isCurrentlyIsolated) {
             await window.api.unisolateDevice(dev.ip, dev.mac);
             textEl.innerText = 'Isoler (Pare-feu)';
-            alert(`La quarantaine de l'appareil ${dev.ip} a été levée.`);
+            window.showToast(`Quarantaine levée : trafic rétabli pour ${dev.ip}.`, 'success');
         } else {
             if (confirm(`Voulez-vous couper immédiatement tout trafic réseau avec ${dev.ip} (${dev.hostname || dev.customName || 'Inconnu'}) via le pare-feu Windows ?`)) {
                 await window.api.isolateDevice(dev.ip, dev.mac);
@@ -1231,16 +1256,112 @@ function initModal() {
                 if (appState.voiceSentinel) {
                     appState.voiceSentinel.speak(`Équipement ${dev.ip} placé en quarantaine.`);
                 }
-                alert(`Bouclier activé : l'équipement ${dev.ip} est totalement isolé.`);
+                window.showToast(`Bouclier activé : l'équipement ${dev.ip} est totalement isolé via le Pare-feu Windows.`, 'danger', 'QUARANTAINE ACTIVE');
             }
         }
         await refreshDevices();
+    });
+
+    // ─── API 5 : Résolution OUI en ligne via MACVendors ─────────────────────
+    document.getElementById('modal-btn-lookup-mac')?.addEventListener('click', async () => {
+        const mac = document.getElementById('modal-device-mac').value;
+        const btn = document.getElementById('modal-btn-lookup-mac');
+        const vendorEl = document.getElementById('modal-info-vendor');
+        if (!mac) return;
+
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> ...`;
+        if (window.lucide) window.lucide.createIcons();
+
+        try {
+            const vendor = await window.api.lookupMacOnline(mac);
+            if (vendor && vendor !== 'Inconnu') {
+                vendorEl.innerText = vendor;
+                vendorEl.style.color = 'var(--accent-cyan)';
+                vendorEl.style.fontWeight = 'bold';
+                await window.api.updateDevice(mac, { vendor });
+                window.showToast(`Constructeur identifié (MACVendors) : ${vendor}`, 'success');
+                await refreshDevices();
+            } else {
+                window.showToast('Constructeur non référencé dans la base en ligne.', 'warning');
+            }
+        } catch (err) {
+            window.showToast('Erreur résolution MAC : ' + err.message, 'danger');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="search" style="width: 11px; height: 11px;"></i> <span>OUI En Ligne</span>`;
+            if (window.lucide) window.lucide.createIcons();
+        }
+    });
+
+    // ─── APIs 3 & 4 : Audit Cyber ThreatFox (Abuse.ch) & AbuseIPDB ───────────
+    document.getElementById('modal-btn-threat-check')?.addEventListener('click', async () => {
+        const ip = document.getElementById('modal-info-ip').innerText;
+        const btn = document.getElementById('modal-btn-threat-check');
+        const resultEl = document.getElementById('modal-threat-result');
+        if (!ip || ip === '--') return;
+
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Analyse Cyber...`;
+        if (window.lucide) window.lucide.createIcons();
+
+        try {
+            resultEl.style.display = 'block';
+            resultEl.innerHTML = `<span style="color: var(--accent-cyan); display: flex; align-items: center; gap: 6px;"><i data-lucide="loader-2" class="spin"></i> Interrogation des bases ThreatFox (Abuse.ch) et AbuseIPDB en cours...</span>`;
+            if (window.lucide) window.lucide.createIcons();
+
+            const [c2Data, abuseData] = await Promise.all([
+                window.api.checkThreatC2(ip),
+                window.api.checkIpReputation(ip)
+            ]);
+
+            const isC2 = c2Data && c2Data.isMalicious;
+            const abuseScore = abuseData?.abuseConfidenceScore || 0;
+
+            resultEl.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; color: ${isC2 ? 'var(--accent-red)' : 'var(--accent-green)'};">
+                            ${isC2 ? '🚨 DÉTECTION C2 / BOTNET' : '✅ Aucune signature C2 Botnet (ThreatFox)'}
+                        </span>
+                        <span class="badge ${isC2 ? 'badge-blocked' : 'badge-trusted'}">${isC2 ? 'MALVEILLANT' : 'CONFORME'}</span>
+                    </div>
+                    ${isC2 ? `<div style="color: var(--accent-red); font-size: 11px;">Type : ${c2Data.threatType} | Malware : ${c2Data.malware} | Confiance : ${c2Data.confidence}%</div>` : ''}
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 5px;">
+                        <span>Score de Malveillance (AbuseIPDB) :</span>
+                        <span style="font-weight: 700; color: ${abuseScore > 20 ? 'var(--accent-amber)' : 'var(--accent-green)'};">${abuseScore} / 100</span>
+                    </div>
+                    <div style="font-size: 10px; color: var(--text-muted);">${abuseData?.status || 'Analyse heuristique locale'}</div>
+                </div>
+            `;
+            window.showToast(isC2 ? `Alerte : IP ${ip} identifiée comme malveillante !` : `Audit de réputation : ${ip} est saine.`, isC2 ? 'danger' : 'success');
+        } catch (err) {
+            resultEl.innerHTML = `<span style="color: var(--accent-red);">Échec de l'audit cyber : ${err.message}</span>`;
+            window.showToast('Erreur audit cyber : ' + err.message, 'danger');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="crosshair"></i> <span>Auditer IP</span>`;
+            if (window.lucide) window.lucide.createIcons();
+        }
     });
 }
 
 window.openDeviceModal = async function(mac) {
     const dev = appState.devices.find(d => d.mac === mac);
     if (!dev) return;
+
+    // Réinitialiser sur le premier onglet (Identité & CMDB)
+    const tabs = document.querySelectorAll('#device-modal .modal-tab');
+    tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-tab') === 'cmdb'));
+    document.querySelectorAll('#device-modal .modal-tab-pane').forEach(p => {
+        p.classList.toggle('active', p.id === 'modal-pane-cmdb');
+    });
+
+    const threatResultEl = document.getElementById('modal-threat-result');
+    if (threatResultEl) {
+        threatResultEl.style.display = 'none';
+        threatResultEl.innerHTML = '';
+    }
 
     document.getElementById('modal-device-mac').value = dev.mac;
     document.getElementById('modal-device-custom-name').value = dev.customName || '';
@@ -1456,7 +1577,7 @@ async function initSettingsEvents() {
     document.getElementById('btn-test-webhook')?.addEventListener('click', async () => {
         const url = whUrl?.value?.trim();
         if (!url) {
-            alert('Veuillez spécifier une URL de Webhook valide avant de tester.');
+            window.showToast('Veuillez spécifier une URL de Webhook valide avant de tester.', 'warning');
             return;
         }
 
@@ -1470,12 +1591,12 @@ async function initSettingsEvents() {
                 type: whType?.value || 'generic'
             });
             if (res && res.success) {
-                alert('✅ Webhook expédié avec succès ! Vérifiez votre canal Slack/Teams/Discord.');
+                window.showToast('Webhook expédié avec succès ! Vérifiez votre canal Slack/Teams/Discord.', 'success');
             } else {
-                alert(`❌ Échec d'envoi du webhook : ${res?.message || 'Erreur réseau ou URL invalide'}`);
+                window.showToast(`Échec d'envoi du webhook : ${res?.message || 'Erreur réseau ou URL invalide'}`, 'danger');
             }
         } catch (err) {
-            alert('Erreur lors du test webhook : ' + err);
+            window.showToast('Erreur lors du test webhook : ' + err, 'danger');
         } finally {
             btn.innerHTML = `<i data-lucide="send"></i> <span>Tester le Webhook</span>`;
             if (window.lucide) window.lucide.createIcons();
@@ -1505,10 +1626,10 @@ async function initSettingsEvents() {
             const csv = await window.api.exportAlertsCsv();
             const result = await window.api.saveExportFile(`wifi-watch-alerts-${new Date().toISOString().slice(0, 10)}.csv`, csv);
             if (result && result.success) {
-                alert(`Alertes exportées avec succès sous :\n${result.filePath}`);
+                window.showToast(`Alertes exportées avec succès : ${result.filePath}`, 'success');
             }
         } catch (err) {
-            alert('Erreur export alertes : ' + err);
+            window.showToast('Erreur export alertes : ' + err, 'danger');
         }
     });
 
@@ -1619,12 +1740,12 @@ function initEnterpriseExportEvents() {
 
             const result = await window.api.saveExportFile(defaultName, content);
             if (result && result.success) {
-                alert(`Export réussi !\nFichier enregistré sous :\n${result.filePath}`);
+                window.showToast(`Export réussi ! Enregistré sous : ${result.filePath}`, 'success');
             } else if (result && result.error) {
-                alert(`Échec de l'exportation : ${result.error}`);
+                window.showToast(`Échec de l'exportation : ${result.error}`, 'danger');
             }
         } catch (err) {
-            alert('Erreur lors de l\'exportation : ' + err);
+            window.showToast('Erreur lors de l\'exportation : ' + err, 'danger');
         }
     };
 
@@ -1714,11 +1835,11 @@ function initHoneypotEvents() {
         const autoBlock = document.getElementById('hp-check-autoblock')?.checked || false;
         await window.api.toggleHoneypot(true, port, autoBlock);
         await refreshHoneypotView();
-        alert(`Canari réseau reconfiguré sur le port ${port} avec auto-quarantaine ${autoBlock ? 'activée' : 'désactivée'}.`);
+        window.showToast(`Canari configuré sur le port ${port} (Auto-quarantaine ${autoBlock ? 'activée' : 'désactivée'}).`, 'info');
     });
 
     document.getElementById('btn-test-honeypot')?.addEventListener('click', async () => {
-        alert('Simulation de sonde déclenchée ! Le port canari va intercepter un paquet test.');
+        window.showToast('Simulation de sonde déclenchée ! Le port canari va intercepter un paquet test.', 'warning', 'SIMULATION TRAP');
         window.api.scanDevicePortsDetailed('127.0.0.1', null, [4455]);
     });
 
@@ -2286,4 +2407,453 @@ function updateRuViewHud(data) {
     if (breathEl) breathEl.innerHTML = `${data.breathingBpm || '--'} <span style="font-size: 13px; font-weight: normal; color: var(--text-muted);">BPM</span>`;
     if (heartEl) heartEl.innerHTML = `${data.heartBpm || '--'} <span style="font-size: 13px; font-weight: normal; color: var(--text-muted);">BPM</span>`;
 }
+
+// ─── Système de Notifications Toast Unifié ───────────────────────────────────
+function initToastSystem() {
+    window.showToast = function(message, type = 'info', title = null) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const icons = {
+            success: '✓',
+            warning: '⚠️',
+            danger: '🛑',
+            info: 'ℹ️'
+        };
+
+        const titles = {
+            success: title || 'Succès',
+            warning: title || 'Avertissement',
+            danger: title || 'Alerte Sécurité',
+            info: title || 'Information'
+        };
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `
+            <div class="toast-icon">${icons[type] || 'ℹ️'}</div>
+            <div class="toast-content">
+                <div class="toast-title">${titles[type]}</div>
+                <div class="toast-message">${message}</div>
+            </div>
+        `;
+
+        container.appendChild(toast);
+        playAlertBeep(type === 'danger' ? 'critical' : 'warning');
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(12px) scale(0.96)';
+            setTimeout(() => toast.remove(), 250);
+        }, 4000);
+    };
+}
+
+// ─── Command Palette & Fast Navigator (Ctrl + K) ────────────────────────────
+function initCommandPalette() {
+    const overlay = document.getElementById('command-palette-modal');
+    const input = document.getElementById('cmd-palette-input');
+    const resultsContainer = document.getElementById('cmd-palette-results');
+    const triggerBtn = document.getElementById('btn-quick-command');
+
+    if (!overlay || !input || !resultsContainer) return;
+
+    let selectedIndex = 0;
+    let currentItems = [];
+
+    const defaultCommands = [
+        { id: 'scan', icon: 'refresh-cw', title: 'Scanner le Réseau (Balayage ARP & mDNS)', badge: 'Action', action: () => window.api.startScan() },
+        { id: 'view-dashboard', icon: 'layout-dashboard', title: 'Aller au Tableau de Bord', badge: 'Vue', action: () => switchView('dashboard') },
+        { id: 'view-radar', icon: 'radar', title: 'Ouvrir le Radar Tactique & Topologie', badge: 'Vue', action: () => switchView('radar') },
+        { id: 'view-devices', icon: 'laptop-2', title: 'Voir l\'Inventaire des Actifs', badge: 'Vue', action: () => switchView('devices') },
+        { id: 'view-honeypot', icon: 'crosshair', title: 'Canari Réseau (Honeypot Decoy Trap)', badge: 'Sécurité', action: () => switchView('honeypot') },
+        { id: 'view-dnsguard', icon: 'globe', title: 'DNS Guard & Détection Altération', badge: 'Sécurité', action: () => switchView('dnsguard') },
+        { id: 'view-audit', icon: 'award', title: 'Audit de Conformité NIS2 & ISO 27001', badge: 'Audit', action: () => switchView('audit') },
+        { id: 'view-speedtest', icon: 'gauge', title: 'Test Débit & Benchmark SLA', badge: 'Performance', action: () => switchView('speedtest') },
+        { id: 'view-channels', icon: 'radio-tower', title: 'Analyseur Wi-Fi & Canaux Spectres', badge: 'Spectre', action: () => switchView('channels') },
+        { id: 'view-spy', icon: 'video', title: 'Chasseur Espion IoT (Caméras & Micros)', badge: 'Sécurité', action: () => switchView('spy') },
+        { id: 'view-wallboard', icon: 'tv-2', title: 'Mur Vidéo SOC / Cyber War Room (Plein Écran)', badge: 'War Room', action: () => { switchView('wallboard'); window.api.toggleFullScreen().then(isFS => { document.body.classList.toggle('soc-fullscreen', isFS); updateWallboardFsBtn(isFS); }); } },
+        { id: 'audit-shodan', icon: 'shield-alert', title: 'Audit Exposition WAN & CVEs (Shodan InternetDB)', badge: 'Cyber Intel', action: () => { switchView('wallboard'); refreshWallboardWan(true); } },
+        { id: 'view-ruview', icon: 'activity', title: 'RuView RF Spatial Sensing', badge: 'Spatial', action: () => switchView('ruview') },
+        { id: 'export-csv', icon: 'file-spreadsheet', title: 'Exporter l\'Inventaire en CSV (Excel)', badge: 'Export', action: () => document.getElementById('btn-quick-export')?.click() }
+    ];
+
+    function openPalette() {
+        overlay.classList.add('open');
+        input.value = '';
+        selectedIndex = 0;
+        renderResults('');
+        input.focus();
+    }
+
+    function closePalette() {
+        overlay.classList.remove('open');
+    }
+
+    triggerBtn?.addEventListener('click', openPalette);
+
+    window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            if (overlay.classList.contains('open')) {
+                closePalette();
+            } else {
+                openPalette();
+            }
+        } else if (e.key === 'Escape' && overlay.classList.contains('open')) {
+            closePalette();
+        }
+    });
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closePalette();
+    });
+
+    function renderResults(query) {
+        const q = (query || '').toLowerCase().trim();
+        let items = [];
+
+        if (!q) {
+            items = defaultCommands;
+        } else {
+            const matchedCommands = defaultCommands.filter(c => 
+                c.title.toLowerCase().includes(q) || c.badge.toLowerCase().includes(q)
+            );
+
+            const matchedDevices = appState.devices.filter(d => 
+                (d.customName && d.customName.toLowerCase().includes(q)) ||
+                (d.ip && d.ip.includes(q)) ||
+                (d.mac && d.mac.toLowerCase().includes(q)) ||
+                (d.vendor && d.vendor.toLowerCase().includes(q)) ||
+                (d.model && d.model.toLowerCase().includes(q)) ||
+                (d.hostname && d.hostname.toLowerCase().includes(q))
+            ).map(d => ({
+                id: `dev-${d.mac}`,
+                icon: 'laptop-2',
+                title: `${d.customName || d.hostname || d.vendor || 'Appareil'} (${d.ip})`,
+                badge: d.isOnline ? 'En Ligne' : 'Hors Ligne',
+                action: () => {
+                    closePalette();
+                    window.openDeviceModal(d.mac);
+                }
+            }));
+
+            items = [...matchedCommands, ...matchedDevices];
+        }
+
+        currentItems = items;
+        if (selectedIndex >= items.length) selectedIndex = 0;
+
+        if (items.length === 0) {
+            resultsContainer.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">Aucun équipement ou commande correspondant à « ${query} »</div>`;
+            return;
+        }
+
+        resultsContainer.innerHTML = items.map((item, idx) => `
+            <div class="command-item ${idx === selectedIndex ? 'selected' : ''}" data-idx="${idx}">
+                <div class="command-item-left">
+                    <i data-lucide="${item.icon}"></i>
+                    <span>${item.title}</span>
+                </div>
+                <span class="command-badge">${item.badge}</span>
+            </div>
+        `).join('');
+
+        if (window.lucide) window.lucide.createIcons();
+
+        resultsContainer.querySelectorAll('.command-item').forEach(el => {
+            el.addEventListener('click', () => {
+                const idx = parseInt(el.getAttribute('data-idx'), 10);
+                if (currentItems[idx]) {
+                    closePalette();
+                    currentItems[idx].action();
+                }
+            });
+        });
+    }
+
+    input.addEventListener('input', (e) => {
+        selectedIndex = 0;
+        renderResults(e.target.value);
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (currentItems.length > 0) {
+                selectedIndex = (selectedIndex + 1) % currentItems.length;
+                renderResults(input.value);
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (currentItems.length > 0) {
+                selectedIndex = (selectedIndex - 1 + currentItems.length) % currentItems.length;
+                renderResults(input.value);
+            }
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (currentItems[selectedIndex]) {
+                const action = currentItems[selectedIndex].action;
+                closePalette();
+                action();
+            }
+        }
+    });
+}
+
+// ─── Module : Mur SOC & War Room (Cyber Wallboard Grand Écran) ───────────────
+function initWallboardEvents() {
+    // Bouton de la barre de titre
+    document.getElementById('btn-toggle-wallboard')?.addEventListener('click', async () => {
+        switchView('wallboard');
+        const isFS = await window.api.toggleFullScreen();
+        document.body.classList.toggle('soc-fullscreen', isFS);
+        updateWallboardFsBtn(isFS);
+    });
+
+    // Bouton plein écran interne au Wallboard
+    document.getElementById('btn-wb-fullscreen-toggle')?.addEventListener('click', async () => {
+        const isFS = await window.api.toggleFullScreen();
+        document.body.classList.toggle('soc-fullscreen', isFS);
+        updateWallboardFsBtn(isFS);
+    });
+
+    // Raccourcis F11 et Escape
+    window.addEventListener('keydown', async (e) => {
+        if (e.key === 'F11') {
+            e.preventDefault();
+            const isFS = await window.api.toggleFullScreen();
+            document.body.classList.toggle('soc-fullscreen', isFS);
+            updateWallboardFsBtn(isFS);
+            if (appState.currentView === 'wallboard' && appState.wallboardRadar) {
+                setTimeout(() => appState.wallboardRadar.initCanvas(), 150);
+            }
+        } else if (e.key === 'Escape' && document.body.classList.contains('soc-fullscreen')) {
+            await window.api.toggleFullScreen();
+            document.body.classList.remove('soc-fullscreen');
+            updateWallboardFsBtn(false);
+        }
+    });
+
+    // Rafraîchir WAN Shodan
+    document.getElementById('btn-wb-refresh-wan')?.addEventListener('click', () => {
+        refreshWallboardWan(true);
+    });
+
+    // Lancer les horloges numériques
+    startWallboardClocks();
+}
+
+function updateWallboardFsBtn(isFS) {
+    const label = document.getElementById('wb-fs-label');
+    if (label) {
+        label.innerText = isFS ? 'Quitter Plein Écran' : 'Plein Écran';
+    }
+}
+
+function startWallboardClocks() {
+    if (appState.wallboardClockInterval) clearInterval(appState.wallboardClockInterval);
+
+    const updateClocks = () => {
+        const now = new Date();
+        const localEl = document.getElementById('wb-clock-local');
+        const zuluEl = document.getElementById('wb-clock-zulu');
+
+        if (localEl) {
+            localEl.innerText = now.toLocaleTimeString('fr-FR', { hour12: false });
+        }
+        if (zuluEl) {
+            const zHours = String(now.getUTCHours()).padStart(2, '0');
+            const zMins = String(now.getUTCMinutes()).padStart(2, '0');
+            const zSecs = String(now.getUTCSeconds()).padStart(2, '0');
+            zuluEl.innerText = `${zHours}:${zMins}:${zSecs} UTC`;
+        }
+    };
+
+    updateClocks();
+    appState.wallboardClockInterval = setInterval(updateClocks, 1000);
+}
+
+async function refreshWallboard() {
+    if (appState.currentView !== 'wallboard') return;
+
+    // 1. Initialiser le radar SOC
+    if (!appState.wallboardRadar && window.NetworkRadar) {
+        appState.wallboardRadar = new window.NetworkRadar('wallboard-radar-canvas');
+    }
+    if (appState.wallboardRadar) {
+        appState.wallboardRadar.initCanvas();
+        appState.wallboardRadar.setData(appState.devices, appState.environment?.gatewayIp, appState.environment?.wifi);
+    }
+
+    // 2. Télémétrie & Nœuds
+    const onlineDevs = appState.devices.filter(d => d.isOnline);
+    const unknownDevs = onlineDevs.filter(d => !d.isTrusted);
+    const isolatedDevs = appState.devices.filter(d => d.isBlocked);
+    const unreadAlerts = appState.alerts.filter(a => !a.read);
+    const criticalAlerts = unreadAlerts.filter(a => a.severity === 'critical');
+
+    const teleNodes = document.getElementById('wb-tele-nodes');
+    if (teleNodes) teleNodes.innerText = `${onlineDevs.length} / ${appState.devices.length}`;
+
+    const devCount = document.getElementById('wb-devices-count');
+    if (devCount) devCount.innerText = `${onlineDevs.length} en ligne`;
+
+    const unkCount = document.getElementById('wb-unknown-count');
+    if (unkCount) unkCount.innerText = `${unknownDevs.length} non identifié(s)`;
+
+    const gwIp = document.getElementById('wb-gateway-ip');
+    if (gwIp) gwIp.innerText = appState.environment?.gatewayIp || '192.168.1.1';
+
+    const quarActive = document.getElementById('wb-quarantine-active');
+    if (quarActive) quarActive.innerText = isolatedDevs.length > 0 ? `⚠️ ${isolatedDevs.length} isolé(s)` : 'Opérationnelle (0 isolés)';
+
+    const wifiEnv = appState.environment?.wifi;
+    const teleFreq = document.getElementById('wb-tele-freq');
+    if (teleFreq && wifiEnv && wifiEnv.channel) {
+        const is5GHz = Number(wifiEnv.channel) > 14;
+        teleFreq.innerText = `${is5GHz ? '5 GHz' : '2.4 GHz'} (Ch ${wifiEnv.channel})`;
+    }
+
+    // Télémétrie Débit
+    const currentSpeed = appState.stats?.currentThroughput || 0;
+    const teleSpeed = document.getElementById('wb-tele-speed');
+    if (teleSpeed) teleSpeed.innerText = `${currentSpeed.toFixed(1)} Mbps`;
+
+    // 3. Calcul DEFCON Dynamique
+    let defconLevel = 5;
+    if (criticalAlerts.length > 0 || isolatedDevs.length > 0 || (appState.shodanAudit?.cves && appState.shodanAudit.cves.length > 0)) {
+        defconLevel = 1; // DEFCON 1 CRITIQUE
+    } else if (unreadAlerts.length > 2 || (appState.shodanAudit?.openPorts && appState.shodanAudit.openPorts.length > 0)) {
+        defconLevel = 2; // DEFCON 2 ALERTE HAUTE
+    } else if (unknownDevs.length > 2) {
+        defconLevel = 3; // DEFCON 3 ÉLEVÉ
+    } else if (unknownDevs.length > 0 || unreadAlerts.length > 0) {
+        defconLevel = 4; // DEFCON 4 VIGILANCE
+    } else {
+        defconLevel = 5; // DEFCON 5 NOMINAL
+    }
+
+    for (let i = 1; i <= 5; i++) {
+        const badge = document.getElementById(`defcon-${i}-badge`);
+        if (badge) {
+            badge.classList.toggle('active', i === defconLevel);
+        }
+    }
+
+    // 4. Flux d'événements récents
+    const eventsStream = document.getElementById('wallboard-events-stream');
+    const eventsCount = document.getElementById('wb-events-count');
+    if (eventsStream) {
+        const recentAlerts = (appState.alerts || []).slice(0, 7);
+        if (eventsCount) eventsCount.innerText = `${recentAlerts.length} alertes`;
+        if (recentAlerts.length === 0) {
+            eventsStream.innerHTML = `
+                <div class="wb-event-item" style="border-left-color: var(--accent-green);">
+                    <span>✅ Aucun incident détecté - Surveillance normale</span>
+                    <span style="font-family: monospace; color: var(--text-muted);">Nominal</span>
+                </div>
+            `;
+        } else {
+            eventsStream.innerHTML = recentAlerts.map(a => `
+                <div class="wb-event-item ${a.severity === 'critical' ? 'critical' : (a.severity === 'warning' ? 'warning' : '')}">
+                    <div>
+                        <strong style="color: var(--text-primary); font-size: 11px;">${a.title}</strong>
+                        <div style="font-size: 10px; color: var(--text-muted);">${a.description ? a.description.slice(0, 65) + '...' : ''}</div>
+                    </div>
+                    <span style="font-family: monospace; color: var(--text-muted); font-size: 10px; white-space: nowrap;">
+                        ${new Date(a.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                </div>
+            `).join('');
+        }
+    }
+
+    // 5. Statut Honeypot
+    try {
+        const hpStatus = await window.api.getHoneypotStatus();
+        const hpEl = document.getElementById('wb-tele-honeypot');
+        const hpPortEl = document.getElementById('wb-honeypot-port');
+        if (hpStatus && hpStatus.isRunning) {
+            if (hpEl) { hpEl.innerText = 'ARMÉ'; hpEl.className = 'wb-tele-val text-green'; }
+            if (hpPortEl) hpPortEl.innerText = `Port ${hpStatus.port} (Décoy Actif)`;
+        } else {
+            if (hpEl) { hpEl.innerText = 'INACTIF'; hpEl.className = 'wb-tele-val text-orange'; }
+            if (hpPortEl) hpPortEl.innerText = 'Désactivé';
+        }
+    } catch (_) {}
+
+    // 6. Audit WAN & Shodan si pas encore chargé
+    if (!appState.wanInfo) {
+        refreshWallboardWan();
+    }
+}
+
+async function refreshWallboardWan(force = false) {
+    const wanIpEl = document.getElementById('wb-wan-ip');
+    const wanIspEl = document.getElementById('wb-wan-isp');
+    const shodanPortsEl = document.getElementById('wb-shodan-ports');
+    const shodanCvesEl = document.getElementById('wb-shodan-cves');
+    const shodanRatingEl = document.getElementById('wb-shodan-rating');
+    const threatFoxEl = document.getElementById('wb-threatfox-status');
+    const abuseScoreEl = document.getElementById('wb-abuse-score');
+
+    if (force || !appState.wanInfo) {
+        if (wanIpEl) wanIpEl.innerText = 'Résolution...';
+        if (wanIspEl) wanIspEl.innerText = 'Recherche IP-API...';
+
+        try {
+            // API 2 : IP-API
+            const wan = await window.api.getWanInfo();
+            appState.wanInfo = wan;
+            if (wanIpEl) wanIpEl.innerText = wan.ip;
+            if (wanIspEl) wanIspEl.innerText = `${wan.city}, ${wan.country} (${wan.isp})`;
+
+            // API 1 : Shodan InternetDB
+            if (shodanPortsEl) shodanPortsEl.innerText = 'Audit Shodan en cours...';
+            const shodan = await window.api.auditWanShodan(wan.ip);
+            appState.shodanAudit = shodan;
+
+            if (shodanPortsEl) {
+                shodanPortsEl.innerText = shodan.openPorts && shodan.openPorts.length > 0 ? `${shodan.openPorts.length} port(s) [${shodan.openPorts.join(', ')}]` : '0 port exposé (Protégé)';
+                shodanPortsEl.className = shodan.openPorts && shodan.openPorts.length > 0 ? 'wb-stat-val text-orange' : 'wb-stat-val text-green';
+            }
+            if (shodanCvesEl) {
+                shodanCvesEl.innerText = shodan.cves && shodan.cves.length > 0 ? `${shodan.cves.length} vulnérabilité(s) CVE` : '0 faille CVE publique';
+                shodanCvesEl.className = shodan.cves && shodan.cves.length > 0 ? 'wb-stat-val text-red' : 'wb-stat-val text-green';
+            }
+            if (shodanRatingEl) {
+                shodanRatingEl.innerText = shodan.rating || (shodan.isExposed ? 'EXPOSÉ' : 'SÉCURISÉ');
+                shodanRatingEl.className = `badge ${shodan.isExposed ? (shodan.cves && shodan.cves.length > 0 ? 'badge-blocked' : 'badge-unknown') : 'badge-trusted'}`;
+            }
+
+            // API 4 : ThreatFox / Abuse.ch
+            const c2Check = await window.api.checkThreatC2(wan.ip);
+            if (threatFoxEl) {
+                if (c2Check && c2Check.isMalicious) {
+                    threatFoxEl.innerText = `🚨 C2 DÉTECTÉ (${c2Check.threatType})`;
+                    threatFoxEl.className = 'wb-stat-val text-red';
+                } else {
+                    threatFoxEl.innerText = 'AUCUNE MENACE C2 DÉTECTÉE';
+                    threatFoxEl.className = 'wb-stat-val text-green';
+                }
+            }
+
+            // API 3 : AbuseIPDB
+            const abuseCheck = await window.api.checkIpReputation(wan.ip);
+            if (abuseScoreEl) {
+                abuseScoreEl.innerText = `${abuseCheck?.abuseConfidenceScore || 0} / 100 (${abuseCheck?.status?.slice(0, 20) || 'Sain'})`;
+            }
+
+            if (force) {
+                window.showToast(`Audit WAN Shodan terminé : ${shodan.rating}`, shodan.isExposed ? 'warning' : 'success');
+            }
+        } catch (err) {
+            if (wanIpEl) wanIpEl.innerText = 'Mode Hors-Ligne';
+            if (wanIspEl) wanIspEl.innerText = 'Réseau Intranet Privé';
+            if (shodanPortsEl) shodanPortsEl.innerText = 'Non auditable (Hors-Ligne)';
+        }
+    }
+}
+
 

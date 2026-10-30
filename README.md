@@ -135,6 +135,20 @@ Integrating cutting-edge RF signal analysis inspired by [@ruvnet's RuView](https
 - Instant top-bar switcher between **Cyberpunk Dark** (high contrast neon for SOC consoles) and **Corporate Light** (clean executive dashboard).
 - Complete bilingual localization with instant UI reactivity.
 
+### 16. 📺 SOC Command Wallboard & Cyber War Room Mode
+- **Meeting Room & Big Screen Ready**: One-click borderless fullscreen view (`F11` or `[📺 Mur SOC]`) optimized for 1080p, 1440p, and 4K displays without vertical scrollbars.
+- **Dynamic DEFCON 1–5 Gauge**: Real-time threat level calculation evaluating active intrusions, unread alerts, quarantined nodes, and exposed external vulnerabilities.
+- **Tactical 360° Radar Canvas**: Real-time rotating sweep with active node telemetry, Wi-Fi frequency monitoring, and aggregate throughput.
+- **Dual Military Clocks**: Synchronized Local Time and Zulu (UTC) military clock for incident response coordination.
+- **Live Cyber Teletype Ticker**: Continuous animated telemetry stream reporting WAN exposure, honeypot traps, and firewall defense readiness.
+
+### 17. 🌐 Threat Intelligence Engine (5 Public Cyber APIs Integrated)
+- **Shodan InternetDB** (`https://internetdb.shodan.io`): 100% free, keyless external WAN exposure audit detecting open ports, published CVEs, and hostnames.
+- **IP-API** (`http://ip-api.com`): Resolves public gateway IP, country, city, ISP/telecom provider, and Autonomous System Number (ASN).
+- **AbuseIPDB** (`https://api.abuseipdb.com`): Audits IP reputation and retrieves historical abuse confidence scores.
+- **ThreatFox / Abuse.ch** (`https://threatfox-api.abuse.ch`): Cross-checks IP addresses and hostnames against real-time global botnet Command & Control (C2) lists.
+- **MACVendors API** (`https://api.macvendors.com`): Live online OUI resolution fallback for newly registered hardware vendors.
+
 ---
 
 ## 🏗️ Architecture

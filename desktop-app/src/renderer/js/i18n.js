@@ -7,6 +7,7 @@ const translations = {
     fr: {
         // Navigation
         'nav.dashboard': 'Tableau de Bord',
+        'nav.wallboard': 'Mur Vidéo SOC',
         'nav.radar': 'Radar Spatial',
         'nav.devices': 'Inventaire Actifs',
         'nav.security': 'Bouclier Réseau',
@@ -20,6 +21,10 @@ const translations = {
         'nav.guest': 'Wi-Fi Invité & Badge',
         'nav.ruview': 'RuView RF Sensing',
         'nav.settings': 'Paramètres',
+        'nav.sec_surveillance': 'Surveillance Globale',
+        'nav.sec_defense': 'Cyber Défense',
+        'nav.sec_perf': 'Audit & Qualité',
+        'nav.sec_tools': 'Outils & Système',
 
         // Statuts & boutons
         'btn.scan': 'Scanner le Réseau',
@@ -109,6 +114,7 @@ const translations = {
     en: {
         // Navigation
         'nav.dashboard': 'Dashboard',
+        'nav.wallboard': 'SOC War Room Wall',
         'nav.radar': 'Spatial Radar',
         'nav.devices': 'Asset Inventory',
         'nav.security': 'Network Shield',
@@ -122,6 +128,10 @@ const translations = {
         'nav.guest': 'Guest Wi-Fi & Badge',
         'nav.ruview': 'RuView RF Sensing',
         'nav.settings': 'Settings',
+        'nav.sec_surveillance': 'Global Surveillance',
+        'nav.sec_defense': 'Cyber Defense',
+        'nav.sec_perf': 'Audit & Quality',
+        'nav.sec_tools': 'Tools & System',
 
         // Status & buttons
         'btn.scan': 'Scan Network',

@@ -121,6 +121,14 @@ contextBridge.exposeInMainWorld('api', {
         return () => ipcRenderer.removeListener('canary:probe', handler);
     },
 
+    // Threat Intelligence & Public APIs (Shodan, IP-API, AbuseIPDB, ThreatFox, MACVendors)
+    getWanInfo: () => ipcRenderer.invoke('threat:get-wan'),
+    auditWanShodan: (ip) => ipcRenderer.invoke('threat:audit-wan', ip),
+    checkIpReputation: (ip, apiKey) => ipcRenderer.invoke('threat:check-ip', ip, apiKey),
+    checkThreatC2: (indicator) => ipcRenderer.invoke('threat:check-c2', indicator),
+    lookupMacOnline: (mac) => ipcRenderer.invoke('threat:lookup-mac', mac),
+    toggleFullScreen: () => ipcRenderer.invoke('window:toggle-fullscreen'),
+
     // Contrôles de fenêtre
     minimizeWindow: () => ipcRenderer.send('window:minimize'),
     maximizeWindow: () => ipcRenderer.send('window:maximize'),
