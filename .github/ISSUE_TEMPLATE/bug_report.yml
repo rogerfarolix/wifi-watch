@@ -1,0 +1,59 @@
+name: 🐛 Rapport de Bug / Vulnerability Alert
+description: Signalez un dysfonctionnement technique ou un comportement inattendu.
+title: "[BUG]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de contribuer à la robustesse de **Wifi-Watch** !
+        *Note : Si vous rapportez une faille de sécurité critique exploitable, veuillez consulter au préalable notre [Politique de Sécurité](SECURITY.md).*
+
+  - type: input
+    id: version
+    attributes:
+      label: Version de Wifi-Watch
+      description: Indiquez la version exacte (ex: v2.0.0 Portable).
+      placeholder: "v2.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Système d'Exploitation
+      description: Sur quelle version de Windows rencontrez-vous le problème ?
+      options:
+        - Windows 11 Pro / Enterprise x64 (23H2 / 24H2)
+        - Windows 10 Pro / Enterprise x64 (22H2)
+        - Windows Server 2022 / 2025
+        - Autre
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description du Problème
+      description: Expliquez précisément le comportement constaté par rapport au comportement attendu.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Étapes pour Reproduire
+      description: 1. Aller sur l'onglet 'Radar'... 2. Cliquer sur...
+      value: |
+        1. Lancer Wifi-Watch Portable
+        2. Naviguer vers...
+        3. Constater l'erreur...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Journaux d'Erreurs / Console
+      description: Copiez ici les logs de la console DevTools (Ctrl+Shift+I) ou du terminal le cas échéant.
+      render: shell

@@ -17,7 +17,7 @@
 
 *Wifi-Watch delivers high-precision, non-intrusive enterprise network surveillance, zero-driver ARP poison mitigation, physical RF spatial sensing (RuView engine), multi-subnet asset inventory, and continuous DNS integrity verification.*
 
-[Français](#-version-française) • [English](#-english-overview) • [Key Features](#-key-features) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [Compliance](#-compliance-nis2--iso-27001)
+[Français](#-version-française) • [English](#-english-overview) • [Key Features](#-key-features) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [Compliance](#-compliance-nis2--iso-27001) • [Roadmap](ROADMAP.md) • [Changelog](CHANGELOG.md)
 
 ---
 
@@ -181,6 +181,46 @@ wifi-watch/
 ├── LICENSE                          # MIT License
 ├── SECURITY.md                      # Security vulnerability reporting protocol
 └── CONTRIBUTING.md                  # Open-source contribution guidelines
+```
+
+### 🔄 Data Flow & Defense Pipeline
+
+```mermaid
+graph TD
+    A[Wi-Fi & LAN Network Airwaves] -->|Zero-Driver ARP & Multicast| B[Wifi-Watch Core Engine]
+    B --> C{Security Detectors}
+    C -->|ARP Poisoning / MITM| D[Active Netsh Quarantine]
+    C -->|Unauthorized Port Scan| E[Canary Honeypot Trap]
+    C -->|Rogue DHCP / Gateway| F[Gateway Guard Alert]
+    C -->|DNS Poisoning| G[DNS Guard Cross-Resolver]
+    B --> H[RuView RF Spatial Sensing]
+    B --> I[Interactive Canvas Topology & Radar]
+    B --> J[Asset Inventory & CMDB SQLite Store]
+    D & E & F & G --> K[SOC Incident Webhooks Slack / Teams / Discord]
+    J --> L[Executive NIS2 / ISO 27001 HTML & CSV Reports]
+```
+
+---
+
+## 🏢 Enterprise Silent Deployment
+
+For IT administrators deploying Wifi-Watch across fleet workstations or jump hosts via Active Directory GPO, Microsoft Intune, or PDQ Deploy:
+
+```powershell
+# 1. Download & deploy standalone binary silently to ProgramData
+$targetDir = "C:\ProgramData\Wifi-Watch"
+New-Item -ItemType Directory -Force -Path $targetDir
+Copy-Item ".\Wifi-Watch-Portable.exe" -Destination "$targetDir\Wifi-Watch.exe"
+
+# 2. Deploy Desktop shortcut to All Users Public Desktop
+$wsh = New-Object -ComObject WScript.Shell
+$sc = $wsh.CreateShortcut("C:\Users\Public\Desktop\Wifi-Watch.lnk")
+$sc.TargetPath = "$targetDir\Wifi-Watch.exe"
+$sc.Description = "Enterprise Cyber Sentinel & Network Radar"
+$sc.Save()
+
+# 3. Optional: Run background monitoring at user logon via registry Run key
+Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "WifiWatchSentinel" -Value "`"$targetDir\Wifi-Watch.exe`" --silent"
 ```
 
 ---

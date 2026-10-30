@@ -1,0 +1,31 @@
+name: 💡 Proposition de Fonctionnalité / Feature Request
+description: Suggérez une nouvelle fonctionnalité cyber, protocole ou amélioration d'interface.
+title: "[FEATURE]: "
+labels: ["enhancement", "proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Partagez vos idées pour enrichir **Wifi-Watch** et en faire le meilleur outil de surveillance réseau open-source.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Quel problème ou besoin cette fonctionnalité adresse-t-elle ?
+      description: Expliquez le cas d'usage professionnel ou personnel.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution ou Fonctionnalité Proposée
+      description: Détaillez la façon dont vous imaginez cette fonctionnalité dans Wifi-Watch (UI, moteur réseau, export, alerte...).
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives ou Outils Similaires
+      description: Existe-t-il d'autres outils (ex: Wireshark, Fing, Nmap) dont nous pourrions nous inspirer ?

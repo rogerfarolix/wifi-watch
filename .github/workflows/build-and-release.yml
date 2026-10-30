@@ -1,0 +1,55 @@
+name: Build & Release Portable Windows Binary
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Standalone Windows x64 Portable .exe
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: desktop-app/package.json
+
+      - name: Install Desktop App Dependencies
+        run: |
+          cd desktop-app
+          npm ci
+
+      - name: Build Standalone Portable Executable
+        run: |
+          cd desktop-app
+          npm run dist
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Wifi-Watch-Portable-Windows-x64
+          path: desktop-app/dist/Wifi-Watch-Portable.exe
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: desktop-app/dist/Wifi-Watch-Portable.exe
+          name: Wifi-Watch ${{ github.ref_name }} // Enterprise Cyber Sentinel
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
