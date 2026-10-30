@@ -1,0 +1,42 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Electron Builder distributions & build artifacts
+dist/
+build/
+desktop-app/dist/
+*.exe
+*.dmg
+*.AppImage
+
+# Local SQLite databases & logs
+*.sqlite
+*.sqlite3
+*.db
+*.log
+desktop-app/src/data/wifiwatch.sqlite
+desktop-app/src/data/wifiwatch.sqlite-journal
+
+# Environment & credentials
+.env
+.env.local
+*.pfx
+*.cert
+
+# Operating System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# IDE & Editor caches
+.idea/
+.vscode/
+*.swp
+*.swo
+.agents/

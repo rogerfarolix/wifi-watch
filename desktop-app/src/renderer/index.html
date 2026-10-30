@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wifi-Watch // Cyber Sentinel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Barre de Titre Personnalisée Frameless -->
+    <header class="titlebar">
+        <div class="titlebar-brand">
+            <img src="assets/icon.png" alt="Wifi-Watch" style="width: 22px; height: 22px; border-radius: 4px; box-shadow: 0 0 10px rgba(0, 240, 255, 0.45); object-fit: cover;">
+            <span>WIFI-WATCH</span>
+            <span class="titlebar-badge">CYBER SENTINEL v2.0</span>
+        </div>
+
+        <div class="titlebar-status">
+            <div class="status-pill" id="titlebar-status-pill">
+                <span class="status-pulse"></span>
+                <span id="titlebar-wifi-name">Wi-Fi Connecté</span>
+            </div>
+            <span id="titlebar-ping-text" style="font-family: monospace; font-size: 11px;">Ping: -- ms</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; margin-right: 12px; -webkit-app-region: no-drag;">
+            <button id="btn-quick-export" title="Exporter l'inventaire des actifs en CSV (Excel)" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; color: var(--accent-green); padding: 4px 10px; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">
+                <i data-lucide="download" style="width: 13px; height: 13px;"></i>
+                <span data-i18n="btn.export_csv">Export CSV</span>
+            </button>
+            <button id="btn-lang-toggle" title="Changer de langue (Français / English)" style="background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); padding: 4px 8px; display: flex; align-items: center; gap: 6px; font-size: 11px; cursor: pointer;">
+                <i data-lucide="languages" style="width: 14px; height: 14px;"></i>
+                <span id="lang-current-label" style="font-weight: 700; color: var(--accent-cyan);">FR</span>
+            </button>
+            <button id="btn-voice-toggle" title="Activer / Désactiver la Voix Tactique Sentinel" style="background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 6px; color: var(--accent-cyan); padding: 4px 8px; display: flex; align-items: center; gap: 6px; font-size: 11px; cursor: pointer;">
+                <i data-lucide="volume-2" id="voice-icon" style="width: 14px; height: 14px;"></i>
+                <span id="voice-status-text">Voix : ON</span>
+            </button>
+        </div>
+
+        <div class="window-controls">
+            <button class="win-btn" id="btn-win-minimize" title="Réduire">
+                <i data-lucide="minus"></i>
+            </button>
+            <button class="win-btn" id="btn-win-maximize" title="Agrandir">
+                <i data-lucide="square"></i>
+            </button>
+            <button class="win-btn close" id="btn-win-close" title="Fermer">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="app-container">
+
+        <!-- Barre Latérale de Navigation -->
+        <aside class="sidebar">
+            <nav style="display: flex; flex-direction: column; gap: 3px;">
+                <div class="nav-item active" data-view="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span data-i18n="nav.dashboard">Tableau de Bord</span>
+                </div>
+                <div class="nav-item" data-view="radar">
+                    <i data-lucide="radar"></i>
+                    <span data-i18n="nav.radar">Radar & Topologie</span>
+                </div>
+                <div class="nav-item" data-view="devices">
+                    <i data-lucide="laptop-2"></i>
+                    <span data-i18n="nav.devices">Inventaire Actifs</span>
+                    <span class="nav-badge" id="sidebar-online-count">0</span>
+                </div>
+                <div class="nav-item" data-view="security">
+                    <i data-lucide="shield-check"></i>
+                    <span data-i18n="nav.security">Sécurité & Alertes</span>
+                    <span class="nav-badge alert-badge" id="sidebar-alert-count" style="display: none;">0</span>
+                </div>
+                <div class="nav-item" data-view="speedtest">
+                    <i data-lucide="gauge"></i>
+                    <span data-i18n="nav.speedtest">Test Débit SLA</span>
+                </div>
+                <div class="nav-item" data-view="channels">
+                    <i data-lucide="radio-tower"></i>
+                    <span data-i18n="nav.channels">Analyseur Wi-Fi</span>
+                </div>
+                <div class="nav-item" data-view="audit">
+                    <i data-lucide="award"></i>
+                    <span data-i18n="nav.audit">Audit & NIS2</span>
+                </div>
+                <div class="nav-item" data-view="dnsguard">
+                    <i data-lucide="globe"></i>
+                    <span data-i18n="nav.dnsguard">DNS Guard & SLA</span>
+                    <span class="nav-badge" style="background: rgba(16, 185, 129, 0.2); color: var(--accent-green); font-weight: bold;">SLA</span>
+                </div>
+                <div class="nav-item" data-view="honeypot">
+                    <i data-lucide="crosshair"></i>
+                    <span data-i18n="nav.honeypot">Canari Cyber & Trap</span>
+                    <span class="nav-badge" id="sidebar-honeypot-badge" style="background: rgba(239, 68, 68, 0.2); color: var(--accent-red); font-weight: bold;">TRAP</span>
+                </div>
+                <div class="nav-item" data-view="monitor">
+                    <i data-lucide="activity"></i>
+                    <span>Moniteur Débit</span>
+                </div>
+                <div class="nav-item" data-view="tools">
+                    <i data-lucide="scan"></i>
+                    <span>Scanner de Ports</span>
+                </div>
+                <div class="nav-item" data-view="spy">
+                    <i data-lucide="video"></i>
+                    <span>Chasseur Espion</span>
+                    <span class="nav-badge" id="sidebar-spy-count" style="display: none; background: var(--accent-red);">0</span>
+                </div>
+                <div class="nav-item" data-view="timeline">
+                    <i data-lucide="calendar-clock"></i>
+                    <span>Présence & Horaires</span>
+                </div>
+                <div class="nav-item" data-view="guest">
+                    <i data-lucide="qr-code"></i>
+                    <span>Wi-Fi Invité (QR)</span>
+                </div>
+                <div class="nav-item" data-view="ruview">
+                    <i data-lucide="activity"></i>
+                    <span>RuView // Présence RF</span>
+                    <span class="nav-badge" id="sidebar-ruview-badge" style="background: rgba(0,240,255,0.2); color: var(--accent-cyan); font-weight: bold;">RF</span>
+                </div>
+                <div class="nav-item" data-view="settings">
+                    <i data-lucide="settings"></i>
+                    <span>Paramètres</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="network-quick-status">
+                    <div class="quick-row">
+                        <span>SSID :</span>
+                        <span class="quick-val" id="sb-ssid">--</span>
+                    </div>
+                    <div class="quick-row">
+                        <span>Mon IP :</span>
+                        <span class="quick-val" id="sb-ip">--</span>
+                    </div>
+                    <div class="quick-row">
+                        <span>Box :</span>
+                        <span class="quick-val" id="sb-gw">--</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Contenu Principal -->
+        <main class="main-content">
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE 1 : TABLEAU DE BORD (DASHBOARD)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section active" id="view-dashboard">
+
+                <!-- Bannière Wi-Fi Hôte -->
+                <div class="wifi-banner-card">
+                    <div class="wifi-banner-info">
+                        <div class="wifi-icon-ring">
+                            <i data-lucide="wifi" style="width: 28px; height: 28px;"></i>
+                        </div>
+                        <div class="wifi-meta">
+                            <h2 id="dash-ssid">Recherche du réseau Wi-Fi...</h2>
+                            <div class="wifi-tags">
+                                <span class="tag highlight" id="dash-bssid">BSSID : --</span>
+                                <span class="tag" id="dash-channel">Canal : --</span>
+                                <span class="tag" id="dash-radio">Radio : --</span>
+                                <span class="tag" id="dash-gateway">Passerelle : --</span>
+                                <span class="tag" id="dash-signal">Signal : --%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wifi-banner-actions">
+                        <button class="btn btn-primary" id="btn-manual-scan">
+                            <i data-lucide="refresh-cw"></i>
+                            <span>Scanner le Réseau</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Barre de progression du scan -->
+                <div class="scan-progress-bar-container" id="scan-progress-container">
+                    <div class="scan-progress-header">
+                        <span id="scan-progress-text">Balayage ARP en cours...</span>
+                        <span id="scan-progress-pct">0%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="scan-progress-fill"></div>
+                    </div>
+                </div>
+
+                <!-- Cartes KPI -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>Appareils Connectés</span>
+                            <div class="kpi-icon green"><i data-lucide="radio"></i></div>
+                        </div>
+                        <div class="kpi-value" id="kpi-online-devices">0 <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">/ 0 total</span></div>
+                        <div class="kpi-subtext">Actuellement en ligne sur le réseau</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>Appareils Inconnus</span>
+                            <div class="kpi-icon amber"><i data-lucide="help-circle"></i></div>
+                        </div>
+                        <div class="kpi-value" id="kpi-unknown-devices">0</div>
+                        <div class="kpi-subtext">Non marqués comme fiables</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>Débit Actuel</span>
+                            <div class="kpi-icon cyan"><i data-lucide="arrow-down-up"></i></div>
+                        </div>
+                        <div class="kpi-value" id="kpi-throughput">0.0 <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">Mbps</span></div>
+                        <div class="kpi-subtext" id="kpi-rx-tx-sub">↓ 0.0 Mbps | ↑ 0.0 Mbps</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>Latence Passerelle</span>
+                            <div class="kpi-icon green" id="kpi-ping-icon"><i data-lucide="zap"></i></div>
+                        </div>
+                        <div class="kpi-value" id="kpi-ping">-- <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">ms</span></div>
+                        <div class="kpi-subtext" id="kpi-ping-internet">Internet: -- ms</div>
+                    </div>
+                </div>
+
+                <!-- Graphe de Débit et Latence en Direct -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="trending-up"></i>
+                            <span>Bande Passante & Latence en Temps Réel</span>
+                        </div>
+                        <span class="badge badge-online">Direct 2s</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="live-bandwidth-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Deux Panneaux : Appareils Récents & Alertes -->
+                <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i data-lucide="cpu"></i>
+                                <span>Appareils Détectés sur le Wi-Fi</span>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" id="btn-view-all-devices">Voir tous</button>
+                        </div>
+                        <table class="device-table">
+                            <thead>
+                                <tr>
+                                    <th>Équipement</th>
+                                    <th>IP</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-recent-devices-tbody">
+                                <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 20px;">Aucun appareil scanné. Cliquez sur « Scanner le Réseau ».</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i data-lucide="bell"></i>
+                                <span>Sentinel — Événements</span>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" id="btn-mark-all-read-dash">Marquer lu</button>
+                        </div>
+                        <div class="alerts-list" id="dash-recent-alerts-list">
+                            <div style="text-align: center; color: var(--text-muted); padding: 30px;">
+                                Aucune alerte de sécurité. Réseau stable.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE 2 : RADAR & TOPOLOGIE DU RÉSEAU (INTERACTIVE RADAR)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-radar">
+                <div class="radar-view-container">
+                    <canvas id="radar-canvas" class="radar-canvas"></canvas>
+
+                    <div class="radar-overlay-hud">
+                        <div class="radar-hud-title">
+                            <i data-lucide="radar"></i>
+                            <span>Radar Tactique Réseau</span>
+                        </div>
+                        <div class="radar-hud-stats" id="radar-hud-info">
+                            Cible : CANALBOX • Nœuds actifs : --
+                        </div>
+                    </div>
+
+                    <div class="radar-controls-floating">
+                        <button class="btn btn-secondary btn-sm" id="btn-radar-toggle-mode">
+                            <i data-lucide="network"></i>
+                            <span id="radar-mode-text">Arbre Topologique</span>
+                        </button>
+                        <button class="btn btn-secondary btn-sm" id="btn-radar-toggle-offline">
+                            <i data-lucide="eye"></i>
+                            <span id="radar-toggle-text">Masquer Hors-Ligne</span>
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="btn-radar-scan-now">
+                            <i data-lucide="refresh-cw"></i>
+                            <span>Balayer</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE 3 : INVENTAIRE ACTIFS (DEVICES ENTERPRISE)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-devices">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="devices-search-input" placeholder="Rechercher par nom, IP, MAC, catégorie, responsable..." data-i18n-placeholder="devices.search_placeholder">
+                    </div>
+
+                    <div class="filter-group">
+                        <button class="filter-btn active" data-filter="all">Tous</button>
+                        <button class="filter-btn" data-filter="online">En Ligne</button>
+                        <button class="filter-btn" data-filter="workstation">Postes</button>
+                        <button class="filter-btn" data-filter="server">Serveurs</button>
+                        <button class="filter-btn" data-filter="network">Réseau</button>
+                        <button class="filter-btn" data-filter="iot">IoT / Caméras</button>
+                        <button class="filter-btn" data-filter="unauthorized">Non Autorisés</button>
+                        <button class="filter-btn" data-filter="blocked">Bloqués</button>
+                    </div>
+
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button class="btn btn-secondary btn-sm" id="btn-export-csv" title="Exporter l'inventaire en CSV (Excel)">
+                            <i data-lucide="file-spreadsheet"></i>
+                            <span data-i18n="btn.export_csv">CSV</span>
+                        </button>
+                        <button class="btn btn-secondary btn-sm" id="btn-export-json" title="Exporter l'inventaire en JSON">
+                            <i data-lucide="file-code"></i>
+                            <span data-i18n="btn.export_json">JSON</span>
+                        </button>
+                        <button class="btn btn-secondary btn-sm" id="btn-toggle-view-grid" title="Vue Grille">
+                            <i data-lucide="layout-grid"></i>
+                        </button>
+                        <button class="btn btn-secondary btn-sm" id="btn-toggle-view-table" title="Vue Tableau">
+                            <i data-lucide="table"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="devices-grid" id="devices-grid-container"></div>
+
+                <div class="card" id="devices-table-card" style="display: none; padding: 0; overflow: hidden;">
+                    <table class="device-table">
+                        <thead>
+                            <tr>
+                                <th>Équipement / Alias</th>
+                                <th>Adresse IP</th>
+                                <th>Adresse MAC</th>
+                                <th>Constructeur</th>
+                                <th>Catégorie</th>
+                                <th>Responsable / Service</th>
+                                <th>Statut</th>
+                                <th>Autorisation</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="devices-full-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE 4 : SÉCURITÉ & ALERTES (SENTINEL)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-security">
+                <div class="toolbar">
+                    <div class="filter-group">
+                        <button class="filter-btn active" data-alert-filter="all">Toutes les Alertes</button>
+                        <button class="filter-btn" data-alert-filter="critical">Critiques</button>
+                        <button class="filter-btn" data-alert-filter="warning">Avertissements</button>
+                        <button class="filter-btn" data-alert-filter="info">Informations</button>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-secondary btn-sm" id="btn-sec-mark-all">
+                            <i data-lucide="check-check"></i>
+                            <span>Tout marquer comme lu</span>
+                        </button>
+                        <button class="btn btn-danger btn-sm" id="btn-sec-clear-all">
+                            <i data-lucide="trash-2"></i>
+                            <span>Vider l'historique</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="alerts-list" id="full-alerts-list"></div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE 5 : TEST DE DÉBIT INTERNET (SPEEDTEST)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-speedtest">
+                <div class="card speedtest-hero">
+                    <div class="speedtest-meter-circle" id="speedtest-dial">
+                        <div class="speedtest-main-val" id="st-main-val">--</div>
+                        <div class="speedtest-main-unit" id="st-main-unit">Mbps</div>
+                        <div class="speedtest-phase-label" id="st-phase-label">Prêt pour le test</div>
+                    </div>
+
+                    <button class="btn btn-primary" id="btn-run-speedtest" style="padding: 12px 28px; font-size: 15px;">
+                        <i data-lucide="play"></i>
+                        <span id="btn-run-speedtest-text">Lancer le Test de Débit</span>
+                    </button>
+                </div>
+
+                <div class="speedtest-kpis">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>Téléchargement</span>
+                            <div class="kpi-icon cyan"><i data-lucide="download"></i></div>
+                        </div>
+                        <div class="kpi-value" id="st-kpi-down">-- <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">Mbps</span></div>
+                        <div class="kpi-subtext">Débit descendant réel CDN</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>Téléversement</span>
+                            <div class="kpi-icon green"><i data-lucide="upload"></i></div>
+                        </div>
+                        <div class="kpi-value" id="st-kpi-up">-- <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">Mbps</span></div>
+                        <div class="kpi-subtext">Débit montant vers l'extérieur</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>Latence (Ping)</span>
+                            <div class="kpi-icon amber"><i data-lucide="zap"></i></div>
+                        </div>
+                        <div class="kpi-value" id="st-kpi-ping">-- <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">ms</span></div>
+                        <div class="kpi-subtext">Temps de réponse serveur</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>Gigue (Jitter)</span>
+                            <div class="kpi-icon purple"><i data-lucide="activity"></i></div>
+                        </div>
+                        <div class="kpi-value" id="st-kpi-jitter">-- <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">ms</span></div>
+                        <div class="kpi-subtext">Stabilité de la connexion</div>
+                    </div>
+                </div>
+
+                <!-- Indice de Qualité SLA & Performance Réseau -->
+                <div class="card" style="margin-top: 20px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="award"></i>
+                            <span>Indice de Qualité SLA & Performance Réseau</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" id="btn-run-benchmark">
+                            <i data-lucide="activity"></i>
+                            <span id="btn-benchmark-text">Lancer Benchmark SLA</span>
+                        </button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: center; padding: 10px 0;">
+                        <div style="text-align: center; border-right: 1px solid var(--border-color); padding-right: 20px;">
+                            <div id="sla-grade-badge" style="font-size: 54px; font-weight: 900; color: var(--accent-green); line-height: 1; text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);">A+</div>
+                            <div id="sla-grade-label" style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; font-weight: 600;">SLA EXCELLENT</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+                                <div style="font-size: 11px; color: var(--text-muted);">Résolution DNS</div>
+                                <div id="sla-dns-latency" style="font-size: 16px; font-weight: 700; color: var(--accent-cyan); margin-top: 4px;">-- ms</div>
+                            </div>
+                            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+                                <div style="font-size: 11px; color: var(--text-muted);">Latence HTTPS API</div>
+                                <div id="sla-http-latency" style="font-size: 16px; font-weight: 700; color: var(--accent-green); margin-top: 4px;">-- ms</div>
+                            </div>
+                            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+                                <div style="font-size: 11px; color: var(--text-muted);">Perte de Paquets</div>
+                                <div id="sla-packet-loss" style="font-size: 16px; font-weight: 700; color: var(--accent-amber); margin-top: 4px;">0%</div>
+                            </div>
+                            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+                                <div style="font-size: 11px; color: var(--text-muted);">Gigue (Jitter SLA)</div>
+                                <div id="sla-jitter-val" style="font-size: 16px; font-weight: 700; color: var(--accent-purple); margin-top: 4px;">-- ms</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="sla-benchmark-desc" style="font-size: 12px; color: var(--text-secondary); margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-color);">
+                        Évaluation continue de la passerelle et de la route Internet (VoIP, Visio HD, Cloud, Réactivité DNS).
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE 6 : ANALYSEUR WI-FI & CANAUX (CHANNEL ANALYZER)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-channels">
+                <!-- Bannière recommandation canal -->
+                <div class="channel-recommend-banner">
+                    <div>
+                        <h3 style="margin: 0 0 4px 0; font-size: 16px; color: var(--accent-green); display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="check-circle-2"></i>
+                            <span id="chan-best-title">Canal Wi-Fi Optimal Recommandé</span>
+                        </h3>
+                        <p style="margin: 0; font-size: 12px; color: var(--text-secondary);" id="chan-best-desc">
+                            Analyse du spectre 2.4 GHz et 5 GHz en cours...
+                        </p>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" id="btn-refresh-channels">
+                        <i data-lucide="refresh-cw"></i>
+                        <span>Actualiser</span>
+                    </button>
+                </div>
+
+                <!-- Alerte Evil Twin (Masquée si non détectée) -->
+                <div class="card" id="evil-twin-alert-card" style="display: none; border-color: var(--accent-red); background: rgba(239, 68, 68, 0.1);">
+                    <div class="card-title" style="color: var(--accent-red);">
+                        <i data-lucide="shield-alert"></i>
+                        <span>ALERTE DE SÉCURITÉ : Faux Point d'Accès « Evil Twin » Détecté !</span>
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-primary); margin-top: 8px;" id="evil-twin-desc">
+                        Un point d'accès pirate clone l'identité de votre box.
+                    </p>
+                </div>
+
+                <!-- Graphique d'encombrement des canaux 2.4 GHz -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="bar-chart-3"></i>
+                            <span>Encombrement des Canaux 2.4 GHz (Canaux 1 à 13)</span>
+                        </div>
+                    </div>
+                    <div class="channel-bar-group" id="channels-bar-container"></div>
+                </div>
+
+                <!-- Réseaux Voisins Détectés -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="wifi"></i>
+                            <span>Points d'Accès Voisins Détectés</span>
+                        </div>
+                    </div>
+                    <table class="device-table">
+                        <thead>
+                            <tr>
+                                <th>Réseau (SSID)</th>
+                                <th>BSSID (MAC)</th>
+                                <th>Signal</th>
+                                <th>Canal</th>
+                                <th>Bande</th>
+                                <th>Sécurité</th>
+                            </tr>
+                        </thead>
+                        <tbody id="neighbor-networks-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE 7 : SCORE DE SÉCURITÉ & RAPPORT D'AUDIT
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-audit">
+                <div class="audit-score-card">
+                    <div>
+                        <h2 style="margin: 0 0 6px 0; font-size: 20px;">Score de Santé & Cyber-Défense</h2>
+                        <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">
+                            Évaluation complète de votre posture de sécurité Wi-Fi basée sur les normes de cybersécurité.
+                        </p>
+                    </div>
+
+                    <div class="audit-dial" id="audit-score-dial">
+                        <span id="audit-score-num">--</span>
+                        <span style="font-size: 11px; font-weight: normal; color: var(--text-muted);" id="audit-grade-txt">GRADE A</span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i data-lucide="alert-triangle"></i>
+                                <span>Points de Vulnérabilité Détectés</span>
+                            </div>
+                        </div>
+                        <ul id="audit-deductions-list" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;"></ul>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i data-lucide="check-circle-2"></i>
+                                <span>Recommandations d'Amélioration</span>
+                            </div>
+                        </div>
+                        <ul id="audit-recommendations-list" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;"></ul>
+                    </div>
+                </div>
+
+                <div class="card" style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h4 style="margin: 0 0 4px 0;">Exporter un Rapport d'Audit Complet</h4>
+                        <p style="margin: 0; font-size: 12px; color: var(--text-muted);">
+                            Générez une fiche d'audit complète avec l'inventaire complet de tous vos appareils et l'historique des vulnérabilités.
+                        </p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-export-audit-report">
+                        <i data-lucide="file-text"></i>
+                        <span>Télécharger le Rapport (HTML / PDF)</span>
+                    </button>
+                </div>
+
+                <!-- Tableau de Conformité NIS2 / ISO 27001 -->
+                <div class="card" style="margin-top: 16px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="shield-check"></i>
+                            <span>Conformité Réglementaire (NIS2 & ISO 27001)</span>
+                        </div>
+                    </div>
+                    <table class="device-table">
+                        <thead>
+                            <tr>
+                                <th>Référentiel</th>
+                                <th>Exigence de Sécurité</th>
+                                <th>Statut d'Audit</th>
+                                <th>Détails & Constats</th>
+                            </tr>
+                        </thead>
+                        <tbody id="audit-compliance-tbody">
+                            <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 15px;">Évaluation en cours...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE : DNS GUARD & SURVEILLANCE SLA
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-dnsguard">
+                <div class="card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <div class="card-title" style="font-size: 18px; color: var(--accent-cyan);">
+                                <i data-lucide="globe"></i>
+                                <span data-i18n="dns.title">DNS Guard // Surveillance de Résolution & Intégrité</span>
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;" data-i18n="dns.subtitle">
+                                Détection d'empoisonnement DNS (Cache Poisoning), détournement de requêtes (Hijacking) et validation SLA de latence.
+                            </p>
+                        </div>
+                        <button class="btn btn-primary" id="btn-run-dns-audit">
+                            <i data-lucide="shield-check"></i>
+                            <span data-i18n="dns.btn_audit">Tester l'Infrastructure DNS</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span data-i18n="dns.col_latency">Latence Moyenne Résolution</span>
+                            <div class="kpi-icon cyan"><i data-lucide="zap"></i></div>
+                        </div>
+                        <div class="kpi-value" id="dns-kpi-latency">-- <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">ms</span></div>
+                        <div class="kpi-subtext" id="dns-kpi-latency-sub">Seuil SLA : &lt; 150 ms</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span data-i18n="dns.col_integrity">Intégrité & Protection Hijack</span>
+                            <div class="kpi-icon green" id="dns-kpi-integrity-icon"><i data-lucide="shield-check"></i></div>
+                        </div>
+                        <div class="kpi-value" id="dns-kpi-integrity" style="color: var(--accent-green); font-size: 20px;">Vérifié</div>
+                        <div class="kpi-subtext" id="dns-kpi-integrity-sub">Canaris conformes</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>Serveurs Résolveurs</span>
+                            <div class="kpi-icon blue"><i data-lucide="server"></i></div>
+                        </div>
+                        <div class="kpi-value" id="dns-kpi-servers-count">0</div>
+                        <div class="kpi-subtext">Système, Cloudflare & Google</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="list"></i>
+                            <span>État des Serveurs de Noms Résolveurs</span>
+                        </div>
+                    </div>
+                    <table class="device-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="dns.col_server">Serveur DNS</th>
+                                <th>Rôle / Fournisseur</th>
+                                <th data-i18n="dns.col_reachable">Disponibilité</th>
+                                <th data-i18n="dns.col_latency">Latence (SLA)</th>
+                                <th data-i18n="dns.col_integrity">Sécurité & Canaris</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dns-servers-tbody">
+                            <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">Cliquez sur « Tester l'Infrastructure DNS » pour lancer la validation.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card" id="dns-recommendations-card" style="display: none; border-left: 4px solid var(--accent-cyan); margin-top: 16px;">
+                    <div class="card-title" style="margin-bottom: 8px;">
+                        <i data-lucide="info"></i>
+                        <span>Constats & Recommandations DNS</span>
+                    </div>
+                    <ul id="dns-recommendations-list" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px;"></ul>
+                </div>
+
+                <!-- Audit DHCP & Détection Rogue DHCP -->
+                <div class="card" style="margin-top: 16px;">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="card-title">
+                            <i data-lucide="server"></i>
+                            <span data-i18n="dhcp.title">Audit DHCP & Détection Rogue DHCP (Anti-MITM)</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" id="btn-run-dhcp-audit">
+                            <i data-lucide="refresh-cw"></i>
+                            <span>Auditer DHCP</span>
+                        </button>
+                    </div>
+                    <div id="dhcp-audit-content" style="padding-top: 10px;">
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px;">
+                            <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px;">
+                                <span style="font-size: 11px; color: var(--text-muted); display: block;">Serveur DHCP Détecté</span>
+                                <span style="font-size: 15px; font-weight: 700; color: var(--accent-cyan);" id="dhcp-val-server">--</span>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px;">
+                                <span style="font-size: 11px; color: var(--text-muted); display: block;">Passerelle par Défaut</span>
+                                <span style="font-size: 15px; font-weight: 700; color: var(--accent-green);" id="dhcp-val-gateway">--</span>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px;">
+                                <span style="font-size: 11px; color: var(--text-muted); display: block;">Statut de Protection</span>
+                                <span style="font-size: 14px; font-weight: 700; color: var(--accent-green);" id="dhcp-val-status">Sécurisé</span>
+                            </div>
+                        </div>
+                        <p style="margin: 0; font-size: 12px; color: var(--text-muted);" id="dhcp-val-details">
+                            Aucun serveur DHCP pirate ou conflit de passerelle détecté sur le segment local.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE : CANARI RÉSEAU & PIÈGE ANTI-RANSOMWARE (HONEYPOT)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-honeypot">
+                <div class="card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <div class="card-title" style="font-size: 18px; color: var(--accent-red);">
+                                <i data-lucide="crosshair"></i>
+                                <span data-i18n="honeypot.title">Canari Réseau // Piège Anti-Ransomware & Mouvement Latéral</span>
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;" data-i18n="honeypot.subtitle">
+                                Écoute silencieuse sur port leurre pour capturer les vers et scans hostiles en 0,1s.
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button class="btn btn-secondary btn-sm" id="btn-test-honeypot">
+                                <i data-lucide="play"></i>
+                                <span data-i18n="honeypot.simulate">Tester le Piège</span>
+                            </button>
+                            <button class="btn btn-primary" id="btn-toggle-honeypot">
+                                <i data-lucide="power"></i>
+                                <span id="btn-honeypot-text">Activer le Piège Canari</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>État du Piège</span>
+                            <div class="kpi-icon green" id="hp-kpi-status-icon"><i data-lucide="shield"></i></div>
+                        </div>
+                        <div class="kpi-value" id="hp-kpi-status" style="font-size: 20px; color: var(--accent-green);">Désactivé</div>
+                        <div class="kpi-subtext" id="hp-kpi-port">Port leurre : 4455</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>Tentatives Interceptées</span>
+                            <div class="kpi-icon red"><i data-lucide="alert-octagon"></i></div>
+                        </div>
+                        <div class="kpi-value" id="hp-kpi-probes">0</div>
+                        <div class="kpi-subtext">Sondes suspectes bloquées</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span>Auto-Quarantaine Pare-feu</span>
+                            <div class="kpi-icon amber"><i data-lucide="flame"></i></div>
+                        </div>
+                        <div class="kpi-value" id="hp-kpi-autoblock" style="font-size: 20px; color: var(--accent-amber);">Inactif</div>
+                        <div class="kpi-subtext">Isolation netsh automatique</div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="sliders"></i>
+                            <span>Paramètres du Port Canari</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                        <div class="form-group" style="margin: 0; min-width: 180px;">
+                            <label data-i18n="honeypot.port">Numéro de Port Leurre (TCP)</label>
+                            <input type="number" class="form-control" id="hp-input-port" value="4455" min="1" max="65535">
+                        </div>
+                        <div class="form-group" style="margin: 0; display: flex; align-items: center; gap: 8px; margin-top: 18px;">
+                            <input type="checkbox" id="hp-check-autoblock" style="width: 18px; height: 18px; cursor: pointer;">
+                            <label for="hp-check-autoblock" style="margin: 0; cursor: pointer; font-size: 13px;" data-i18n="honeypot.autoblock">Isoler immédiatement l'IP attaquante via le pare-feu Windows</label>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" id="btn-save-honeypot-cfg" style="margin-top: 18px;">
+                            <i data-lucide="save"></i>
+                            <span>Appliquer</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="list"></i>
+                            <span>Journal des Tentatives d'Intrusion Interceptées</span>
+                        </div>
+                    </div>
+                    <table class="device-table">
+                        <thead>
+                            <tr>
+                                <th>Horodatage</th>
+                                <th>IP Attaquante</th>
+                                <th>Port Cible</th>
+                                <th>Gravité</th>
+                                <th>Action Réseau</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hp-probes-tbody">
+                            <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">Aucune tentative d'intrusion interceptée pour le moment. Le piège surveille le réseau.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE 8 : MONITEUR DE DÉBIT CONTINU (MONITOR)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-monitor">
+                <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="card" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;">
+                        <div class="kpi-icon cyan" style="width: 44px; height: 44px;"><i data-lucide="download"></i></div>
+                        <span style="font-size: 13px; color: var(--text-secondary);">Débit Téléchargement (Download)</span>
+                        <div style="font-size: 36px; font-weight: 800; color: var(--accent-cyan);" id="mon-download-rate">0.00 <span style="font-size: 16px; font-weight: normal; color: var(--text-muted);">Mbps</span></div>
+                    </div>
+
+                    <div class="card" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;">
+                        <div class="kpi-icon green" style="width: 44px; height: 44px;"><i data-lucide="upload"></i></div>
+                        <span style="font-size: 13px; color: var(--text-secondary);">Débit Téléversement (Upload)</span>
+                        <div style="font-size: 36px; font-weight: 800; color: var(--accent-green);" id="mon-upload-rate">0.00 <span style="font-size: 16px; font-weight: normal; color: var(--text-muted);">Mbps</span></div>
+                    </div>
+
+                    <div class="card" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;">
+                        <div class="kpi-icon amber" style="width: 44px; height: 44px;"><i data-lucide="gauge"></i></div>
+                        <span style="font-size: 13px; color: var(--text-secondary);">Qualité du Signal Wi-Fi</span>
+                        <div style="font-size: 36px; font-weight: 800; color: var(--accent-amber);" id="mon-signal-val">--%</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="line-chart"></i>
+                            <span>Historique de Débit Continu (Download & Upload)</span>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="monitor-bandwidth-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="wifi"></i>
+                            <span>Caractéristiques Techniques de la Liaison Radio</span>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; font-size: 13px;">
+                        <div>
+                            <span style="color: var(--text-muted); display: block; margin-bottom: 4px;">Point d'accès (BSSID)</span>
+                            <span class="detail-val" id="mon-bssid" style="font-size: 13px;">--</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); display: block; margin-bottom: 4px;">Norme Radio Wi-Fi</span>
+                            <span class="detail-val" id="mon-radio" style="font-size: 13px;">--</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); display: block; margin-bottom: 4px;">Vitesse Négociée (Rx / Tx)</span>
+                            <span class="detail-val" id="mon-rates" style="font-size: 13px;">-- Mbps</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); display: block; margin-bottom: 4px;">Sécurité / Chiffrement</span>
+                            <span class="detail-val" id="mon-sec" style="font-size: 13px;">--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE 9 : SCANNER DE PORTS (TOOLS)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-tools">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="scan-line"></i>
+                            <span>Audit & Scan de Vulnérabilités de Ports</span>
+                        </div>
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+                        Sélectionnez un équipement ou saisissez une adresse IP pour sonder les services exposés (FTP, SSH, Telnet, HTTP, SMB, RDP...).
+                    </p>
+
+                    <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+                        <div class="form-group" style="flex: 1; min-width: 260px;">
+                            <label>Adresse IP Cible</label>
+                            <input type="text" class="form-control" id="tools-target-ip" placeholder="Ex: 192.168.1.254">
+                        </div>
+
+                        <div class="form-group" style="flex: 1; min-width: 260px;">
+                            <label>Ou choisir parmi les appareils actifs :</label>
+                            <select class="form-control" id="tools-device-select">
+                                <option value="">-- Sélectionner un appareil détecté --</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-primary" id="btn-launch-port-scan" style="height: 40px;">
+                            <i data-lucide="shield-alert"></i>
+                            <span>Lancer l'Audit</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" id="tools-port-results-card" style="display: none;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="list"></i>
+                            <span id="tools-port-results-title">Résultats du Scan</span>
+                        </div>
+                        <span class="badge badge-online" id="tools-port-count-badge">0 ports ouverts</span>
+                    </div>
+
+                    <table class="device-table">
+                        <thead>
+                            <tr>
+                                <th>Port</th>
+                                <th>Service</th>
+                                <th>Niveau de Risque</th>
+                                <th>Description</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tools-port-results-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE 10 : PARAMÈTRES (SETTINGS)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-settings">
+                <div class="card" style="max-width: 650px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="sliders"></i>
+                            <span>Configuration de la Surveillance</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 18px;">
+                        <div class="form-group">
+                            <label>Intervalle du Scan Automatique</label>
+                            <select class="form-control" id="setting-scan-interval">
+                                <option value="15">Toutes les 15 secondes (Très réactif)</option>
+                                <option value="30" selected>Toutes les 30 secondes (Recommandé)</option>
+                                <option value="60">Toutes les 60 secondes (Économique)</option>
+                                <option value="120">Toutes les 2 minutes</option>
+                            </select>
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <span style="font-weight: 600; display: block; font-size: 13px;">Notifications de Bureau Windows</span>
+                                <span style="font-size: 12px; color: var(--text-muted);">Alerte native lors de la connexion d'un nouvel appareil ou appareil bloqué.</span>
+                            </div>
+                            <input type="checkbox" id="setting-notifications" checked style="width: 18px; height: 18px; cursor: pointer;">
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <span style="font-weight: 600; display: block; font-size: 13px;">Minimiser dans la zone de notification (Tray)</span>
+                                <span style="font-size: 12px; color: var(--text-muted);">Garde l'application en veille discrète près de l'horloge Windows à la fermeture.</span>
+                            </div>
+                            <input type="checkbox" id="setting-tray" checked style="width: 18px; height: 18px; cursor: pointer;">
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <span style="font-weight: 600; display: block; font-size: 13px;">Signal Sonore d'Alerte</span>
+                                <span style="font-size: 12px; color: var(--text-muted);">Émettre un bip audio lorsqu'une anomalie critique est détectée.</span>
+                            </div>
+                            <input type="checkbox" id="setting-sound" checked style="width: 18px; height: 18px; cursor: pointer;">
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <span style="font-weight: 600; display: block; font-size: 13px;">Scan Automatique Périodique</span>
+                                <span style="font-size: 12px; color: var(--text-muted);">Maintient l'inventaire réseau à jour en permanence en tâche de fond.</span>
+                            </div>
+                            <input type="checkbox" id="setting-autoscan" checked style="width: 18px; height: 18px; cursor: pointer;">
+                        </div>
+
+                        <!-- Préférences Interface & Thème -->
+                        <div style="padding-top: 14px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 14px;">
+                            <div class="card-title" style="font-size: 14px;">
+                                <i data-lucide="palette"></i>
+                                <span>Affichage & Langue</span>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div class="form-group">
+                                    <label>Langue de l'Interface</label>
+                                    <select class="form-control" id="setting-language">
+                                        <option value="fr">Français (FR)</option>
+                                        <option value="en">English (EN)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Thème Graphique</label>
+                                    <select class="form-control" id="setting-theme">
+                                        <option value="cyber">Cyberpunk Neon (Dark HUD)</option>
+                                        <option value="corporate">Corporate Clean (Entreprise)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Configuration Multi-Sous-Réseaux & VLANs -->
+                        <div style="padding-top: 14px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px;">
+                            <div class="card-title" style="font-size: 14px;">
+                                <i data-lucide="network"></i>
+                                <span>Multi-Sous-Réseaux & VLANs Entreprise</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Plages IP / CIDR Personnalisées (séparées par virgules)</label>
+                                <input type="text" class="form-control" id="setting-custom-subnets" placeholder="Ex: 192.168.1.0/24, 10.0.0.0/24, 172.16.10.0/24">
+                                <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: block;">Laissez vide pour scanner uniquement le sous-réseau local auto-détecté.</span>
+                            </div>
+                        </div>
+
+                        <!-- Webhooks d'Alerte Entreprise -->
+                        <div style="padding-top: 14px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 14px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div class="card-title" style="font-size: 14px;">
+                                    <i data-lucide="webhook"></i>
+                                    <span>Webhooks d'Alerte Incident (Slack, Teams, Discord)</span>
+                                </div>
+                                <input type="checkbox" id="setting-webhook-enabled" style="width: 18px; height: 18px; cursor: pointer;">
+                            </div>
+
+                            <div id="webhook-settings-box" style="display: flex; flex-direction: column; gap: 12px;">
+                                <div style="display: grid; grid-template-columns: 140px 1fr; gap: 12px;">
+                                    <div class="form-group">
+                                        <label>Service Cible</label>
+                                        <select class="form-control" id="setting-webhook-type">
+                                            <option value="slack">Slack</option>
+                                            <option value="discord">Discord</option>
+                                            <option value="teams">Microsoft Teams</option>
+                                            <option value="generic">REST / Syslog</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>URL du Webhook Endpoint</label>
+                                        <input type="url" class="form-control" id="setting-webhook-url" placeholder="https://hooks.slack.com/services/... ou Discord/Teams webhook">
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div class="form-group" style="margin: 0; min-width: 220px;">
+                                        <label style="font-size: 11px;">Seuil Minimum d'Alerte</label>
+                                        <select class="form-control" id="setting-webhook-severity">
+                                            <option value="info">Toutes les alertes (Info, Warning, Critique)</option>
+                                            <option value="warning" selected>Avertissements et Critiques</option>
+                                            <option value="critical">Critiques Uniquement</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" id="btn-test-webhook" style="margin-top: 16px;">
+                                        <i data-lucide="send"></i>
+                                        <span>Tester le Webhook</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding-top: 14px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn btn-secondary btn-sm" id="btn-export-db">
+                                <i data-lucide="download"></i>
+                                <span>Exporter Base (JSON)</span>
+                            </button>
+                            <button class="btn btn-secondary btn-sm" id="btn-export-alerts-csv">
+                                <i data-lucide="file-spreadsheet"></i>
+                                <span>Exporter Alertes (CSV)</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE : CHASSEUR DE CAMÉRAS & MICROS ESPIONS (IOT SPY HUNTER)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-spy">
+                <div class="card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <div class="card-title" style="font-size: 18px; color: var(--accent-red);">
+                                <i data-lucide="video"></i>
+                                <span>IoT Spy Hunter // Détecteur de Surveillance Clandestine</span>
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                                Traque les caméras IP cachées, micros espions, flux RTSP ouverts et modules domotiques indiscrets sur votre réseau.
+                            </p>
+                        </div>
+                        <button class="btn btn-primary" id="btn-start-spy-hunt" style="background: linear-gradient(135deg, rgba(255,51,102,0.8), rgba(255,107,0,0.8));">
+                            <i data-lucide="radar"></i>
+                            <span id="btn-spy-text">Lancer la Chasse aux Espions</span>
+                        </button>
+                    </div>
+
+                    <!-- Barre de progression -->
+                    <div id="spy-progress-container" style="display: none; margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                            <span id="spy-progress-label">Analyse en cours...</span>
+                            <span id="spy-progress-count" style="font-family: monospace;">0/0</span>
+                        </div>
+                        <div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;">
+                            <div id="spy-progress-bar" style="width: 0%; height: 100%; background: var(--accent-red); transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Métriques Clés -->
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-title">Équipements Analysés</div>
+                        <div class="stat-value" id="spy-stat-scanned">--</div>
+                        <div class="stat-desc">Appareils actifs testés</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Matériel Vidéo / Audio</div>
+                        <div class="stat-value text-red" id="spy-stat-found">0</div>
+                        <div class="stat-desc">Caméras ou micros repérés</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Flux RTSP Ouverts</div>
+                        <div class="stat-value text-orange" id="spy-stat-rtsp">0</div>
+                        <div class="stat-desc">Diffusions vidéo directes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Niveau de Menace Espion</div>
+                        <div class="stat-value text-green" id="spy-stat-threat">SÉCURISÉ</div>
+                        <div class="stat-desc" id="spy-stat-threat-desc">Aucune caméra hostile</div>
+                    </div>
+                </div>
+
+                <!-- Liste des équipements de surveillance -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="shield-alert"></i>
+                            <span>Équipements de Surveillance Identifiés</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Équipement / Nom</th>
+                                    <th>Adresse IP</th>
+                                    <th>Constructeur & Type</th>
+                                    <th>Flux & Ports</th>
+                                    <th>Niveau de Risque</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="spy-devices-table-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                                        Cliquez sur « Lancer la Chasse aux Espions » pour auditer le réseau local.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE : PRÉSENCE & TIMELINE DE CONNEXION (CONTRÔLE PARENTAL)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-timeline">
+                <div class="card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <div class="card-title" style="font-size: 18px; color: var(--accent-cyan);">
+                                <i data-lucide="calendar-clock"></i>
+                                <span>Présence & Timeline // Historique des Connexions</span>
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                                Surveillez les heures de connexion, la durée d'activité et détectez l'utilisation nocturne d'Internet par appareil.
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <select class="form-control" id="timeline-device-filter" style="width: auto; min-width: 200px;">
+                                <option value="">Tous les équipements</option>
+                            </select>
+                            <button class="btn btn-secondary btn-sm" id="btn-refresh-timeline">
+                                <i data-lucide="refresh-cw"></i>
+                                <span>Actualiser</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI Timeline -->
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-title">Heures en Ligne Aujourd'hui</div>
+                        <div class="stat-value text-cyan" id="timeline-kpi-hours">0.0 h</div>
+                        <div class="stat-desc">Cumul d'activité sur le réseau</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Sessions Aujourd'hui</div>
+                        <div class="stat-value" id="timeline-kpi-sessions">0</div>
+                        <div class="stat-desc">Nombre de connexions enregistrées</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Activité Nocturne (23h - 6h)</div>
+                        <div class="stat-value" id="timeline-kpi-night">NON</div>
+                        <div class="stat-desc" id="timeline-kpi-night-desc">Aucune utilisation la nuit</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">En Ligne Maintenant</div>
+                        <div class="stat-value text-green" id="timeline-kpi-active">0</div>
+                        <div class="stat-desc">Appareils actuellement connectés</div>
+                    </div>
+                </div>
+
+                <!-- Journal Visuel des Sessions -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="history"></i>
+                            <span>Journal Chronologique des Sessions</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" id="btn-clear-sessions" style="color: var(--text-muted);">
+                            <i data-lucide="trash-2"></i>
+                            <span>Effacer l'historique</span>
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Appareil</th>
+                                    <th>Adresse IP</th>
+                                    <th>Début de Connexion</th>
+                                    <th>Fin de Connexion</th>
+                                    <th>Durée Totale</th>
+                                    <th>Statut / Type</th>
+                                </tr>
+                            </thead>
+                            <tbody id="timeline-sessions-table-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                                        Aucune session enregistrée pour le moment.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE : PORTAIL INVITÉ & BADGE QR CODE WI-FI
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-guest">
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-title" style="font-size: 18px; color: var(--accent-cyan);">
+                        <i data-lucide="qr-code"></i>
+                        <span>Portail Wi-Fi Invité // Générateur de Badge QR Code</span>
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                        Permettez à vos visiteurs de se connecter instantanément à votre Wi-Fi en scannant ce badge sans avoir à saisir le mot de passe.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+                    <!-- Configuration du Réseau Invité -->
+                    <div class="card">
+                        <div class="card-title" style="margin-bottom: 15px;">
+                            <i data-lucide="sliders"></i>
+                            <span>Paramètres du Réseau</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nom du Réseau Wi-Fi (SSID)</label>
+                            <input type="text" class="form-control" id="guest-input-ssid" placeholder="Ex: CANALBOX-3C12-2G">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mot de Passe Wi-Fi</label>
+                            <div style="position: relative;">
+                                <input type="password" class="form-control" id="guest-input-password" placeholder="Mot de passe du réseau...">
+                                <button type="button" id="btn-toggle-guest-pass" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer;">
+                                    <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Chiffrement / Sécurité</label>
+                            <select class="form-control" id="guest-select-security">
+                                <option value="WPA">WPA / WPA2 / WPA3 (Recommandé)</option>
+                                <option value="WEP">WEP (Ancien)</option>
+                                <option value="OPEN">Réseau Ouvert (Sans mot de passe)</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-top: 20px; display: flex; gap: 10px;">
+                            <button class="btn btn-primary" id="btn-generate-guest-qr" style="flex: 1;">
+                                <i data-lucide="refresh-cw"></i>
+                                <span>Générer le QR Code</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Badge Invité à Imprimer -->
+                    <div class="card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 25px;">
+                        <div id="printable-guest-badge" style="background: linear-gradient(145deg, #090d16, #0e1524); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 16px; padding: 25px; width: 100%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
+                                <img src="assets/icon.png" style="width: 24px; height: 24px; border-radius: 4px;">
+                                <span style="font-weight: 700; letter-spacing: 1.5px; font-size: 13px; color: var(--accent-cyan);">WIFI-WATCH // INVITÉ</span>
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; display: block;">Réseau Wi-Fi</span>
+                                <span id="badge-display-ssid" style="font-size: 18px; font-weight: 700; color: #fff;">--</span>
+                            </div>
+
+                            <div style="background: #090d16; padding: 12px; border-radius: 12px; display: inline-block; border: 1px solid rgba(0,240,255,0.2); margin-bottom: 15px;">
+                                <canvas id="guest-qr-canvas" style="display: block;"></canvas>
+                            </div>
+
+                            <div style="margin-bottom: 10px;">
+                                <span style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; display: block;">Sécurité</span>
+                                <span id="badge-display-sec" style="font-size: 12px; color: var(--accent-green); font-weight: 600;">WPA2 / WPA3</span>
+                            </div>
+
+                            <p style="font-size: 11px; color: var(--text-muted); margin: 0;">
+                                Scannez ce code avec l'appareil photo de votre smartphone pour vous connecter directement.
+                            </p>
+                        </div>
+
+                        <div style="margin-top: 20px; display: flex; gap: 10px; width: 100%; max-width: 320px;">
+                            <button class="btn btn-secondary" id="btn-print-badge" style="flex: 1;">
+                                <i data-lucide="printer"></i>
+                                <span>Imprimer le Badge</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 VUE : RUVIEW // PRÉSENCE RF & DENSEPOSE SANS CAMÉRA (ruvnet/RuView)
+            ══════════════════════════════════════════════════════════════ -->
+            <section class="view-section" id="view-ruview">
+                <div class="card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div class="card-title" style="font-size: 18px; color: var(--accent-cyan); margin: 0;">
+                                    <i data-lucide="activity"></i>
+                                    <span>RuView // Spatial Sensing & WiFi DensePose</span>
+                                </div>
+                                <span class="badge" id="ruview-mode-badge" style="background: rgba(0,240,255,0.15); color: var(--accent-cyan); border: 1px solid rgba(0,240,255,0.3); font-weight: bold;">Moteur RuSense RF</span>
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">
+                                Basé sur les recherches open-source de <strong style="color: var(--accent-cyan);">ruvnet/RuView</strong>. 
+                                Reconstruit la silhouette humaine 3D, le rythme respiratoire et détecte les chutes à travers les murs sans caméra.
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <button class="btn btn-secondary btn-sm" id="btn-ruview-calibrate" title="Étalonner le bruit électromagnétique ambiant de la pièce">
+                                <i data-lucide="sliders"></i>
+                                <span>Calibrer Espace RF</span>
+                            </button>
+                            <button class="btn btn-secondary btn-sm" id="btn-ruview-toggle-node" title="Configurer une passerelle matérielle ESP32-S3 réelle">
+                                <i data-lucide="cpu"></i>
+                                <span>Nœud Matériel ESP32</span>
+                            </button>
+                            <button class="btn btn-primary btn-sm" id="btn-ruview-toggle-feed">
+                                <i data-lucide="play" id="ruview-feed-icon"></i>
+                                <span id="ruview-feed-text">Reprendre Flux RF</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Métriques Biomiques en Temps Réel -->
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-title">Présence Humaine RF</div>
+                        <div class="stat-value text-cyan" id="ruview-stat-presence">DÉTECTÉE</div>
+                        <div class="stat-desc" id="ruview-stat-conf">94% Confiance Spatiale</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Occupation de la Pièce</div>
+                        <div class="stat-value text-green" id="ruview-stat-occupancy">1 Personne</div>
+                        <div class="stat-desc">Zone couverte par les ondes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Rythme Respiratoire</div>
+                        <div class="stat-value text-cyan" id="ruview-stat-breathing">15.5 <span style="font-size: 13px; font-weight: normal; color: var(--text-muted);">BPM</span></div>
+                        <div class="stat-desc">Micromouvements thoraciques</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Fréquence Cardiaque RF</div>
+                        <div class="stat-value text-orange" id="ruview-stat-heart">72 <span style="font-size: 13px; font-weight: normal; color: var(--text-muted);">BPM</span></div>
+                        <div class="stat-desc">Pulsations RF estimées</div>
+                    </div>
+                </div>
+
+                <!-- Panneaux Graphiques Doubles : DensePose 3D & Spectre CSI -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                    <!-- Visualisation DensePose 3D -->
+                    <div class="card" style="display: flex; flex-direction: column;">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="card-title">
+                                <i data-lucide="user-check"></i>
+                                <span>WiFi DensePose 3D // Squelette Spatiale (17 Joints COCO)</span>
+                            </div>
+                            <!-- Sélecteur de scénario d'activité -->
+                            <select class="form-control" id="ruview-activity-select" style="width: auto; font-size: 11px; padding: 4px 8px;">
+                                <option value="BREATHING">Scénario : Respiration assise</option>
+                                <option value="MOTION">Scénario : Mouvement / Marche</option>
+                                <option value="FALL_ALERT">Scénario : Alerte Chute au sol</option>
+                                <option value="IDLE">Scénario : Pièce vide (Absence)</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; min-height: 360px; background: #070b12; border-radius: 10px; overflow: hidden; position: relative; border: 1px solid rgba(0,240,255,0.15);">
+                            <canvas id="ruview-pose-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Oscilloscope Biomique & Spectre OFDM CSI -->
+                    <div class="card" style="display: flex; flex-direction: column;">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i data-lucide="activity"></i>
+                                <span>Oscilloscope Thoracique & 56 Canaux CSI (OFDM)</span>
+                            </div>
+                        </div>
+                        <div style="flex: 1; min-height: 360px; background: #070b12; border-radius: 10px; overflow: hidden; position: relative; border: 1px solid rgba(0,240,255,0.15);">
+                            <canvas id="ruview-wave-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Passerelle Matérielle ESP32-S3 RuView (ruvnet/RuView) -->
+                <div class="card" id="ruview-hardware-card" style="display: none; border-color: rgba(0, 240, 255, 0.3);">
+                    <div class="card-title" style="margin-bottom: 12px; color: var(--accent-cyan);">
+                        <i data-lucide="cpu"></i>
+                        <span>Configuration du Microcontrôleur ESP32-S3 RuView (Hardware Node)</span>
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px;">
+                        Pour connecter un vrai capteur matériel RuView (microcontrôleur ESP32-S3 à 8$), flashez le firmware open-source RuView et connectez-le à votre réseau local en renseignant son adresse ci-dessous.
+                    </p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <input type="text" class="form-control" id="ruview-node-input-url" placeholder="ws://192.168.1.150:8765" style="flex: 1; min-width: 260px;">
+                        <button class="btn btn-primary" id="btn-ruview-connect">
+                            <i data-lucide="link"></i>
+                            <span>Connecter le Nœud ESP32</span>
+                        </button>
+                        <button class="btn btn-secondary" id="btn-ruview-revert-rusense">
+                            <span>Bascule Mode RuSense (Local)</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         MODAL : ÉDITION & DÉTAILS D'UN APPAREIL
+    ══════════════════════════════════════════════════════════════ -->
+    <div class="modal-overlay" id="device-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="card-title">
+                    <i data-lucide="edit-3"></i>
+                    <span id="modal-title">Détails de l'Appareil</span>
+                </div>
+                <button class="win-btn" id="modal-btn-close">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="modal-device-mac">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label>Nom Personnalisé (Alias Entreprise)</label>
+                        <input type="text" class="form-control" id="modal-device-custom-name" placeholder="Ex: PC-DIR-01, Imprimante RH...">
+                    </div>
+                    <div class="form-group">
+                        <label>Catégorie de l'Actif</label>
+                        <select class="form-control" id="modal-device-category">
+                            <option value="workstation">Poste de Travail (PC/Mac)</option>
+                            <option value="server">Serveur Critique / NAS</option>
+                            <option value="network">Équipement Réseau (Switch/AP)</option>
+                            <option value="printer">Imprimante / Périphérique</option>
+                            <option value="iot">IoT / Caméra IP / Domotique</option>
+                            <option value="mobile">Smartphone / Tablette</option>
+                            <option value="guest">Invité / Visiteur Temporaire</option>
+                            <option value="unauthorized">Non Autorisé / Suspect</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label>Responsable / Utilisateur</label>
+                        <input type="text" class="form-control" id="modal-device-owner" placeholder="Ex: Jean Dupont">
+                    </div>
+                    <div class="form-group">
+                        <label>Département / Service</label>
+                        <input type="text" class="form-control" id="modal-device-department" placeholder="Ex: IT, Finance, RH, Direction...">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label>Emplacement Physique</label>
+                        <input type="text" class="form-control" id="modal-device-location" placeholder="Ex: Bureau 204, Baie Réseau A...">
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; justify-content: center;">
+                        <label style="margin-bottom: 6px;">Statut d'Autorisation & Criticité</label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+                            <input type="checkbox" id="modal-device-authorized" style="width: 18px; height: 18px; cursor: pointer;">
+                            <span style="font-weight: 600; color: var(--accent-green);">Équipement Approuvé / Autorisé</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; margin-top: 6px;">
+                            <input type="checkbox" id="modal-device-critical" style="width: 18px; height: 18px; cursor: pointer;">
+                            <span style="font-weight: 600; color: var(--accent-amber);">⭐ Équipement Critique (Watchdog Always-Online)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Notes & Historique d'Intervention</label>
+                    <input type="text" class="form-control" id="modal-device-notes" placeholder="Ex: Mis à jour le 15/10, certificat VPN déployé...">
+                </div>
+
+                <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px; font-size: 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <div class="detail-line"><span>Adresse IP :</span><span class="detail-val" id="modal-info-ip">--</span></div>
+                    <div class="detail-line"><span>Adresse MAC :</span><span class="detail-val" id="modal-info-mac">--</span></div>
+                    <div class="detail-line"><span>Constructeur (Vendor) :</span><span class="detail-val" id="modal-info-vendor">--</span></div>
+                    <div class="detail-line"><span>Modèle Détecté (ZeroConf) :</span><span class="detail-val" id="modal-info-model">--</span></div>
+                    <div class="detail-line"><span>Nom d'Hôte Détecté :</span><span class="detail-val" id="modal-info-hostname">--</span></div>
+                    <div class="detail-line"><span>Première Détection :</span><span class="detail-val" id="modal-info-firstseen">--</span></div>
+                    <div class="detail-line"><span>Dernière Activité :</span><span class="detail-val" id="modal-info-lastseen">--</span></div>
+                </div>
+
+                <!-- Zone Résultats Ports Détectés dans le Modal -->
+                <div id="modal-ports-container" style="display: none; margin-top: 10px; background: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--accent-cyan);">Services & Ports Ouverts Détectés :</span>
+                        <span class="badge" id="modal-ports-count-badge" style="background: rgba(0,240,255,0.2); color: var(--accent-cyan); font-size: 10px;">0 ports</span>
+                    </div>
+                    <div id="modal-ports-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 120px; overflow-y: auto;"></div>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary btn-sm" id="modal-btn-scan-ports" style="flex: 1;">
+                        <i data-lucide="scan"></i>
+                        <span>Tester Ports</span>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="modal-btn-wol" style="flex: 1;" title="Envoyer un paquet magique WoL pour allumer l'ordinateur à distance">
+                        <i data-lucide="power"></i>
+                        <span>Allumer (WoL)</span>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="modal-btn-spy-check" style="flex: 1;" title="Détecter si cet appareil diffuse de la vidéo ou audio espion">
+                        <i data-lucide="video"></i>
+                        <span>Audit Espion</span>
+                    </button>
+                    <button class="btn btn-danger btn-sm" id="modal-btn-toggle-isolate" style="flex: 1;" title="Couper tout trafic réseau avec cet appareil via le pare-feu Windows">
+                        <i data-lucide="shield-off"></i>
+                        <span id="modal-isolate-text">Isoler (Pare-feu)</span>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="modal-btn-toggle-block" style="flex: 1;">
+                        <i data-lucide="slash"></i>
+                        <span id="modal-block-text">Bloquer</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modal-btn-cancel">Annuler</button>
+                <button class="btn btn-primary" id="modal-btn-save">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Locaux Embarqués (100% Hors-Ligne) -->
+    <script src="js/vendor/chart.min.js"></script>
+    <script src="js/vendor/lucide.min.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/qrGenerator.js"></script>
+    <script src="js/voiceSentinel.js"></script>
+    <script src="js/ruviewCanvas.js"></script>
+    <script src="js/radar.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "wifi-watch",
+  "version": "2.0.0",
+  "description": "Wifi-Watch — Enterprise Cyber Sentinel & Autonomous Network Radar",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix desktop-app start",
+    "pack": "npm --prefix desktop-app run pack",
+    "dist": "npm --prefix desktop-app run dist",
+    "install:app": "npm --prefix desktop-app install"
+  },
+  "keywords": [
+    "cybersecurity",
+    "network-scanner",
+    "wifi-sentinel",
+    "arp-spoofing",
+    "rf-sensing",
+    "nis2",
+    "iso27001",
+    "electron",
+    "windows"
+  ],
+  "author": "Nealix",
+  "license": "MIT"
+}
