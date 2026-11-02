@@ -6,7 +6,7 @@ Thank you for your interest in improving **Wifi-Watch**! We welcome contribution
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/wifi-watch.git
+   git clone https://github.com/rogerfarolix/wifi-watch.git
    cd wifi-watch/desktop-app
    ```
 

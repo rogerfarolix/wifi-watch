@@ -5,6 +5,36 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
+## [2.0.1] — 2026-11-02
+
+### 🛡️ Sécurité
+- **Injection de commandes corrigée** : tous les appels `ping`/`netsh`/`arp` passent par `execFile` sans shell, après validation stricte (IP, hôte, MAC, ports). Nouveau module `validators.js`, couvert par des tests.
+- **Durcissement Electron** : `sandbox: true`, navigation et ouverture de fenêtres externes bloquées, **Content-Security-Policy** stricte (`script-src 'self'`), plus aucun gestionnaire `onclick` inline.
+- **XSS** : échappement des données issues du réseau (noms d'hôtes, services, alertes) dans l'interface.
+- **Webhooks** : HTTPS obligatoire, loopback et link-local (métadonnées cloud) refusés.
+- **Secrets chiffrés au repos** (DPAPI via `safeStorage`) : URL de webhook et clé AbuseIPDB (nouveau champ dans les paramètres).
+
+### 🐞 Corrections
+- Mur SOC : erreur `this.nodes is not iterable` qui laissait les compteurs à 0.
+- Benchmark SLA : le ping n'était jamais lu sur Windows en français (« temps=2 ms »), d'où 100 % de perte et une note A+ trompeuse ; une perte ≥ 50 % donne désormais la note F.
+- Audit DHCP : la passerelle par défaut n'était jamais affichée.
+- Analyseur Wi-Fi : le canal des points d'accès était écrasé par « Utilisation du canal » (tout apparaissait sur le canal 1).
+- Sécurité / chiffrement Wi-Fi : la ligne `akm` de netsh polluait l'affichage.
+- Vues Chasseur Espion, Présence et RuView : styles manquants (cartes de statistiques, tableaux, spinners).
+- Scanner de ports : badges de risque, validation de l'IP et message d'erreur non bloquant.
+- Catégorie par défaut des nouveaux appareils déduite de leur type (smartphone, box, IoT…).
+- Sortie de `netsh`/`ipconfig` décodée en UTF-8 (accents corrects, débits Rx/Tx lus).
+
+### ✨ Améliorations
+- **Interface bilingue FR/EN complète** (textes statiques et messages dynamiques) ; langue par défaut alignée sur celle du système.
+- Alertes Sentinel, rapport d'audit NIS2, recommandations DNS, libellés du radar (canvas) et menu du tray traduits en anglais.
+- Captures d'écran anonymisées dans le README ; build portable vérifié (l'exécutable empaqueté démarre sans erreur).
+- Cases à cocher stylées, barres de canaux vides à largeur nulle, libellés de canaux sans retour à la ligne.
+- `app.js` (2 900 lignes) découpé en 6 modules thématiques.
+- Tests unitaires, CI GitHub Actions (tests + `npm audit`), Dependabot, `package-lock.json` versionné.
+
+---
+
 ## [2.0.0] — 2026-10-30
 
 ### 🚀 Nouveautés Majeures (Enterprise & Cyber Sentinel)

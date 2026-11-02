@@ -10,9 +10,12 @@ Cette feuille de route présente les orientations stratégiques et les fonctionn
 - [x] **Benchmark de Performance SLA** : Notation A+ à F (Jitter, Packet Loss, DNS/HTTP).
 - [x] **Auditeur de Ports TCP non-bloquant** : Détection des services vulnérables.
 - [x] **Découverte mDNS / SSDP UPnP** : Résolution sans pilote des modèles d'équipements.
-- [ ] **Palette de Commandes Rapides (Quick Command Bar `Ctrl + K`)** : Recherche globale instantanée, actions rapides d'isolation ou de scan sans quitter le clavier.
-- [ ] **Centre de Notifications In-App (Toast)** : Système unifié de feedback discret et non-intrusif.
-- [ ] **Regroupement Intelligent dans la Sidebar** : Organisation ergonomique par sections (`Surveillance`, `Sécurité Active`, `Performance`, `Administration`).
+- [x] **Palette de Commandes Rapides (Quick Command Bar `Ctrl + K`)** : Recherche globale instantanée, actions rapides d'isolation ou de scan sans quitter le clavier.
+- [x] **Centre de Notifications In-App (Toast)** : Système unifié de feedback discret et non-intrusif.
+- [x] **Regroupement Intelligent dans la Sidebar** : Organisation ergonomique par sections (`Surveillance`, `Sécurité Active`, `Performance`, `Administration`).
+- [x] **Interface bilingue FR/EN** et durcissement de sécurité (CSP, sandbox, validation des entrées, secrets chiffrés).
+- [ ] **Signature de code de l'exécutable** (certificat Authenticode) pour supprimer l'avertissement Windows SmartScreen.
+- [x] **Traduction EN des messages du processus principal** (alertes Sentinel, rapport d'audit, menu du tray). Reste en français : l'export HTML du rapport d'audit.
 
 ---
 

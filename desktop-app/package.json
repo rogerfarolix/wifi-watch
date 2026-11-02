@@ -1,13 +1,14 @@
 {
   "name": "wifi-watch-desktop",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": "Nealix",
   "description": "Wifi-Watch — Cyber Sentinel & Surveillance Réseau Temps Réel",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "test": "node --test test/*.test.js"
   },
   "build": {
     "appId": "com.nealix.wifiwatch",

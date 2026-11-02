@@ -1,13 +1,14 @@
 {
   "name": "wifi-watch",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Wifi-Watch — Enterprise Cyber Sentinel & Autonomous Network Radar",
   "private": true,
   "scripts": {
     "start": "npm --prefix desktop-app start",
     "pack": "npm --prefix desktop-app run pack",
     "dist": "npm --prefix desktop-app run dist",
-    "install:app": "npm --prefix desktop-app install"
+    "install:app": "npm --prefix desktop-app install",
+    "test": "npm --prefix desktop-app test"
   },
   "keywords": [
     "cybersecurity",
@@ -21,5 +22,9 @@
     "windows"
   ],
   "author": "Nealix",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerfarolix/wifi-watch.git"
+  }
 }

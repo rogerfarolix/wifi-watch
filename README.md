@@ -6,10 +6,15 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078D6?logo=windows)](https://microsoft.com)
-[![Architecture](https://img.shields.io/badge/Architecture-x64%20Portable-success)](https://github.com)
-[![Drivers](https://img.shields.io/badge/Npcap%2FWinPcap-NOT%20REQUIRED-brightgreen)](https://github.com)
-[![Compliance](https://img.shields.io/badge/Compliance-NIS2%20%7C%20ISO%2027001-blueviolet)](https://github.com)
-[![Webhooks](https://img.shields.io/badge/Alerts-Slack%20%7C%20Teams%20%7C%20Discord-orange)](https://github.com)
+[![Architecture](https://img.shields.io/badge/Architecture-x64%20Portable-success)](https://github.com/rogerfarolix/wifi-watch)
+[![Drivers](https://img.shields.io/badge/Npcap%2FWinPcap-NOT%20REQUIRED-brightgreen)](https://github.com/rogerfarolix/wifi-watch)
+[![Compliance](https://img.shields.io/badge/Compliance-NIS2%20%7C%20ISO%2027001-blueviolet)](https://github.com/rogerfarolix/wifi-watch)
+[![Webhooks](https://img.shields.io/badge/Alerts-Slack%20%7C%20Teams%20%7C%20Discord-orange)](https://github.com/rogerfarolix/wifi-watch)
+
+> [!WARNING]
+> **Usage légal / Legal use only.** Wifi-Watch is a *defensive* tool for administrators. Scan, probe, or quarantine only networks and devices you own or are explicitly authorized to audit. Port scanning, honeypots and firewall quarantine on third-party networks may be illegal in your country. The authors accept no liability for misuse (see [LICENSE](LICENSE)).
+>
+> **Windows SmartScreen** may warn on first launch because the portable `.exe` is not code-signed. Build it yourself from source if you prefer.
 
 <p align="center">
   <img src="assets/banner.jpg" alt="Wifi-Watch Banner" width="850" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,255,204,0.2);">
@@ -60,6 +65,31 @@ Integrating cutting-edge RF signal analysis inspired by [@ruvnet's RuView](https
 - **Surveillance & Watchdog d'Actifs Critiques** : Alertes vocales et webhooks immédiats en cas de déconnexion d'un serveur ou équipement critique labellisé.
 - **Benchmark SLA & Qualité de Service** : Évaluation globale de la stabilité réseau avec attribution d'une note SLA (A+ à F) combinant latence min/moy/max, gigue (jitter), perte de paquets, et vitesse de résolution DNS/HTTPS.
 - **Analyseur Spectral Wi-Fi** : Cartographie des canaux 2.4 GHz et 5 GHz et calcul du score de congestion pour recommander les canaux optimaux.
+
+---
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td><img src="assets/screenshots/dashboard.png" alt="Dashboard"><br><sub><b>Dashboard</b> — live bandwidth & latency, device inventory, Sentinel events</sub></td>
+    <td><img src="assets/screenshots/soc-wallboard.png" alt="SOC Wallboard"><br><sub><b>SOC Wallboard</b> — DEFCON gauge, WAN exposure audit, tactical radar</sub></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/radar.png" alt="Network radar"><br><sub><b>Tactical radar</b> — devices by latency ring, topology tree mode</sub></td>
+    <td><img src="assets/screenshots/inventory.png" alt="Asset inventory"><br><sub><b>Asset inventory</b> — CMDB cards, trust / block actions</sub></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/audit-nis2.png" alt="NIS2 audit"><br><sub><b>NIS2 & ISO 27001 audit</b> — health score and compliance table</sub></td>
+    <td><img src="assets/screenshots/spy-hunter.png" alt="IoT Spy Hunter"><br><sub><b>IoT Spy Hunter</b> — hidden cameras, microphones, open RTSP streams</sub></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/honeypot.png" alt="Canary trap"><br><sub><b>Canary trap</b> — decoy port against lateral movement</sub></td>
+    <td><img src="assets/screenshots/wifi-channels.png" alt="Wi-Fi channels"><br><sub><b>Wi-Fi analyzer</b> — channel congestion, neighbors, Evil Twin detection</sub></td>
+  </tr>
+</table>
+
+*Network names, MAC addresses and public IPs are anonymized in these screenshots.*
 
 ---
 
@@ -165,30 +195,41 @@ wifi-watch/
 │   │   ├── main.js                  # Electron main process & IPC coordinator
 │   │   ├── preload.js               # Context-isolated secure bridge
 │   │   ├── data/
-│   │   │   └── database.js          # SQLite3 enterprise state store & CMDB
+│   │   │   └── database.js          # JSON enterprise state store & CMDB
 │   │   ├── network/
+│   │   │   ├── validators.js        # Input validation (IP, host, MAC, ports, URLs) at the IPC boundary
+│   │   │   ├── shell.js             # Single entry point for system commands (UTF-8, no shell injection)
+│   │   │   ├── detector.js          # Wi-Fi / gateway environment detection (netsh)
 │   │   │   ├── scanner.js           # Multi-subnet scanner & ARP table reader
-│   │   │   ├── threatIntel.js       # Threat rules, MAC OUI vendor signatures
+│   │   │   ├── ouiDatabase.js       # MAC OUI vendor signatures & device-type heuristics
 │   │   │   ├── portScanner.js       # Fast non-blocking TCP port & service auditor
 │   │   │   ├── zeroConfDiscovery.js # Autonomous mDNS & SSDP/UPnP model discovery
 │   │   │   ├── honeypot.js          # Decoy TCP honeypot canary & probe sensor
 │   │   │   ├── dhcpAuditor.js       # Rogue DHCP server & gateway MITM detector
 │   │   │   ├── spectrumAnalyzer.js  # WiFi channel congestion & spectrum auditor
+│   │   │   ├── channelAnalyzer.js   # Neighbor APs & Evil Twin detection
 │   │   │   ├── speedBenchmark.js    # Enterprise SLA benchmark & quality grader
-│   │   │   ├── ruviewEngine.js      # RF micro-perturbations & distance model
+│   │   │   ├── ruviewBridge.js      # RuView RF sensing bridge (simulated or ESP32 hardware)
 │   │   │   ├── dnsGuard.js          # DNS integrity auditor & canary checks
 │   │   │   ├── webhookDispatcher.js # Slack/Teams/Discord/REST alert dispatcher
 │   │   │   ├── exportManager.js     # UTF-8 BOM CSV & JSON CMDB generators
-│   │   │   ├── firewall.js          # Windows Firewall netsh isolation engine
+│   │   │   ├── quarantine.js        # Windows Firewall (netsh) isolation engine
+│   │   │   ├── threatIntelligenceApis.js # Shodan InternetDB, IP-API, AbuseIPDB, ThreatFox, MACVendors
 │   │   │   └── auditReport.js       # NIS2 Article 21 & ISO 27001 reporter
 │   │   └── renderer/
-│   │       ├── index.html           # Modern glassmorphism dashboard
+│   │       ├── index.html           # Modern glassmorphism dashboard (strict CSP)
 │   │       ├── css/style.css        # Cyberpunk & Corporate theme definitions
 │   │       └── js/
-│   │           ├── app.js           # View state manager, filters & modals
-│   │           ├── i18n.js          # French / English translation dictionary
-│   │           ├── radar.js         # Canvas 60 FPS rotating radar scope
-│   │           └── audioVoice.js    # Speech synthesis audio annunciator
+│   │           ├── app-state.js     # Global state & helpers
+│   │           ├── app-core.js      # Init, navigation, charts, IPC listeners
+│   │           ├── app-devices.js   # Dashboard, inventory, device modal
+│   │           ├── app-network.js   # Speed test, Wi-Fi, ports, DNS/DHCP
+│   │           ├── app-settings.js  # Settings, exports, toasts, command palette
+│   │           ├── app-features.js  # Honeypot, Spy Hunter, presence, guest QR, RuView, SOC wall
+│   │           ├── i18n.js          # FR/EN engine (+ i18n-en.js dictionary)
+│   │           ├── radar.js         # Canvas rotating radar scope
+│   │           └── voiceSentinel.js # Speech synthesis annunciator
+│   ├── test/                        # Unit tests (npm test)
 │   └── package.json
 ├── Lancer-WifiWatch.bat             # Fast launch script
 ├── Wifi-Watch-Silencieux.vbs        # Background launch script
@@ -209,7 +250,7 @@ graph TD
     C -->|DNS Poisoning| G[DNS Guard Cross-Resolver]
     B --> H[RuView RF Spatial Sensing]
     B --> I[Interactive Canvas Topology & Radar]
-    B --> J[Asset Inventory & CMDB SQLite Store]
+    B --> J[Asset Inventory & CMDB Local JSON Store]
     D & E & F & G --> K[SOC Incident Webhooks Slack / Teams / Discord]
     J --> L[Executive NIS2 / ISO 27001 HTML & CSV Reports]
 ```
@@ -242,9 +283,9 @@ Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Na
 ## 🚀 Getting Started
 
 ### Option A: Portable Binary (No Installation)
-1. Download `Wifi-Watch-Portable.exe` from the latest [Releases](https://github.com).
+1. Download `Wifi-Watch-Portable.exe` from the latest [Releases](https://github.com/rogerfarolix/wifi-watch/releases/latest).
 2. Double-click to launch. No administrator rights required for general scanning (Admin rights required only for active firewall quarantine).
-3. The application runs self-contained with an embedded local SQLite database.
+3. The application runs self-contained with an embedded local JSON data store.
 
 ### Option B: Run from Source
 **Prerequisites**:
@@ -254,7 +295,7 @@ Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Na
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/wifi-watch.git
+git clone https://github.com/rogerfarolix/wifi-watch.git
 cd wifi-watch/desktop-app
 
 # 2. Install dependencies
@@ -300,4 +341,4 @@ If you discover a vulnerability or security issue within Wifi-Watch, please refe
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
-*Disclaimer: Wifi-Watch is built strictly for defensive cybersecurity, authorized enterprise network administration, and educational auditing. Always obtain explicit permission before scanning networks you do not own or manage.*
+*Disclaimer (see the warning at the top): Wifi-Watch is built strictly for defensive cybersecurity, authorized enterprise network administration, and educational auditing. Always obtain explicit permission before scanning networks you do not own or manage.*

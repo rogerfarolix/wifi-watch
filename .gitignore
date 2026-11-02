@@ -3,7 +3,6 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
 
 # Electron Builder distributions & build artifacts
 dist/
@@ -17,6 +16,8 @@ desktop-app/dist/
 *.sqlite
 *.sqlite3
 *.db
+*.db.json
+wifi_watch.db.tmp
 *.log
 desktop-app/src/data/wifiwatch.sqlite
 desktop-app/src/data/wifiwatch.sqlite-journal
