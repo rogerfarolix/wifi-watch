@@ -36,7 +36,7 @@ jobs:
           npm run dist
 
       - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Wifi-Watch-Portable-Windows-x64
           path: desktop-app/dist/Wifi-Watch-Portable.exe
