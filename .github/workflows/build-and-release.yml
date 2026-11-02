@@ -44,7 +44,7 @@ jobs:
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: desktop-app/dist/Wifi-Watch-Portable.exe
           name: Wifi-Watch ${{ github.ref_name }} // Enterprise Cyber Sentinel
