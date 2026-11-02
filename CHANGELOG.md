@@ -5,7 +5,7 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
-## [Non publié]
+## [2.0.3] - 2026-11-03
 
 ### Ajouts
 - Vérification des mises à jour : au démarrage (désactivable) et via le bouton « Vérifier maintenant » dans les Paramètres. Une seule requête vers l'API GitHub des releases, aucune donnée personnelle envoyée, aucun téléchargement automatique.
