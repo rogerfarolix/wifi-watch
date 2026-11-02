@@ -3,6 +3,53 @@
  * (module issu du découpage d'app.js ; scripts classiques, portée globale partagée)
  */
 
+// ─── Mises à jour ───────────────────────────────────────────────────────────
+function showUpdateState(info) {
+    const status = document.getElementById('update-status-label');
+    const dlBtn = document.getElementById('btn-open-release');
+    if (!status) return;
+    if (info.updateAvailable) {
+        status.innerHTML = `<span class="text-orange" style="font-weight: 600;">(version ${escapeHtml(info.latest)} disponible)</span>`;
+        if (dlBtn) dlBtn.style.display = '';
+    } else {
+        status.innerHTML = `<span class="text-green">(à jour)</span>`;
+        if (dlBtn) dlBtn.style.display = 'none';
+    }
+}
+
+function initUpdateSettings(settings) {
+    const check = document.getElementById('setting-check-updates');
+    const btn = document.getElementById('btn-check-update');
+    if (check) check.checked = settings.checkUpdates !== false;
+    check?.addEventListener('change', (e) => window.api.updateSettings({ checkUpdates: e.target.checked }));
+
+    window.api.getAppVersion().then(v => {
+        const el = document.getElementById('app-version-label');
+        if (el) el.textContent = v;
+    });
+
+    document.getElementById('btn-open-release')?.addEventListener('click', () => window.api.openReleasePage());
+
+    btn?.addEventListener('click', async () => {
+        btn.disabled = true;
+        const res = await window.api.checkUpdate();
+        btn.disabled = false;
+        if (!res.success) {
+            window.showToast(`Impossible de vérifier les mises à jour : ${res.message}`, 'warning');
+            return;
+        }
+        showUpdateState(res);
+        if (res.updateAvailable) window.showToast(`Nouvelle version ${res.latest} disponible.`, 'info');
+        else window.showToast('Vous utilisez la dernière version.', 'success');
+    });
+
+    // Vérification automatique au démarrage (déclenchée par le processus principal)
+    window.api.onUpdateAvailable((info) => {
+        showUpdateState(info);
+        window.showToast(`Nouvelle version ${info.latest} disponible. Ouvrez les Paramètres pour la télécharger.`, 'info');
+    });
+}
+
 // ─── Paramètres ─────────────────────────────────────────────────────────────
 async function initSettingsEvents() {
     const settings = await window.api.getSettings();
@@ -40,6 +87,8 @@ async function initSettingsEvents() {
     autoScanCheck?.addEventListener('change', async (e) => {
         await window.api.updateSettings({ autoScan: e.target.checked });
     });
+
+    initUpdateSettings(settings);
 
     // Multi-Sous-Réseaux & VLANs
     const customSubnetsInput = document.getElementById('setting-custom-subnets');

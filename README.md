@@ -24,17 +24,17 @@
 
 *Wifi-Watch delivers high-precision, non-intrusive enterprise network surveillance, zero-driver ARP poison mitigation, physical RF spatial sensing (RuView engine), multi-subnet asset inventory, and continuous DNS integrity verification.*
 
-[Français](#-version-française) • [English](#-english-overview) • [Key Features](#-key-features) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [Compliance](#-compliance-nis2--iso-27001) • [Roadmap](ROADMAP.md) • [Changelog](CHANGELOG.md)
+[Français](#version-française) • [English](#english-overview) • [Key Features](#key-features) • [Architecture](#architecture) • [Getting Started](#getting-started) • [Compliance](#compliance-nis2--iso-27001) • [Roadmap](ROADMAP.md) • [Changelog](CHANGELOG.md)
 
 ---
 
 
 <p align="center">
-  <a href="#-screenshots">Screenshots</a> ·
-  <a href="#-quick-start">Quick start</a> ·
-  <a href="#-key-features">Features</a> ·
-  <a href="#-privacy--network-requests">Privacy</a> ·
-  <a href="#-known-limitations">Limitations</a> ·
+  <a href="#screenshots">Screenshots</a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#key-features">Features</a> ·
+  <a href="#privacy--network-requests">Privacy</a> ·
+  <a href="#known-limitations">Limitations</a> ·
   <a href="ROADMAP.md">Roadmap</a> ·
   <a href="CHANGELOG.md">Changelog</a>
 </p>
@@ -43,7 +43,7 @@
 
 ## Quick Start
 
-1. Download **`Wifi-Watch-Portable.exe`** from the [latest release](%s/releases/latest) - no installation, no driver, no admin rights for scanning.
+1. Download **`Wifi-Watch-Portable.exe`** from the [latest release](https://github.com/rogerfarolix/wifi-watch/releases/latest) - no installation, no driver, no admin rights for scanning.
 2. Run it and click **Scan Network**. Within seconds you get every device on your Wi-Fi, its vendor, a trust status, and a security score.
 3. Open **Audit & NIS2** for the compliance view, **SOC Wall** (`F11`) for the big-screen mode, or press `Ctrl + K` to jump anywhere.
 
@@ -76,7 +76,7 @@ Its RuView module (inspired by [@ruvnet's RuView](https://github.com/ruvnet) res
 
 ---
 
-## 🇫🇷 Version Française
+## Version Française
 
 **Wifi-Watch** est une plateforme autonome de surveillance et de défense cyber pour réseaux locaux et WiFi d'entreprise. Conçue pour les DSI, RSSI, administrateurs réseau et auditeurs de sécurité, l'application fonctionne de manière 100% autonome sous Windows 10 et 11 sans nécessiter l'installation de pilotes réseau intrusifs (aucun Npcap ou WinPcap requis).
 
@@ -361,6 +361,7 @@ Wifi-Watch has **no telemetry, no account, no cloud backend**. Everything is sto
 | IP reputation | AbuseIPDB | IP you check | Optional |
 | Vendor lookup (fallback) | macvendors.com | first 3 bytes of a MAC | No |
 | Speed test / latency | Cloudflare, Google | standard HTTPS requests | No |
+| Update check (can be disabled) | GitHub API | nothing besides a standard request | No |
 | Alert webhooks | Your Slack / Teams / Discord URL | alert text | You provide it |
 
 Secrets you enter (webhook URL, AbuseIPDB key) are encrypted at rest with Windows DPAPI. See [SECURITY.md](SECURITY.md).

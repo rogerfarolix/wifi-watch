@@ -4,7 +4,7 @@
  * base de données embarquée, plateau système (Tray) et ponts IPC.
  */
 
-const { app, BrowserWindow, ipcMain, Notification, Tray, Menu, nativeImage, dialog, safeStorage } = require('electron');
+const { app, BrowserWindow, ipcMain, Notification, Tray, Menu, nativeImage, dialog, safeStorage, shell } = require('electron');
 const path = require('path');
 const V = require('./network/validators');
 const fs = require('fs');
@@ -32,6 +32,7 @@ const DhcpAuditor = require('./network/dhcpAuditor');
 const SpectrumAnalyzer = require('./network/spectrumAnalyzer');
 const SpeedBenchmark = require('./network/speedBenchmark');
 const ThreatIntelligenceApis = require('./network/threatIntelligenceApis');
+const { checkForUpdate, RELEASES_URL } = require('./network/updateChecker');
 
 let mainWindow = null;
 let tray = null;
@@ -379,6 +380,15 @@ app.whenReady().then(() => {
     createWindow();
     createSystemTray();
 
+    // Vérification silencieuse d'une nouvelle version, 15 s après le démarrage
+    setTimeout(async () => {
+        if (db.getSettings().checkUpdates === false) return;
+        try {
+            const info = await checkForUpdate(app.getVersion());
+            if (info.updateAvailable && mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('update:available', info);
+        } catch (e) { /* hors ligne ou GitHub indisponible : nouvel essai au prochain lancement */ }
+    }, 15000);
+
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
@@ -629,6 +639,20 @@ ipcMain.handle('db:update-settings', (_, patch) => {
     resetAutoScanTimer();
     return updated;
 });
+
+// ─── Mises à jour ───────────────────────────────────────────────────────────
+ipcMain.handle('app:get-version', () => app.getVersion());
+
+ipcMain.handle('app:check-update', async () => {
+    try {
+        return { success: true, ...(await checkForUpdate(app.getVersion())) };
+    } catch (e) {
+        return { success: false, current: app.getVersion(), message: e.message };
+    }
+});
+
+// URL fixe côté processus principal : le renderer ne peut pas faire ouvrir une adresse arbitraire
+ipcMain.handle('app:open-release-page', () => shell.openExternal(RELEASES_URL));
 
 // ─── Enterprise & Exports IPC ───────────────────────────────────────────────
 ipcMain.handle('export:devices-csv', () => {

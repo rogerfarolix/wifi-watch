@@ -21,6 +21,16 @@ contextBridge.exposeInMainWorld('api', {
     auditDns: (customServers) => ipcRenderer.invoke('dns:audit', customServers),
     testWebhook: (config) => ipcRenderer.invoke('webhook:test', config),
 
+    // Mises à jour
+    getAppVersion: () => ipcRenderer.invoke('app:get-version'),
+    checkUpdate: () => ipcRenderer.invoke('app:check-update'),
+    openReleasePage: () => ipcRenderer.invoke('app:open-release-page'),
+    onUpdateAvailable: (callback) => {
+        const handler = (_, data) => callback(data);
+        ipcRenderer.on('update:available', handler);
+        return () => ipcRenderer.removeListener('update:available', handler);
+    },
+
     // Nouveaux Modules Cyber & Enterprise
     getHoneypotStatus: () => ipcRenderer.invoke('honeypot:status'),
     toggleHoneypot: (enabled, port, autoBlock) => ipcRenderer.invoke('honeypot:toggle', enabled, port, autoBlock),

@@ -52,6 +52,7 @@ class Database {
                 webhookEnabled: false,
                 webhookUrl: '',
                 abuseIpdbKey: '', // clé API AbuseIPDB (optionnelle)
+                checkUpdates: true, // vérification des nouvelles versions sur GitHub au démarrage
                 webhookType: 'slack', // 'slack', 'discord', 'teams', 'generic'
                 webhookMinSeverity: 'warning', // 'info', 'warning', 'critical'
                 honeypotEnabled: false,

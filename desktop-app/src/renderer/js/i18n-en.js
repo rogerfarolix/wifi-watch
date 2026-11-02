@@ -203,6 +203,11 @@ window.I18N_EN_HTML = {
  "Émettre un bip audio lorsqu'une anomalie critique est détectée.": "Play an audio beep when a critical anomaly is detected.",
  "Scan Automatique Périodique": "Periodic Automatic Scan",
  "Maintient l'inventaire réseau à jour en permanence en tâche de fond.": "Keeps the network inventory continuously up to date in the background.",
+ "Vérifier les mises à jour au démarrage": "Check for updates at startup",
+ "Interroge les releases GitHub du projet. Aucune donnée personnelle n'est envoyée.": "Queries the project's GitHub releases. No personal data is sent.",
+ "Version installée :": "Installed version:",
+ "Télécharger": "Download",
+ "Vérifier maintenant": "Check now",
  "Affichage & Langue": "Display & Language",
  "Langue de l'Interface": "Interface Language",
  "Thème Graphique": "Graphic Theme",
@@ -635,9 +640,27 @@ window.I18N_EN_DYNAMIC = {
   "Dégradé - Forte latence ou gigue": "Degraded - High latency or jitter",
   "Impossible de lire la configuration IP": "Unable to read the IP configuration",
   "Aucun serveur DHCP pirate ou conflit de passerelle détecté sur le segment local.": "No rogue DHCP server or gateway conflict detected on the local segment.",
-  "URL WebSocket invalide (ws:// ou wss:// requis)": "Invalid WebSocket URL (ws:// or wss:// required)"
+  "URL WebSocket invalide (ws:// ou wss:// requis)": "Invalid WebSocket URL (ws:// or wss:// required)",
+  "(à jour)": "(up to date)",
+  "Vous utilisez la dernière version.": "You are running the latest version."
  },
  "patterns": [
+  [
+   "^\\(version (.+) disponible\\)$",
+   "(version $1 available)"
+  ],
+  [
+   "^Nouvelle version (.+) disponible\\.$",
+   "New version $1 available."
+  ],
+  [
+   "^Nouvelle version (.+) disponible\\. Ouvrez les Paramètres pour la télécharger\\.$",
+   "New version $1 available. Open Settings to download it."
+  ],
+  [
+   "^Impossible de vérifier les mises à jour : (.+)$",
+   "Unable to check for updates: $1"
+  ],
   [
    "^Canal : (.+)$",
    "Channel: $1"
