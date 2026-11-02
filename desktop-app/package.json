@@ -2,7 +2,7 @@
   "name": "wifi-watch-desktop",
   "version": "2.0.2",
   "author": "Nealix",
-  "description": "Wifi-Watch — Cyber Sentinel & Surveillance Réseau Temps Réel",
+  "description": "Wifi-Watch - Cyber Sentinel & Surveillance Réseau Temps Réel",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",

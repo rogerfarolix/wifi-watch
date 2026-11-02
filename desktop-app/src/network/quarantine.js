@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Network Shield & Device Quarantine (Isolation Réseau)
+ * Wifi-Watch - Network Shield & Device Quarantine (Isolation Réseau)
  * Permet d'isoler immédiatement un équipement intrus ou malveillant
  * en coupant tout trafic réseau avec le poste hôte via le pare-feu Windows
  * et en invalidant les connexions actives.

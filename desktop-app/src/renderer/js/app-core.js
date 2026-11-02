@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Renderer : Initialisation, navigation, radar, graphiques, événements IPC et rafraîchissement
+ * Wifi-Watch - Renderer : Initialisation, navigation, radar, graphiques, événements IPC et rafraîchissement
  * (module issu du découpage d'app.js ; scripts classiques, portée globale partagée)
  */
 

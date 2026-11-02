@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Enterprise Webhook Dispatcher
+ * Wifi-Watch - Enterprise Webhook Dispatcher
  * Envoi d'alertes en temps réel vers Slack, Discord, Microsoft Teams, Telegram ou Webhook HTTP générique.
  */
 
@@ -44,7 +44,7 @@ class WebhookDispatcher {
         const testAlert = {
             id: 'test-' + Date.now(),
             type: 'ENTERPRISE_WEBHOOK_TEST',
-            title: '✅ Wifi-Watch Enterprise — Test de Notification Réussi',
+            title: 'Wifi-Watch Enterprise - Test de Notification Réussi',
             description: 'Ce message confirme que les alertes de sécurité réseau sont correctement acheminées vers ce canal.',
             severity: 'info',
             timestamp: new Date().toISOString(),
@@ -63,7 +63,7 @@ class WebhookDispatcher {
      * Formate le payload selon la plateforme cible
      */
     static formatPayload(type, alert) {
-        const severityEmoji = alert.severity === 'critical' ? '🚨' : alert.severity === 'warning' ? '⚠️' : 'ℹ️';
+        const severityEmoji = alert.severity === 'critical' ? '[CRITIQUE]' : alert.severity === 'warning' ? '[ALERTE]' : '[INFO]';
         const colorHex = alert.severity === 'critical' ? 0xff0055 : alert.severity === 'warning' ? 0xffaa00 : 0x00d4ff;
         const colorStr = alert.severity === 'critical' ? '#ff0055' : alert.severity === 'warning' ? '#ffaa00' : '#00d4ff';
 

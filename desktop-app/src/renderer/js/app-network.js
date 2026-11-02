@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Renderer : Speedtest, analyseur Wi-Fi, audit, scanner de ports, DNS Guard et DHCP
+ * Wifi-Watch - Renderer : Speedtest, analyseur Wi-Fi, audit, scanner de ports, DNS Guard et DHCP
  * (module issu du découpage d'app.js ; scripts classiques, portée globale partagée)
  */
 
@@ -76,7 +76,7 @@ function initSpeedTestEvents() {
 
             const descEl = document.getElementById('sla-benchmark-desc');
             if (descEl) {
-                descEl.innerText = `Audit SLA validé (${new Date(bench.timestamp).toLocaleTimeString()}) — Cible testée : ${target} (Min: ${bench.ping.minMs}ms, Moy: ${bench.ping.avgMs}ms, Max: ${bench.ping.maxMs}ms)`;
+                descEl.innerText = `Audit SLA validé (${new Date(bench.timestamp).toLocaleTimeString()}) - Cible testée : ${target} (Min: ${bench.ping.minMs}ms, Moy: ${bench.ping.avgMs}ms, Max: ${bench.ping.maxMs}ms)`;
             }
         } catch (err) {
             console.error('Erreur benchmark:', err);

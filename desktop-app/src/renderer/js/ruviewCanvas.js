@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — RuView Visualizer (WiFi DensePose & CSI Spatial Analyzer)
+ * Wifi-Watch - RuView Visualizer (WiFi DensePose & CSI Spatial Analyzer)
  * Rendu graphique Canvas temps réel pour la détection RF open-source RuView :
  * - Reconstruction du squelette humain 3D (17 articulations COCO) à travers les murs.
  * - Oscilloscope biométrique de la respiration et du rythme cardiaque.

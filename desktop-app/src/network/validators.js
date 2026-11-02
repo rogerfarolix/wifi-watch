@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Validation des entrées (frontière IPC renderer → main)
+ * Wifi-Watch - Validation des entrées (frontière IPC renderer → main)
  * Toute valeur issue du renderer ou du réseau doit passer par ici avant
  * d'atteindre une commande système, un socket ou le système de fichiers.
  */

@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Renderer : Dashboard, inventaire des appareils, sécurité, filtres et fiche appareil
+ * Wifi-Watch - Renderer : Dashboard, inventaire des appareils, sécurité, filtres et fiche appareil
  * (module issu du découpage d'app.js ; scripts classiques, portée globale partagée)
  */
 
@@ -383,7 +383,7 @@ function initModal() {
             countBadge.innerText = `${ports.length} port(s) ouvert(s)`;
 
             if (ports.length === 0) {
-                listEl.innerHTML = `<span style="font-size: 11px; color: var(--accent-green); padding: 4px 0; display: block;">✅ Aucun port vulnérable courant exposé.</span>`;
+                listEl.innerHTML = `<span style="font-size: 11px; color: var(--accent-green); padding: 4px 0; display: block;">Aucun port vulnérable courant exposé.</span>`;
                 window.showToast(`Audit terminé : aucun port critique exposé sur ${ip}.`, 'success');
             } else {
                 listEl.innerHTML = ports.map(p => `
@@ -531,7 +531,7 @@ function initModal() {
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-weight: 700; color: ${isC2 ? 'var(--accent-red)' : 'var(--accent-green)'};">
-                            ${isC2 ? '🚨 DÉTECTION C2 / BOTNET' : '✅ Aucune signature C2 Botnet (ThreatFox)'}
+                            ${isC2 ? 'DÉTECTION C2 / BOTNET' : 'Aucune signature C2 Botnet (ThreatFox)'}
                         </span>
                         <span class="badge ${isC2 ? 'badge-blocked' : 'badge-trusted'}">${isC2 ? 'MALVEILLANT' : 'CONFORME'}</span>
                     </div>

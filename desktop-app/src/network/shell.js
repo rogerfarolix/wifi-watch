@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Exécution de commandes système Windows
+ * Wifi-Watch - Exécution de commandes système Windows
  * Point d'entrée unique : sortie décodée en UTF-8 (chcp 65001), aucun shell pour les arguments dynamiques.
  */
 

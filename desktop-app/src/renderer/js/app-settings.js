@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Renderer : Paramètres, exports, langue/thème, toasts et palette de commandes
+ * Wifi-Watch - Renderer : Paramètres, exports, langue/thème, toasts et palette de commandes
  * (module issu du découpage d'app.js ; scripts classiques, portée globale partagée)
  */
 
@@ -217,9 +217,9 @@ function initToastSystem() {
 
         const icons = {
             success: '✓',
-            warning: '⚠️',
-            danger: '🛑',
-            info: 'ℹ️'
+            warning: '!',
+            danger: '×',
+            info: 'i'
         };
 
         const titles = {
@@ -232,7 +232,7 @@ function initToastSystem() {
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
         toast.innerHTML = `
-            <div class="toast-icon">${icons[type] || 'ℹ️'}</div>
+            <div class="toast-icon">${icons[type] || ''}</div>
             <div class="toast-content">
                 <div class="toast-title">${titles[type]}</div>
                 <div class="toast-message">${message}</div>

@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Internationalization (i18n) Engine
+ * Wifi-Watch - Internationalization (i18n) Engine
  * Dictionnaire bilingue Français / Anglais pour adoption internationale et entreprise.
  */
 
@@ -91,7 +91,7 @@ const translations = {
         'cat.unauthorized': 'Non Autorisé',
 
         // DNS Guard
-        'dns.title': 'DNS Guard — Surveillance de Résolution & Intégrité',
+        'dns.title': 'DNS Guard - Surveillance de Résolution & Intégrité',
         'dns.subtitle': 'Contrôle continu contre le DNS Hijacking, empoisonnement de cache et conformité SLA.',
         'dns.btn_audit': 'Tester l\'Infrastructure DNS',
         'dns.col_server': 'Serveur DNS',
@@ -198,7 +198,7 @@ const translations = {
         'cat.unauthorized': 'Unauthorized',
 
         // DNS Guard
-        'dns.title': 'DNS Guard — Resolution SLA & Integrity Monitor',
+        'dns.title': 'DNS Guard - Resolution SLA & Integrity Monitor',
         'dns.subtitle': 'Continuous monitoring against DNS Hijacking, cache poisoning, and SLA latency compliance.',
         'dns.btn_audit': 'Audit DNS Infrastructure',
         'dns.col_server': 'DNS Server',

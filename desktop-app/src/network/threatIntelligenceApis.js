@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Threat Intelligence & Cyber Public APIs Engine
+ * Wifi-Watch - Threat Intelligence & Cyber Public APIs Engine
  * Intégration de 5 APIs publiques gratuites de renseignement cyber & réseau :
  * 1. Shodan InternetDB (Audit d'exposition WAN & CVEs, 100% gratuit, sans clé)
  * 2. IP-API (Géolocalisation WAN & Renseignement FAI / ASN)
@@ -119,7 +119,7 @@ class ThreatIntelligenceApis {
                     cves: [],
                     tags: [],
                     hostnames: [],
-                    rating: 'SÉCURISÉ — Aucun port public exposé sur Internet'
+                    rating: 'SÉCURISÉ - Aucun port public exposé sur Internet'
                 };
             }
 
@@ -134,7 +134,7 @@ class ThreatIntelligenceApis {
                 cves,
                 tags: data.tags || [],
                 hostnames: data.hostnames || [],
-                rating: isExposed ? (cves.length > 0 ? 'CRITIQUE — Vulnérabilités CVE visibles sur le web' : 'ATTENTION — Ports WAN ouverts sur Internet') : 'SÉCURISÉ'
+                rating: isExposed ? (cves.length > 0 ? 'CRITIQUE - Vulnérabilités CVE visibles sur le web' : 'ATTENTION - Ports WAN ouverts sur Internet') : 'SÉCURISÉ'
             };
         } catch (err) {
             return {

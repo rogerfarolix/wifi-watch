@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛡️ Wifi-Watch — Enterprise Cyber Sentinel & Autonomous Network Radar
+# Wifi-Watch - Enterprise Cyber Sentinel & Autonomous Network Radar
 
 **Next-Generation Zero-Driver WiFi & Local Network Defense Platform for Windows**
 
@@ -41,38 +41,38 @@
 
 </div>
 
-## ⚡ Quick Start
+## Quick Start
 
-1. Download **`Wifi-Watch-Portable.exe`** from the [latest release](%s/releases/latest) — no installation, no driver, no admin rights for scanning.
+1. Download **`Wifi-Watch-Portable.exe`** from the [latest release](%s/releases/latest) - no installation, no driver, no admin rights for scanning.
 2. Run it and click **Scan Network**. Within seconds you get every device on your Wi-Fi, its vendor, a trust status, and a security score.
 3. Open **Audit & NIS2** for the compliance view, **SOC Wall** (`F11`) for the big-screen mode, or press `Ctrl + K` to jump anywhere.
 
-> Windows SmartScreen may warn because the binary is not code-signed yet — click *More info → Run anyway*, or [build it from source](#option-b-run-from-source).
+> Windows SmartScreen may warn because the binary is not code-signed yet - click *More info → Run anyway*, or [build it from source](#option-b-run-from-source).
 > The interface follows your system language (French / English) and can be switched at any time from the top bar.
 
 ---
 
-## 🌐 English Overview
+## English Overview
 
 **Wifi-Watch** is an enterprise-grade autonomous cyber sentinel designed for CISOs, SOC teams, IT administrators, and security auditors. Operating natively on Windows 10 & 11 without requiring risky kernel drivers (like Npcap or WinPcap), it continuously scans, audits, and shields local corporate infrastructures and WiFi networks.
 
-Its RuView module (inspired by [@ruvnet's RuView](https://github.com/ruvnet) research) visualizes RF presence sensing — in simulation mode by default, or with real data from an ESP32-S3 node.
+Its RuView module (inspired by [@ruvnet's RuView](https://github.com/ruvnet) research) visualizes RF presence sensing - in simulation mode by default, or with real data from an ESP32-S3 node.
 
-### ⚡ Why Wifi-Watch?
+### Why Wifi-Watch?
 
 | Traditional Network Scanners | Wifi-Watch Enterprise Sentinel |
 | :--- | :--- |
-| ❌ Require kernel driver install (`Npcap`, `WinPcap`) | ✅ **100% Zero-Driver** (Native Windows API & ARP Mining) |
-| ❌ Single subnet limitation (`192.168.1.0/24`) | ✅ **Multi-Subnet & Corporate CIDR** (`10.0.0.0/24`, VLANs) |
-| ❌ Raw IP/MAC dumps without business context | ✅ **Full CMDB Asset Tagging** (Owner, Dept, Location, Status) |
-| ❌ Manual alert monitoring | ✅ **Instant Webhooks** (Slack, Discord, Microsoft Teams, REST) |
-| ❌ Passive observation only | ✅ **1-Click Active Firewall Quarantine** (Windows Defender Netsh) |
-| ❌ No regulatory linkage | ✅ **Automated NIS2 & ISO 27001 Compliance Evaluation** |
-| ❌ Blind to DNS cache tampering | ✅ **DNS Guard with canary resolver cross-verification** |
-| ❌ No lateral movement traps | ✅ **Integrated Network Canary Honeypot & Auto-Quarantine** |
-| ❌ Static device listings | ✅ **Interactive Dual-Mode Radar & Hierarchical Topology Tree** |
-| ❌ Basic ping only | ✅ **Full SLA Benchmark Engine** (Jitter, Packet Loss, DNS, HTTP) |
-| ❌ Unaware of rogue DHCP servers | ✅ **Rogue DHCP & Gateway Spoofing Auditor (Anti-MITM)** |
+| Require kernel driver install (`Npcap`, `WinPcap`) | **100% Zero-Driver** (Native Windows API & ARP Mining) |
+| Single subnet limitation (`192.168.1.0/24`) | **Multi-Subnet & Corporate CIDR** (`10.0.0.0/24`, VLANs) |
+| Raw IP/MAC dumps without business context | **Full CMDB Asset Tagging** (Owner, Dept, Location, Status) |
+| Manual alert monitoring | **Instant Webhooks** (Slack, Discord, Microsoft Teams, REST) |
+| Passive observation only | **1-Click Active Firewall Quarantine** (Windows Defender Netsh) |
+| No regulatory linkage | **Automated NIS2 & ISO 27001 Compliance Evaluation** |
+| Blind to DNS cache tampering | **DNS Guard with canary resolver cross-verification** |
+| No lateral movement traps | **Integrated Network Canary Honeypot & Auto-Quarantine** |
+| Static device listings | **Interactive Dual-Mode Radar & Hierarchical Topology Tree** |
+| Basic ping only | **Full SLA Benchmark Engine** (Jitter, Packet Loss, DNS, HTTP) |
+| Unaware of rogue DHCP servers | **Rogue DHCP & Gateway Spoofing Auditor (Anti-MITM)** |
 
 ---
 
@@ -80,7 +80,7 @@ Its RuView module (inspired by [@ruvnet's RuView](https://github.com/ruvnet) res
 
 **Wifi-Watch** est une plateforme autonome de surveillance et de défense cyber pour réseaux locaux et WiFi d'entreprise. Conçue pour les DSI, RSSI, administrateurs réseau et auditeurs de sécurité, l'application fonctionne de manière 100% autonome sous Windows 10 et 11 sans nécessiter l'installation de pilotes réseau intrusifs (aucun Npcap ou WinPcap requis).
 
-### 🚀 Points Forts & Nouveautés v2.0
+### Points Forts & Nouveautés v2.0
 - **Piège Canari Réseau (Honeypot Intégré)** : Serveur leurre simulé (ex: SMB/TCP) détectant toute tentative de scan furtif ou de déplacement latéral (ransomware), avec mise en quarantaine automatique optionnelle via le Pare-feu Windows.
 - **Topologie & Radar Interactif 360°** : Basculez en un clic entre la vue Radar tactique circulaire et la vue Arbre Topologique d'entreprise (WAN → Passerelle → Postes / Serveurs / IoT) rendue en Canvas haute performance.
 - **Audit de Ports TCP & Services Vulnérables** : Scanner ultra-rapide non-bloquant analysant 25 ports critiques d'entreprise (SSH, RDP, SMB, Telnet, HTTP, MySQL...) avec alertes de sévérité.
@@ -92,24 +92,24 @@ Its RuView module (inspired by [@ruvnet's RuView](https://github.com/ruvnet) res
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 <table>
   <tr>
-    <td><img src="assets/screenshots/dashboard.png" alt="Dashboard"><br><sub><b>Dashboard</b> — live bandwidth & latency, device inventory, Sentinel events</sub></td>
-    <td><img src="assets/screenshots/soc-wallboard.png" alt="SOC Wallboard"><br><sub><b>SOC Wallboard</b> — DEFCON gauge, WAN exposure audit, tactical radar</sub></td>
+    <td><img src="assets/screenshots/dashboard.png" alt="Dashboard"><br><sub><b>Dashboard</b> - live bandwidth & latency, device inventory, Sentinel events</sub></td>
+    <td><img src="assets/screenshots/soc-wallboard.png" alt="SOC Wallboard"><br><sub><b>SOC Wallboard</b> - DEFCON gauge, WAN exposure audit, tactical radar</sub></td>
   </tr>
   <tr>
-    <td><img src="assets/screenshots/radar.png" alt="Network radar"><br><sub><b>Tactical radar</b> — devices by latency ring, topology tree mode</sub></td>
-    <td><img src="assets/screenshots/inventory.png" alt="Asset inventory"><br><sub><b>Asset inventory</b> — CMDB cards, trust / block actions</sub></td>
+    <td><img src="assets/screenshots/radar.png" alt="Network radar"><br><sub><b>Tactical radar</b> - devices by latency ring, topology tree mode</sub></td>
+    <td><img src="assets/screenshots/inventory.png" alt="Asset inventory"><br><sub><b>Asset inventory</b> - CMDB cards, trust / block actions</sub></td>
   </tr>
   <tr>
-    <td><img src="assets/screenshots/audit-nis2.png" alt="NIS2 audit"><br><sub><b>NIS2 & ISO 27001 audit</b> — health score and compliance table</sub></td>
-    <td><img src="assets/screenshots/spy-hunter.png" alt="IoT Spy Hunter"><br><sub><b>IoT Spy Hunter</b> — hidden cameras, microphones, open RTSP streams</sub></td>
+    <td><img src="assets/screenshots/audit-nis2.png" alt="NIS2 audit"><br><sub><b>NIS2 & ISO 27001 audit</b> - health score and compliance table</sub></td>
+    <td><img src="assets/screenshots/spy-hunter.png" alt="IoT Spy Hunter"><br><sub><b>IoT Spy Hunter</b> - hidden cameras, microphones, open RTSP streams</sub></td>
   </tr>
   <tr>
-    <td><img src="assets/screenshots/honeypot.png" alt="Canary trap"><br><sub><b>Canary trap</b> — decoy port against lateral movement</sub></td>
-    <td><img src="assets/screenshots/wifi-channels.png" alt="Wi-Fi channels"><br><sub><b>Wi-Fi analyzer</b> — channel congestion, neighbors, Evil Twin detection</sub></td>
+    <td><img src="assets/screenshots/honeypot.png" alt="Canary trap"><br><sub><b>Canary trap</b> - decoy port against lateral movement</sub></td>
+    <td><img src="assets/screenshots/wifi-channels.png" alt="Wi-Fi channels"><br><sub><b>Wi-Fi analyzer</b> - channel congestion, neighbors, Evil Twin detection</sub></td>
   </tr>
 </table>
 
@@ -117,59 +117,59 @@ Its RuView module (inspired by [@ruvnet's RuView](https://github.com/ruvnet) res
 
 ---
 
-## 🎯 Key Features
+## Key Features
 
-### 1. 📡 Dual-Mode Tactical Radar & Topology Tree
+### 1. Dual-Mode Tactical Radar & Topology Tree
 - Instant toggle between **360° Circular Tactical Radar** and **Interactive Hierarchical Network Tree** (Canvas 60 FPS).
 - Real-time distance mapping based on signal RSSI and round-trip latency.
 - Audio voice annunciator via Web Speech API announcing critical intrusions in French or English.
 
-### 2. 🕳️ Network Canary & Decoy Honeypot Trap
+### 2. Network Canary & Decoy Honeypot Trap
 - Lightweight decoy TCP service designed to catch ransomware probes, port scans, and lateral movement.
 - Emits immediate high-priority alerts and can **automatically isolate offending IPs** via Windows Firewall rules.
 
-### 3. 🔌 Fast TCP Port Scanner & Vulnerable Services Auditor
+### 3. Fast TCP Port Scanner & Vulnerable Services Auditor
 - Audits critical enterprise ports (21, 22, 23, 25, 80, 135, 139, 443, 445, 1433, 3306, 3389, 5432, 8080...) natively via Node.js sockets.
 - Integrated directly into the Device Inspection Modal for rapid security assessments.
 
-### 4. 🏷️ ZeroConf (mDNS & SSDP/UPnP) Autonomous Discovery
+### 4. ZeroConf (mDNS & SSDP/UPnP) Autonomous Discovery
 - Listens to multicast packets (`224.0.0.251:5353` and `239.255.255.250:1900`) to extract human-friendly device names and manufacturer models without active port spamming.
 
-### 5. 🚨 Rogue DHCP & Gateway Spoofing Auditor
+### 5. Rogue DHCP & Gateway Spoofing Auditor
 - Actively audits local DHCP configuration and multiple gateways to identify rogue DHCP servers and MITM poisoning.
 
 ### 6. ⏱️ Critical Asset Watchdog & SLA Heartbeat
 - Mark infrastructure servers, NAS, and key routers as "Critical Infrastructure Assets".
 - Receive immediate warnings if an essential node drops offline.
 
-### 7. ⚡ Enterprise SLA Performance & Latency Benchmark Engine
+### 7. Enterprise SLA Performance & Latency Benchmark Engine
 - Measures minimum, average, and maximum ping, jitter (variance), packet loss percentage, DNS resolution speed, and HTTPS API round-trip.
 - Computes an **SLA Quality Grade (A+ to F)** for VoIP, Video Conferencing, and Cloud readiness.
 
-### 8. 📶 WiFi Spectrum & Channel Congestion Analyzer
+### 8. WiFi Spectrum & Channel Congestion Analyzer
 - Scans all visible 802.11 Access Points across 2.4 GHz and 5 GHz bands.
 - Calculates channel congestion histograms and recommends optimal collision-free channels.
 
-### 9. 🧬 RuView RF Micro-Perturbation Engine
+### 9. RuView RF Micro-Perturbation Engine
 - Extracts real-time WiFi BSSID metadata, signal strength (dBm / percentage), radio band (2.4 GHz / 5 GHz / 6 GHz Wi-Fi 6E), and channel quality.
 - Applies mathematical variance and path loss algorithms to estimate physical distance and detect human motion interference in the wireless medium (inspired by [@ruvnet's RuView](https://github.com/ruvnet)).
 
-### 10. 🛡️ Active Threat Defense & Instant Netsh Quarantine
+### 10. Active Threat Defense & Instant Netsh Quarantine
 - **ARP Spoofing Detector**: Flags duplicate MAC addresses claiming multiple IPs on the gateway.
 - **Spy Device & Camera Hunter**: Curated OUI fingerprint database targeting IP cameras and micro-bugs.
 - **Instant Netsh Quarantine**: Quarantines rogue MAC/IP addresses directly at the Windows Advanced Firewall layer with zero latency.
 
-### 11. 🔍 DNS Guard & SLA Integrity Monitor
+### 11. DNS Guard & SLA Integrity Monitor
 - Audits system-configured DNS servers against canary domains (`cloudflare.com`, `google.com`, `one.one.one.one`).
 - Performs parallel queries to Cloudflare (`1.1.1.1`) and Google DNS (`8.8.8.8`) to detect DNS hijacking and cache poisoning.
 
-### 12. 🏷️ Enterprise Asset Management & CMDB Export
+### 12. Enterprise Asset Management & CMDB Export
 - Tag assets with standard categories: `Workstation`, `Server`, `Network Equipment`, `Printer`, `IoT Device`, `Mobile Device`, `Guest`, `Unauthorized`.
 - Associate Department, Owner, Physical Room/Rack, and Authorized flag.
 - Export clean UTF-8 BOM CSV files with 15 columns tailored for Microsoft Excel, GLPI, and CMDB import.
 - Export full structured JSON snapshots for backup or external SOC analytics.
 
-### 13. 📊 Automated NIS2 & ISO 27001 Audit Reports
+### 13. Automated NIS2 & ISO 27001 Audit Reports
 - Assesses network hygiene across 8 enterprise checkpoints:
   - Encryption standard (WPA2/WPA3 vs legacy WEP/WPA).
   - Rogue and unauthorized equipment ratio.
@@ -178,25 +178,25 @@ Its RuView module (inspired by [@ruvnet's RuView](https://github.com/ruvnet) res
   - DNS integrity & latency SLA.
 - Generates a printable, executive-ready HTML cybersecurity audit report.
 
-### 14. 🔔 SOC Incident Webhooks
+### 14. SOC Incident Webhooks
 - Out-of-the-box integration with:
   - **Slack**: Rich blocks with incident severity badges.
   - **Discord**: Color-coded embeds with threat telemetry.
   - **Microsoft Teams**: Adaptive Office 365 connector cards.
   - **Generic Webhook**: Clean JSON POST for SIEM ingestion (Splunk, Elastic, Wazuh).
 
-### 15. 🎨 Corporate & Cyberpunk Themes + FR/EN Toggle
+### 15. Corporate & Cyberpunk Themes + FR/EN Toggle
 - Instant top-bar switcher between **Cyberpunk Dark** (high contrast neon for SOC consoles) and **Corporate Light** (clean executive dashboard).
 - Complete bilingual localization with instant UI reactivity.
 
-### 16. 📺 SOC Command Wallboard & Cyber War Room Mode
-- **Meeting Room & Big Screen Ready**: One-click borderless fullscreen view (`F11` or `[📺 Mur SOC]`) optimized for 1080p, 1440p, and 4K displays without vertical scrollbars.
+### 16. SOC Command Wallboard & Cyber War Room Mode
+- **Meeting Room & Big Screen Ready**: One-click borderless fullscreen view (`F11` or `[Mur SOC]`) optimized for 1080p, 1440p, and 4K displays without vertical scrollbars.
 - **Dynamic DEFCON 1–5 Gauge**: Real-time threat level calculation evaluating active intrusions, unread alerts, quarantined nodes, and exposed external vulnerabilities.
 - **Tactical 360° Radar Canvas**: Real-time rotating sweep with active node telemetry, Wi-Fi frequency monitoring, and aggregate throughput.
 - **Dual Military Clocks**: Synchronized Local Time and Zulu (UTC) military clock for incident response coordination.
 - **Live Cyber Teletype Ticker**: Continuous animated telemetry stream reporting WAN exposure, honeypot traps, and firewall defense readiness.
 
-### 17. 🌐 Threat Intelligence Engine (5 Public Cyber APIs Integrated)
+### 17. Threat Intelligence Engine (5 Public Cyber APIs Integrated)
 - **Shodan InternetDB** (`https://internetdb.shodan.io`): 100% free, keyless external WAN exposure audit detecting open ports, published CVEs, and hostnames.
 - **IP-API** (`http://ip-api.com`): Resolves public gateway IP, country, city, ISP/telecom provider, and Autonomous System Number (ASN).
 - **AbuseIPDB** (`https://api.abuseipdb.com`): Audits IP reputation and retrieves historical abuse confidence scores.
@@ -205,7 +205,7 @@ Its RuView module (inspired by [@ruvnet's RuView](https://github.com/ruvnet) res
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 wifi-watch/
@@ -262,7 +262,7 @@ wifi-watch/
 └── CONTRIBUTING.md                  # Open-source contribution guidelines
 ```
 
-### 🔄 Data Flow & Defense Pipeline
+### Data Flow & Defense Pipeline
 
 ```mermaid
 graph TD
@@ -281,7 +281,7 @@ graph TD
 
 ---
 
-## 🏢 Enterprise Silent Deployment
+## Enterprise Silent Deployment
 
 For IT administrators deploying Wifi-Watch across fleet workstations or jump hosts via Active Directory GPO, Microsoft Intune, or PDQ Deploy:
 
@@ -304,7 +304,7 @@ Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Na
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Option A: Portable Binary (No Installation)
 1. Download `Wifi-Watch-Portable.exe` from the latest [Releases](https://github.com/rogerfarolix/wifi-watch/releases/latest).
@@ -334,22 +334,22 @@ npm run dist
 
 ---
 
-## 🔒 Compliance: NIS2 & ISO 27001
+## Compliance: NIS2 & ISO 27001
 
 Wifi-Watch directly supports technical verification requirements of modern cybersecurity standards:
 
 | Standard | Article / Control | How Wifi-Watch Addresses It |
 | :--- | :--- | :--- |
-| **NIS2 Directive** | **Article 21(2)(a)** — Policies on risk analysis & system security | Automated security audit reports scoring hygiene & encryption. |
-| **NIS2 Directive** | **Article 21(2)(e)** — Network and information systems security | Continuous surveillance, rogue device alerts, and DNS verification. |
-| **NIS2 Directive** | **Article 21(2)(b)** — Incident handling & response | 1-click active firewall isolation and real-time webhook broadcasts. |
-| **ISO/IEC 27001:2022** | **A.8.1** — User endpoint devices | Complete asset tagging (Department, Owner, Authorized status). |
-| **ISO/IEC 27001:2022** | **A.8.20** — Network security | Multi-subnet and VLAN scanning, ARP spoofing detection. |
-| **ISO/IEC 27001:2022** | **A.8.8** — Management of technical vulnerabilities | Identification of unencrypted WEP/WPA and vulnerable IoT endpoints. |
+| **NIS2 Directive** | **Article 21(2)(a)** - Policies on risk analysis & system security | Automated security audit reports scoring hygiene & encryption. |
+| **NIS2 Directive** | **Article 21(2)(e)** - Network and information systems security | Continuous surveillance, rogue device alerts, and DNS verification. |
+| **NIS2 Directive** | **Article 21(2)(b)** - Incident handling & response | 1-click active firewall isolation and real-time webhook broadcasts. |
+| **ISO/IEC 27001:2022** | **A.8.1** - User endpoint devices | Complete asset tagging (Department, Owner, Authorized status). |
+| **ISO/IEC 27001:2022** | **A.8.20** - Network security | Multi-subnet and VLAN scanning, ARP spoofing detection. |
+| **ISO/IEC 27001:2022** | **A.8.8** - Management of technical vulnerabilities | Identification of unencrypted WEP/WPA and vulnerable IoT endpoints. |
 
 ---
 
-## 🔐 Privacy & Network Requests
+## Privacy & Network Requests
 
 Wifi-Watch has **no telemetry, no account, no cloud backend**. Everything is stored locally in your Windows user profile (`%APPDATA%`). The only outbound requests are optional lookups, each sending **only the IP or MAC being checked**:
 
@@ -367,7 +367,7 @@ Secrets you enter (webhook URL, AbuseIPDB key) are encrypted at rest with Window
 
 ---
 
-## ⚠️ Known Limitations
+## Known Limitations
 
 - **Windows only** for now (relies on `netsh`, `arp`, Windows Firewall). Linux/macOS are on the [roadmap](ROADMAP.md).
 - **Quarantine** creates Windows Firewall rules on *the machine running Wifi-Watch* (it cuts that PC's traffic with the target). It does not reconfigure your router or switch. Requires administrator rights.
@@ -378,20 +378,20 @@ Secrets you enter (webhook URL, AbuseIPDB key) are encrypted at rest with Window
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions from cybersecurity engineers, network administrators, and open-source enthusiasts. Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on code style, testing, and pull request workflows.
 
 ---
 
-## 🛡️ Security & Responsible Disclosure
+## Security & Responsible Disclosure
 
 If you discover a vulnerability or security issue within Wifi-Watch, please refer to our [SECURITY.md](SECURITY.md) for our responsible disclosure procedure. **Do not create public GitHub issues for security vulnerabilities.**
 
 ---
 
-## 📜 License
+## License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 *Disclaimer (see the warning at the top): Wifi-Watch is built strictly for defensive cybersecurity, authorized enterprise network administration, and educational auditing. Always obtain explicit permission before scanning networks you do not own or manage.*

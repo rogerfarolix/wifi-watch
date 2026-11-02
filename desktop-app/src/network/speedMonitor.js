@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Real-time Speed & Latency Monitor
+ * Wifi-Watch - Real-time Speed & Latency Monitor
  * Mesure en temps réel le débit réseau local (Download / Upload en Mbps)
  * et la latence (Ping vers la Box et vers Internet).
  */

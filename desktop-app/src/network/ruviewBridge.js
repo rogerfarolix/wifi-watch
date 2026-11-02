@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — RuView Integration Bridge (ruvnet/RuView)
+ * Wifi-Watch - RuView Integration Bridge (ruvnet/RuView)
  * Intégration de la technologie open-source RuView (rUv / Reuven Cohen) :
  * Détection de présence spatiale sans caméra, estimation de pose 3D (WiFi DensePose)
  * et surveillance des signes vitaux (respiration / rythme cardiaque) par radiofréquence Wi-Fi.

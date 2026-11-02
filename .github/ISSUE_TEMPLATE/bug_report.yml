@@ -1,4 +1,4 @@
-name: 🐛 Rapport de Bug / Vulnerability Alert
+name: Rapport de Bug / Vulnerability Alert
 description: Signalez un dysfonctionnement technique ou un comportement inattendu.
 title: "[BUG]: "
 labels: ["bug", "triage"]

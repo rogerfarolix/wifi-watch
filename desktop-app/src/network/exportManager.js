@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Enterprise Export Manager
+ * Wifi-Watch - Enterprise Export Manager
  * Génère des exports d'inventaire réseau conformes aux standards d'entreprise
  * (CSV compatible Excel/CMDB, JSON structuré pour SIEM/ITSM).
  */

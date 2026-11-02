@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Standalone Offline QR Code Generator
+ * Wifi-Watch - Standalone Offline QR Code Generator
  * Générateur de QR Code 100% autonome et hors-ligne pour badges Wi-Fi Invités.
  * Ne nécessite aucune connexion Internet ni bibliothèque externe.
  */

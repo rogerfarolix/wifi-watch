@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — IoT Spy Hunter (Détecteur Caméras & Micros Espions)
+ * Wifi-Watch - IoT Spy Hunter (Détecteur Caméras & Micros Espions)
  * Détecte les équipements de surveillance cachés sur le réseau local :
  * Caméras IP, Micros espions, flux RTSP non chiffrés, serveurs ONVIF,
  * DVRs, NVRs et objets connectés suspects.

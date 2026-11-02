@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Security Score & Enterprise Audit Report Generator
+ * Wifi-Watch - Security Score & Enterprise Audit Report Generator
  * Calcule une note de sécurité globale (0-100), évalue la conformité NIS2 / ISO 27001
  * et génère un rapport d'audit exécutif professionnel exportable en HTML / PDF imprimable.
  */
@@ -132,7 +132,7 @@ function generateHtmlReport(auditData) {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Rapport d'Audit Réseau & Conformité NIS2 / ISO 27001 — Wifi-Watch Enterprise</title>
+    <title>Rapport d'Audit Réseau & Conformité NIS2 / ISO 27001 - Wifi-Watch Enterprise</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;

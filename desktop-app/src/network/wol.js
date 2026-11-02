@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Wake-on-LAN Engine (Allumage d'appareils à distance)
+ * Wifi-Watch - Wake-on-LAN Engine (Allumage d'appareils à distance)
  * Envoie un « Magic Packet » UDP de diffusion pour démarrer à distance
  * un ordinateur ou un NAS équipé d'une carte réseau compatible WoL.
  */

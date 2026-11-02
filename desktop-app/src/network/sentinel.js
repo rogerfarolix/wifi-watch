@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Security Sentinel
+ * Wifi-Watch - Security Sentinel
  * Détecte les anomalies, nouveaux appareils, intrusions et risques d'usurpation.
  */
 

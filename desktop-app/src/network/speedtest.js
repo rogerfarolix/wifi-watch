@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Real Internet Speed Test Engine
+ * Wifi-Watch - Real Internet Speed Test Engine
  * Mesure avec précision la latence (Ping & Jitter), le débit de téléchargement (Download)
  * et le téléversement (Upload) sans aucun outil tiers.
  */

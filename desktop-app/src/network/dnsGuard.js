@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Enterprise DNS Guard & SLA Monitor
+ * Wifi-Watch - Enterprise DNS Guard & SLA Monitor
  * Détecte les attaques DNS Poisoning / Hijacking, mesure la latence de résolution (SLA)
  * et valide l'intégrité des serveurs de noms.
  */

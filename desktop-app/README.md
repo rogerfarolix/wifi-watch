@@ -4,7 +4,7 @@ Application de bureau native pour la surveillance en temps réel, l'inventaire c
 
 ---
 
-### 🛡️ Suite Complète de Fonctionnalités
+### Suite Complète de Fonctionnalités
 
 1. **100% Autonome & Zéro Dépendance Serveur** :
    * Ne nécessite ni XAMPP, ni Apache, ni PHP, ni PostgreSQL, ni Docker.
@@ -74,7 +74,7 @@ Application de bureau native pour la surveillance en temps réel, l'inventaire c
 
 ---
 
-### 🚀 Lancement Rapide
+### Lancement Rapide
 
 Double-cliquez simplement sur **`Lancer-WifiWatch.bat`** à la racine du projet, ou exécutez dans un terminal :
 

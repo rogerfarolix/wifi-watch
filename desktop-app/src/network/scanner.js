@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Network Scanner Engine
+ * Wifi-Watch - Network Scanner Engine
  * Balayage rapide du sous-réseau, extraction ARP Windows,
  * résolution NetBIOS, mDNS et identification des équipements.
  */

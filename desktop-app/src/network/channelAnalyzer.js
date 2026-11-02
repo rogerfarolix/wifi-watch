@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Wi-Fi Channel Analyzer & Evil Twin Detector
+ * Wifi-Watch - Wi-Fi Channel Analyzer & Evil Twin Detector
  * Analyse l'encombrement des canaux 2.4GHz / 5GHz, détecte les box voisines,
  * recommande le canal optimal et alerte sur les faux points d'accès (Evil Twin).
  */

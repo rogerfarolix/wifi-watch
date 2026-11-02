@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Electron Main Process
+ * Wifi-Watch - Electron Main Process
  * Coeur de l'application de bureau : orchestration des modules réseau,
  * base de données embarquée, plateau système (Tray) et ponts IPC.
  */

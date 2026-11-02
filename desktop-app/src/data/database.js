@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Local Embedded Database
+ * Wifi-Watch - Local Embedded Database
  * Stockage atomique et persistant sous forme JSON avec reprise sur incident.
  */
 

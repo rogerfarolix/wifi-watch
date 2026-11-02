@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Renderer : Honeypot, Voice Sentinel, Spy Hunter, présence, portail invité, RuView et Mur SOC
+ * Wifi-Watch - Renderer : Honeypot, Voice Sentinel, Spy Hunter, présence, portail invité, RuView et Mur SOC
  * (module issu du découpage d'app.js ; scripts classiques, portée globale partagée)
  */
 
@@ -351,7 +351,7 @@ async function renderTimelineView() {
             const icon = getDeviceIcon(dev.deviceType || 'unknown');
             const isOnlineNow = !s.endedAt;
             const startFormatted = new Date(s.startedAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-            const endFormatted = s.endedAt ? new Date(s.endedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '—';
+            const endFormatted = s.endedAt ? new Date(s.endedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '-';
             
             let durationStr = `${s.durationMinutes || 1} min`;
             if (s.durationMinutes >= 60) {
@@ -371,7 +371,7 @@ async function renderTimelineView() {
                             </div>
                         </div>
                     </td>
-                    <td><span class="detail-val">${escapeHtml(s.ip || '—')}</span></td>
+                    <td><span class="detail-val">${escapeHtml(s.ip || '-')}</span></td>
                     <td style="font-size: 12px;">${startFormatted}</td>
                     <td style="font-size: 12px;">${isOnlineNow ? '<span class="badge badge-online">Actif maintenant</span>' : endFormatted}</td>
                     <td>
@@ -666,7 +666,7 @@ async function refreshWallboard() {
     if (gwIp) gwIp.innerText = appState.environment?.gatewayIp || '192.168.1.1';
 
     const quarActive = document.getElementById('wb-quarantine-active');
-    if (quarActive) quarActive.innerText = isolatedDevs.length > 0 ? `⚠️ ${isolatedDevs.length} isolé(s)` : 'Opérationnelle (0 isolés)';
+    if (quarActive) quarActive.innerText = isolatedDevs.length > 0 ? `${isolatedDevs.length} isolé(s)` : 'Opérationnelle (0 isolés)';
 
     const wifiEnv = appState.environment?.wifi;
     const teleFreq = document.getElementById('wb-tele-freq');
@@ -710,7 +710,7 @@ async function refreshWallboard() {
         if (recentAlerts.length === 0) {
             eventsStream.innerHTML = `
                 <div class="wb-event-item" style="border-left-color: var(--accent-green);">
-                    <span>✅ Aucun incident détecté - Surveillance normale</span>
+                    <span>Aucun incident détecté - Surveillance normale</span>
                     <span style="font-family: monospace; color: var(--text-muted);">Nominal</span>
                 </div>
             `;
@@ -791,7 +791,7 @@ async function refreshWallboardWan(force = false) {
             const c2Check = await window.api.checkThreatC2(wan.ip);
             if (threatFoxEl) {
                 if (c2Check && c2Check.isMalicious) {
-                    threatFoxEl.innerText = `🚨 C2 DÉTECTÉ (${c2Check.threatType})`;
+                    threatFoxEl.innerText = `C2 DÉTECTÉ (${c2Check.threatType})`;
                     threatFoxEl.className = 'wb-stat-val text-red';
                 } else {
                     threatFoxEl.innerText = 'AUCUNE MENACE C2 DÉTECTÉE';

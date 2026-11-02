@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Network Detector
+ * Wifi-Watch - Network Detector
  * Détecte l'interface réseau active, les paramètres Wi-Fi (SSID, Signal, BSSID),
  * la passerelle (box internet) et le sous-réseau local.
  */

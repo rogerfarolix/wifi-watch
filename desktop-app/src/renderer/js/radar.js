@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Radar & Interactive Network Topology Engine
+ * Wifi-Watch - Radar & Interactive Network Topology Engine
  * Moteur de rendu Canvas haute performance pour visualiser le réseau
  * sous forme de radar tactique cyberpunk avec détection interactive.
  */
@@ -290,7 +290,7 @@ class NetworkRadar {
             ctx.fillStyle = '#00f0ff';
             ctx.font = 'bold 11px monospace';
             ctx.textAlign = 'center';
-            ctx.fillText('🌐 INTERNET / WAN', bx, 32);
+            ctx.fillText('INTERNET / WAN', bx, 32);
 
             // Liaison descendante vers la Box
             ctx.beginPath();

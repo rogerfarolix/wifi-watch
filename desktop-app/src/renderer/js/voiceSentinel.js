@@ -1,5 +1,5 @@
 /**
- * Wifi-Watch — Voice Sentinel (Synthèse Vocale Tactique & Alertes Cyber)
+ * Wifi-Watch - Voice Sentinel (Synthèse Vocale Tactique & Alertes Cyber)
  * Moteur vocal cyber autonome basé sur l'API Web Speech native du navigateur.
  * Annonce vocalement les intrusions, nouveaux équipements, caméras espions
  * et résultats de scans sans aucun service tiers.

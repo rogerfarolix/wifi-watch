@@ -1,10 +1,10 @@
 /**
- * Wifi-Watch — Renderer : État global, utilitaires et synthétiseur audio
+ * Wifi-Watch - Renderer : État global, utilitaires et synthétiseur audio
  * (module issu du découpage d'app.js ; scripts classiques, portée globale partagée)
  */
 
 /**
- * Wifi-Watch — Renderer Client Application
+ * Wifi-Watch - Renderer Client Application
  * Gère l'interface réactive, les graphiques temps réel, les événements réseau
  * et les nouvelles fonctionnalités (Radar, Speedtest, Analyseur Wi-Fi, WoL, Audit).
  */

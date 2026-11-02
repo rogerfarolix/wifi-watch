@@ -1,4 +1,4 @@
-/* Wifi-Watch — Dictionnaire FR → EN des textes statiques de index.html (généré, appliqué par i18n.js) */
+/* Wifi-Watch - Dictionnaire FR → EN des textes statiques de index.html (généré, appliqué par i18n.js) */
 window.I18N_EN_HTML = {
  "Wi-Fi Connecté": "Wi-Fi Connected",
  "Mur SOC": "SOC Wall",
@@ -46,7 +46,7 @@ window.I18N_EN_HTML = {
  "Statut": "Status",
  "Actions": "Actions",
  "Aucun appareil scanné. Cliquez sur « Scanner le Réseau ».": "No device scanned. Click \"Scan Network\".",
- "Sentinel — Événements": "Sentinel — Events",
+ "Sentinel - Événements": "Sentinel - Events",
  "Marquer lu": "Mark read",
  "Aucune alerte de sécurité. Réseau stable.": "No security alerts. Network is stable.",
  "Radar Tactique Réseau": "Network Tactical Radar",
@@ -373,7 +373,7 @@ window.I18N_EN_HTML = {
  "Emplacement Physique": "Physical Location",
  "Statut d'Autorisation & Criticité": "Authorization Status & Criticality",
  "Équipement Approuvé / Autorisé": "Approved / Authorized Device",
- "⭐ Équipement Critique (Watchdog Always-Online)": "⭐ Critical Device (Always-Online Watchdog)",
+ "Équipement Critique (Watchdog Always-Online)": "Critical Device (Always-Online Watchdog)",
  "Notes & Historique d'Intervention": "Notes & Intervention History",
  "Adresse IP :": "IP Address:",
  "Adresse MAC :": "MAC Address:",
@@ -456,7 +456,7 @@ window.I18N_EN_DYNAMIC = {
   "Périmètre Sain : Aucune caméra ou micro espion détecté sur le réseau local.": "Healthy perimeter: no spy camera or microphone detected on the local network.",
   "Score de Malveillance (AbuseIPDB) :": "Maliciousness Score (AbuseIPDB):",
   "Votre Box": "Your Router",
-  "✅ Aucun incident détecté - Surveillance normale": "✅ No incident detected - Normal monitoring",
+  "Aucun incident détecté - Surveillance normale": "No incident detected - Normal monitoring",
   "NOMINAL (Analyse locale heuristique - Clé AbuseIPDB optionnelle)": "NOMINAL (Local heuristic analysis - AbuseIPDB key optional)",
   "Adresse MAC Privée (Smartphone iOS / Android)": "Private MAC Address (iOS / Android Smartphone)",
   "Poste Travail": "Workstation",
@@ -532,7 +532,7 @@ window.I18N_EN_DYNAMIC = {
   "Aucun réseau Wi-Fi voisin détecté.": "No neighboring Wi-Fi network detected.",
   "Aucun appareil correspondant aux critères de recherche.": "No device matching the search criteria.",
   "Aucun port standard": "No standard port",
-  "✅ Aucun port vulnérable courant exposé.": "✅ No commonly vulnerable port exposed.",
+  "Aucun port vulnérable courant exposé.": "No commonly vulnerable port exposed.",
   "Aucune caméra hostile": "No hostile camera",
   "Aucune utilisation la nuit": "No nighttime usage",
   "Analyse heuristique locale": "Local heuristic analysis",
@@ -549,8 +549,8 @@ window.I18N_EN_DYNAMIC = {
   "Non détecté": "Not detected",
   "Non résolu": "Unresolved",
   "AUCUNE MENACE C2 DÉTECTÉE": "NO C2 THREAT DETECTED",
-  "✅ Aucune signature C2 Botnet (ThreatFox)": "✅ No C2 botnet signature (ThreatFox)",
-  "🚨 DÉTECTION C2 / BOTNET": "🚨 C2 / BOTNET DETECTED",
+  "Aucune signature C2 Botnet (ThreatFox)": "No C2 botnet signature (ThreatFox)",
+  "DÉTECTION C2 / BOTNET": "C2 / BOTNET DETECTED",
   "SLA Dégradé (> 250ms)": "SLA Degraded (> 250ms)",
   "Webhook expédié avec succès ! Vérifiez votre canal Slack/Teams/Discord.": "Webhook delivered successfully! Check your Slack/Teams/Discord channel.",
   "Veuillez spécifier une URL de Webhook valide avant de tester.": "Please enter a valid Webhook URL before testing.",
@@ -615,9 +615,9 @@ window.I18N_EN_DYNAMIC = {
   "Port audio bidirectionnel Dahua": "Dahua two-way audio port",
   "Flux vidéo temps réel RTMP": "RTMP real-time video stream",
   "Interface de streaming vidéo web MJPEG": "MJPEG web video streaming interface",
-  "SÉCURISÉ — Aucun port public exposé sur Internet": "SECURE — No public port exposed to the Internet",
-  "CRITIQUE — Vulnérabilités CVE visibles sur le web": "CRITICAL — CVE vulnerabilities visible on the web",
-  "ATTENTION — Ports WAN ouverts sur Internet": "WARNING — WAN ports open to the Internet",
+  "SÉCURISÉ - Aucun port public exposé sur Internet": "SECURE - No public port exposed to the Internet",
+  "CRITIQUE - Vulnérabilités CVE visibles sur le web": "CRITICAL - CVE vulnerabilities visible on the web",
+  "ATTENTION - Ports WAN ouverts sur Internet": "WARNING - WAN ports open to the Internet",
   "Non indexé sur Shodan (Protection WAN active)": "Not indexed on Shodan (WAN protection active)",
   "MALVEILLANT": "MALICIOUS",
   "SUSPECT": "SUSPICIOUS",
@@ -687,8 +687,8 @@ window.I18N_EN_DYNAMIC = {
    "$1 isolated"
   ],
   [
-   "^⚠️ (\\d+) isolé\\(s\\)$",
-   "⚠️ $1 isolated"
+   "^(\\d+) isolé\\(s\\)$",
+   "$1 isolated"
   ],
   [
    "^(\\d+) événements?$",
@@ -947,8 +947,8 @@ window.I18N_EN_DYNAMIC = {
    "For the 2.4 GHz band, channel $1 is the least congested ($2 access point(s) detected). If possible, prefer the 5 GHz band (802.11ac/ax) to avoid microwave and Bluetooth interference."
   ],
   [
-   "^Audit SLA validé \\((.*)\\) — Cible testée : (.*)$",
-   "SLA audit validated ($1) — Target tested: $2"
+   "^Audit SLA validé \\((.*)\\) - Cible testée : (.*)$",
+   "SLA audit validated ($1) - Target tested: $2"
   ],
   [
    "^Heure locale : (.*)$",
