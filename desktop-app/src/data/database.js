@@ -6,8 +6,29 @@
 const fs = require('fs');
 const path = require('path');
 
+/** Catégorie d'inventaire par défaut déduite du type d'appareil détecté. */
+function defaultCategory(deviceType) {
+    switch (deviceType) {
+        case 'router': return 'network';
+        case 'phone': return 'mobile';
+        case 'iot': case 'camera': case 'tv': return 'iot';
+        case 'printer': return 'printer';
+        case 'server': case 'nas': return 'server';
+        default: return 'workstation';
+    }
+}
+
+const SECRET_FIELDS = ['webhookUrl', 'abuseIpdbKey'];
+const ENC_PREFIX = 'enc:v1:';
+
 class Database {
-    constructor(storageDir) {
+    /**
+     * @param {string} storageDir
+     * @param {{encrypt:(s:string)=>string, decrypt:(s:string)=>string}|null} cipher
+     *        Chiffrement des secrets au repos (safeStorage d'Electron : DPAPI sous Windows).
+     */
+    constructor(storageDir, cipher = null) {
+        this.cipher = cipher;
         this.dir = storageDir || path.join(__dirname, '..', '..', 'data');
         this.filePath = path.join(this.dir, 'wifi_watch.db.json');
         this.tempPath = path.join(this.dir, 'wifi_watch.db.tmp');
@@ -30,6 +51,7 @@ class Database {
                 theme: 'cyber', // 'cyber' ou 'corporate'
                 webhookEnabled: false,
                 webhookUrl: '',
+                abuseIpdbKey: '', // clé API AbuseIPDB (optionnelle)
                 webhookType: 'slack', // 'slack', 'discord', 'teams', 'generic'
                 webhookMinSeverity: 'warning', // 'info', 'warning', 'critical'
                 honeypotEnabled: false,
@@ -64,6 +86,7 @@ class Database {
                     bandwidthHistory: parsed.bandwidthHistory || [],
                     sessions: parsed.sessions || []
                 };
+                this.decryptSecrets(this.data.settings);
             } catch (err) {
                 console.error('[DATABASE] Erreur lecture DB, réinitialisation de secours:', err);
                 this.save();
@@ -73,10 +96,30 @@ class Database {
         }
     }
 
+    encryptSecrets(settings) {
+        if (!this.cipher) return settings;
+        for (const f of SECRET_FIELDS) {
+            if (settings[f] && !String(settings[f]).startsWith(ENC_PREFIX)) {
+                try { settings[f] = ENC_PREFIX + this.cipher.encrypt(String(settings[f])); } catch (_) { /* conserve la valeur */ }
+            }
+        }
+        return settings;
+    }
+
+    decryptSecrets(settings) {
+        for (const f of SECRET_FIELDS) {
+            const v = settings[f];
+            if (typeof v === 'string' && v.startsWith(ENC_PREFIX)) {
+                try { settings[f] = this.cipher ? this.cipher.decrypt(v.slice(ENC_PREFIX.length)) : ''; } catch (_) { settings[f] = ''; }
+            }
+        }
+    }
+
     save() {
         try {
             this.data.meta.updatedAt = new Date().toISOString();
-            const json = JSON.stringify(this.data, null, 2);
+            const toWrite = { ...this.data, settings: this.encryptSecrets({ ...this.data.settings }) };
+            const json = JSON.stringify(toWrite, null, 2);
             fs.writeFileSync(this.tempPath, json, 'utf-8');
             fs.renameSync(this.tempPath, this.filePath);
         } catch (err) {
@@ -118,7 +161,7 @@ class Database {
                 customName: deviceData.customName || '',
                 vendor: deviceData.vendor || 'Inconnu',
                 deviceType: deviceData.deviceType || 'unknown',
-                category: deviceData.category || (deviceData.deviceType === 'router' ? 'network' : 'workstation'),
+                category: deviceData.category || defaultCategory(deviceData.deviceType),
                 owner: deviceData.owner || '',
                 department: deviceData.department || '',
                 location: deviceData.location || '',
@@ -142,7 +185,7 @@ class Database {
                 vendor: (existing.vendor && existing.vendor !== 'Inconnu') ? existing.vendor : (deviceData.vendor || existing.vendor),
                 model: existing.model || deviceData.model || '',
                 deviceType: (existing.deviceType && existing.deviceType !== 'unknown') ? existing.deviceType : (deviceData.deviceType || existing.deviceType),
-                category: existing.category || (deviceData.deviceType === 'router' ? 'network' : 'workstation'),
+                category: existing.category || defaultCategory(deviceData.deviceType),
                 owner: existing.owner || '',
                 department: existing.department || '',
                 location: existing.location || '',

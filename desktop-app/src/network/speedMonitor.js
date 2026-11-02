@@ -4,16 +4,10 @@
  * et la latence (Ping vers la Box et vers Internet).
  */
 
-const { exec } = require('child_process');
+const { runStatic } = require('./shell');
 const { measurePing } = require('./scanner');
 
-function execCommand(cmd, timeout = 3000) {
-    return new Promise((resolve) => {
-        exec(cmd, { timeout, windowsHide: true }, (err, stdout) => {
-            resolve(err ? '' : stdout.toString());
-        });
-    });
-}
+const execCommand = (cmd, timeout = 3000) => runStatic(cmd, timeout);
 
 class SpeedMonitor {
     constructor() {

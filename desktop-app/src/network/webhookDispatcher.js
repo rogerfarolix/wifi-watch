@@ -6,6 +6,7 @@
 const https = require('https');
 const http = require('http');
 const { URL } = require('url');
+const { isSafeWebhookUrl } = require('./validators');
 
 class WebhookDispatcher {
     /**
@@ -160,6 +161,9 @@ class WebhookDispatcher {
      */
     static sendHttpRequest(targetUrl, payloadObj) {
         return new Promise((resolve) => {
+            if (!isSafeWebhookUrl(targetUrl)) {
+                return resolve({ success: false, message: 'URL webhook refusée : https requis, hôte local interdit' });
+            }
             try {
                 const parsedUrl = new URL(targetUrl);
                 const isHttps = parsedUrl.protocol === 'https:';

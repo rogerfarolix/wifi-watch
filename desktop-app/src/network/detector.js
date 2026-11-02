@@ -5,15 +5,9 @@
  */
 
 const os = require('os');
-const { exec } = require('child_process');
+const { runStatic } = require('./shell');
 
-function execCommand(cmd, timeout = 5000) {
-    return new Promise((resolve) => {
-        exec(cmd, { timeout, windowsHide: true }, (err, stdout) => {
-            resolve(err ? '' : stdout.toString());
-        });
-    });
-}
+const execCommand = (cmd, timeout = 5000) => runStatic(cmd, timeout);
 
 /**
  * Récupère les informations Wi-Fi détaillées via netsh
@@ -54,7 +48,7 @@ async function getWifiInfo() {
         else if (key === 'rssi') info.rssi = parseInt(val, 10);
         else if (key === 'canal' || key === 'channel') info.channel = parseInt(val, 10);
         else if (key.includes('radio')) info.radioType = val;
-        else if (key.includes('authentification') || key.includes('chiffrement')) {
+        else if ((key.startsWith('authentification') || key.startsWith('authentication') || key.startsWith('chiffrement') || key.startsWith('cipher')) && !key.includes('akm')) {
             info.security = info.security ? `${info.security} / ${val}` : val;
         } else if (key.includes('réception') || key.includes('receive')) {
             info.rxRateMbps = parseFloat(val) || 0;

@@ -4,15 +4,9 @@
  * recommande le canal optimal et alerte sur les faux points d'accès (Evil Twin).
  */
 
-const { exec } = require('child_process');
+const { runStatic } = require('./shell');
 
-function execCommand(cmd, timeout = 7000) {
-    return new Promise((resolve) => {
-        exec(cmd, { timeout, windowsHide: true }, (err, stdout) => {
-            resolve(err ? '' : stdout.toString());
-        });
-    });
-}
+const execCommand = (cmd, timeout = 7000) => runStatic(cmd, timeout);
 
 /**
  * Scanne tous les points d'accès Wi-Fi visibles
@@ -81,9 +75,9 @@ async function scanNeighborNetworks(currentSsid = '', currentBssid = '') {
 
         if (key.includes('signal')) {
             currentBss.signal = parseInt(val.replace('%', ''), 10) || 0;
-        } else if (key.includes('canal') || key.includes('channel')) {
+        } else if (key === 'canal' || key === 'channel') {
             currentBss.channel = parseInt(val, 10) || 1;
-        } else if (key.includes('bande') || key.includes('band')) {
+        } else if (key === 'bande' || key === 'band') {
             currentBss.band = val;
         } else if (key.includes('radio')) {
             currentBss.radioType = val;

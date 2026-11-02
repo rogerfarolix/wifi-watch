@@ -4,8 +4,9 @@
  * base de données embarquée, plateau système (Tray) et ponts IPC.
  */
 
-const { app, BrowserWindow, ipcMain, Notification, Tray, Menu, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, Notification, Tray, Menu, nativeImage, dialog, safeStorage } = require('electron');
 const path = require('path');
+const V = require('./network/validators');
 const fs = require('fs');
 
 const Database = require('./data/database');
@@ -59,10 +60,14 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
             nodeIntegration: false,
-            sandbox: false
+            sandbox: true
         },
         show: false
     });
+
+    // Verrouillage de la navigation : aucune fenêtre externe, aucune redirection hors de l'app
+    mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+    mainWindow.webContents.on('will-navigate', (e) => e.preventDefault());
 
     mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
@@ -92,10 +97,16 @@ function createSystemTray() {
 
     tray = new Tray(icon);
     tray.setToolTip('Wifi-Watch // Cyber Sentinel');
+    updateTrayMenu();
+}
 
+/** (Re)construit le menu du tray dans la langue de l'interface. */
+function updateTrayMenu() {
+    if (!tray) return;
+    const en = (db?.getSettings().language || 'fr') === 'en';
     const contextMenu = Menu.buildFromTemplate([
         {
-            label: 'Ouvrir Wifi-Watch',
+            label: en ? 'Open Wifi-Watch' : 'Ouvrir Wifi-Watch',
             click: () => {
                 if (mainWindow) {
                     mainWindow.show();
@@ -104,12 +115,12 @@ function createSystemTray() {
             }
         },
         {
-            label: 'Scanner le Réseau Maintenant',
+            label: en ? 'Scan Network Now' : 'Scanner le Réseau Maintenant',
             click: () => executeScan()
         },
         { type: 'separator' },
         {
-            label: 'Quitter Définitivement',
+            label: en ? 'Quit Completely' : 'Quitter Définitivement',
             click: () => {
                 app.isQuitting = true;
                 app.quit();
@@ -118,6 +129,8 @@ function createSystemTray() {
     ]);
 
     tray.setContextMenu(contextMenu);
+    if (tray.__dblClickBound) return;
+    tray.__dblClickBound = true;
     tray.on('double-click', () => {
         if (mainWindow) {
             mainWindow.show();
@@ -349,7 +362,16 @@ async function executeScan() {
 
 app.whenReady().then(() => {
     const userDataPath = app.getPath('userData');
-    db = new Database(userDataPath);
+    const isFirstRun = !fs.existsSync(path.join(userDataPath, 'wifi_watch.db.json'));
+    const cipher = safeStorage.isEncryptionAvailable() ? {
+        encrypt: (text) => safeStorage.encryptString(text).toString('base64'),
+        decrypt: (b64) => safeStorage.decryptString(Buffer.from(b64, 'base64'))
+    } : null;
+    db = new Database(userDataPath, cipher);
+    if (isFirstRun) {
+        // Première exécution : langue de l'interface alignée sur celle du système
+        db.updateSettings({ language: app.getLocale().toLowerCase().startsWith('fr') ? 'fr' : 'en' });
+    }
     speedMonitor = new SpeedMonitor();
     sentinel = new Sentinel(db);
     ruviewBridge = new RuViewBridge(() => mainWindow);
@@ -416,7 +438,7 @@ ipcMain.handle('network:scan-channels', async () => {
 
 // Wake-on-LAN
 ipcMain.handle('network:wake-on-lan', async (_, mac) => {
-    if (!mac) throw new Error('Adresse MAC requise');
+    if (!V.isValidMac(mac)) throw new Error('Adresse MAC invalide');
     return await wakeDevice(mac);
 });
 
@@ -446,7 +468,7 @@ ipcMain.handle('audit:generate-report', () => {
 
 // Scan de ports
 ipcMain.handle('network:scan-ports', async (_, ip) => {
-    if (!ip) return [];
+    if (!V.isValidIpv4(ip)) return [];
     try {
         const ports = await scanDevicePorts(ip);
         const devices = db.getDevices();
@@ -503,6 +525,7 @@ ipcMain.handle('timeline:clear-sessions', (_, mac) => {
 // Bouclier & Quarantaine Réseau (Isolation Intrus)
 ipcMain.handle('quarantine:isolate', async (_, ip, mac) => {
     try {
+        if (!V.isValidIpv4(ip)) return { success: false, error: 'Adresse IP invalide' };
         const res = await isolateDevice(ip);
         if (mac) {
             db.updateDevice(mac, { isBlocked: true });
@@ -523,6 +546,7 @@ ipcMain.handle('quarantine:isolate', async (_, ip, mac) => {
 
 ipcMain.handle('quarantine:unisolate', async (_, ip, mac) => {
     try {
+        if (!V.isValidIpv4(ip)) return { success: false, error: 'Adresse IP invalide' };
         const res = await unisolateDevice(ip);
         if (mac) {
             db.updateDevice(mac, { isBlocked: false });
@@ -534,6 +558,7 @@ ipcMain.handle('quarantine:unisolate', async (_, ip, mac) => {
 });
 
 ipcMain.handle('quarantine:status', async (_, ip) => {
+    if (!V.isValidIpv4(ip)) return false;
     return await checkQuarantineStatus(ip);
 });
 
@@ -555,11 +580,11 @@ ipcMain.handle('ruview:stop', () => {
 });
 
 ipcMain.handle('ruview:connect-node', (_, url) => {
-    if (ruviewBridge && url) {
+    if (ruviewBridge && url && V.isValidWsUrl(url)) {
         ruviewBridge.connectHardware(url);
         return ruviewBridge.getStatus();
     }
-    return { error: 'URL manquante' };
+    return { error: 'URL WebSocket invalide (ws:// ou wss:// requis)' };
 });
 
 ipcMain.handle('ruview:calibrate', () => {
@@ -600,6 +625,7 @@ ipcMain.handle('db:get-bandwidth-history', () => db.getBandwidthHistory());
 ipcMain.handle('db:get-settings', () => db.getSettings());
 ipcMain.handle('db:update-settings', (_, patch) => {
     const updated = db.updateSettings(patch);
+    if (patch && patch.language) updateTrayMenu();
     resetAutoScanTimer();
     return updated;
 });
@@ -621,7 +647,8 @@ ipcMain.handle('export:alerts-csv', () => {
 });
 
 ipcMain.handle('file:save-export', async (_, defaultFilename, content) => {
-    if (!mainWindow) return { success: false };
+    if (!mainWindow || typeof content !== 'string' || content.length > 50 * 1024 * 1024) return { success: false };
+    defaultFilename = V.sanitizeExportFilename(defaultFilename);
     const { canceled, filePath } = await dialog.showSaveDialog(mainWindow, {
         title: 'Enregistrer le fichier d\'export',
         defaultPath: defaultFilename,
@@ -667,8 +694,11 @@ ipcMain.handle('honeypot:status', () => {
 
 ipcMain.handle('honeypot:toggle', async (_, enabled, port, autoBlock) => {
     try {
+        if (port != null && (!V.isValidPort(Number(port)) || Number(port) < 1024)) {
+            return { error: 'Port invalide (1024-65535)', isRunning: false };
+        }
         if (enabled) {
-            await Honeypot.start(port || 4455, autoBlock || false);
+            await Honeypot.start(Number(port) || 4455, !!autoBlock);
         } else {
             Honeypot.stop();
         }
@@ -702,6 +732,7 @@ ipcMain.handle('spectrum:analyze', async () => {
 ipcMain.handle('benchmark:run', async (_, targetHost) => {
     try {
         const host = targetHost || currentEnv?.gatewayIp || '1.1.1.1';
+        if (!V.isValidHost(host)) return { grade: 'F', rating: 'Hôte invalide', error: 'Hôte invalide' };
         return await SpeedBenchmark.runBenchmark(host);
     } catch (err) {
         return { grade: 'F', rating: 'Échec du benchmark', error: err.message };
@@ -718,7 +749,8 @@ ipcMain.handle('zeroconf:discover', async () => {
 });
 
 ipcMain.handle('device:scan-ports', async (_, ip, mac, customPorts) => {
-    if (!ip) return [];
+    if (!V.isValidIpv4(ip)) return [];
+    if (customPorts != null && !(Array.isArray(customPorts) && customPorts.length <= 100 && customPorts.every(V.isValidPort))) return [];
     try {
         const ports = await PortScanner.scanHost(ip, customPorts);
         if (mac) {
@@ -756,11 +788,13 @@ ipcMain.handle('threat:get-wan', async () => {
 });
 
 ipcMain.handle('threat:audit-wan', async (_, ip) => {
+    if (ip != null && !V.isValidIpv4(ip)) return { error: 'IP invalide' };
     return await ThreatIntelligenceApis.auditWanWithShodan(ip);
 });
 
 ipcMain.handle('threat:check-ip', async (_, ip, apiKey) => {
-    return await ThreatIntelligenceApis.checkIpReputationAbuse(ip, apiKey);
+    if (!V.isValidIpv4(ip) || (apiKey != null && typeof apiKey !== 'string')) return { error: 'Paramètres invalides' };
+    return await ThreatIntelligenceApis.checkIpReputationAbuse(ip, apiKey || db.getSettings().abuseIpdbKey || '');
 });
 
 ipcMain.handle('threat:check-c2', async (_, indicator) => {

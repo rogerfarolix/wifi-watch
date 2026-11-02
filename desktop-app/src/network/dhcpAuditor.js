@@ -1,4 +1,4 @@
-const { exec } = require('child_process');
+const { runStatic } = require('./shell');
 
 /**
  * Rogue DHCP Server & Gateway Spoofing Auditor
@@ -10,7 +10,7 @@ class DhcpAuditor {
      */
     static audit() {
         return new Promise((resolve) => {
-            exec('ipconfig /all', { windowsHide: true }, (err, stdout) => {
+            runStatic('ipconfig /all').then((stdout) => { const err = !stdout;
                 if (err || !stdout) {
                     return resolve({
                         status: 'UNKNOWN',
@@ -25,27 +25,26 @@ class DhcpAuditor {
                 const defaultGateways = new Set();
                 const dnsServers = new Set();
 
-                const lines = stdout.split('\r\n');
+                const IPV4 = /\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/;
+                const lines = stdout.split(/\r?\n/);
+                // Les passerelles et serveurs DNS peuvent occuper des lignes de continuation sans libellé
+                let section = null;
                 for (const line of lines) {
-                    // Match DHCP Server
-                    const dhcpMatch = line.match(/DHCP.*?Server[^\d]*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/i) ||
-                                      line.match(/Serveur DHCP[^\d]*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/i);
-                    if (dhcpMatch) {
-                        dhcpServers.add(dhcpMatch[1]);
-                    }
+                    const ip = (line.match(IPV4) || [])[1];
 
-                    // Match Default Gateway
-                    const gwMatch = line.match(/Default Gateway[^\d]*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/i) ||
-                                    line.match(/Passerelle par d.faut[^\d]*(\d{1,3}\.\d{1,3}\.\d{1,3})/i);
-                    if (gwMatch && gwMatch[1] !== '0.0.0.0') {
-                        defaultGateways.add(gwMatch[1]);
-                    }
-
-                    // Match DNS Servers
-                    const dnsMatch = line.match(/DNS Servers[^\d]*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/i) ||
-                                     line.match(/Serveurs DNS[^\d]*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/i);
-                    if (dnsMatch) {
-                        dnsServers.add(dnsMatch[1]);
+                    if (/DHCP/i.test(line) && ip && !/class/i.test(line)) {
+                        dhcpServers.add(ip);
+                        section = null;
+                    } else if (/gateway|passerelle/i.test(line)) {
+                        section = 'gw';
+                        if (ip && ip !== '0.0.0.0') defaultGateways.add(ip);
+                    } else if (/\bDNS\b/i.test(line) && line.includes(':')) {
+                        section = 'dns';
+                        if (ip) dnsServers.add(ip);
+                    } else if (section && /^\s{10,}\S/.test(line) && !line.includes(' : ')) {
+                        if (ip && ip !== '0.0.0.0') (section === 'gw' ? defaultGateways : dnsServers).add(ip);
+                    } else {
+                        section = null;
                     }
                 }
 

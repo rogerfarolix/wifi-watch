@@ -1,4 +1,5 @@
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
+const { isValidHost } = require('./validators');
 const dns = require('dns').promises;
 const https = require('https');
 
@@ -20,7 +21,10 @@ class SpeedBenchmark {
         let grade = 'A+';
         let rating = 'Excellente qualité réseau';
 
-        if (pingStats.avgMs > 100 || pingStats.jitterMs > 30 || dnsLatency > 150) {
+        if (pingStats.packetLoss >= 50) {
+            grade = 'F';
+            rating = 'Critique - Hôte injoignable ou forte perte de paquets';
+        } else if (pingStats.packetLoss > 0 || pingStats.avgMs > 100 || pingStats.jitterMs > 30 || dnsLatency > 150) {
             grade = 'C';
             rating = 'Dégradé - Forte latence ou gigue';
         } else if (pingStats.avgMs > 50 || pingStats.jitterMs > 15 || dnsLatency > 70) {
@@ -46,7 +50,10 @@ class SpeedBenchmark {
      */
     static measurePingAndJitter(host) {
         return new Promise((resolve) => {
-            exec(`ping -n 4 -w 1000 ${host}`, { windowsHide: true }, (err, stdout) => {
+            if (!isValidHost(host)) {
+                return resolve({ minMs: 0, avgMs: 0, maxMs: 0, jitterMs: 0, packetLoss: 100 });
+            }
+            execFile('ping', ['-n', '4', '-w', '1000', host], { windowsHide: true }, (err, stdout) => {
                 if (err || !stdout) {
                     return resolve({ minMs: 0, avgMs: 0, maxMs: 0, jitterMs: 0, packetLoss: 100 });
                 }
@@ -55,7 +62,8 @@ class SpeedBenchmark {
                 const lines = stdout.split('\r\n');
 
                 for (const line of lines) {
-                    const match = line.match(/(?:time|temps)[<=](\d+)ms/i);
+                    // Indépendant de la langue : « temps=2 ms », « time<1ms », « Zeit=3ms »
+                    const match = /TTL=/i.test(line) ? line.match(/[=<]\s*(\d+)\s*ms/i) : null;
                     if (match) {
                         times.push(parseInt(match[1], 10));
                     }
@@ -80,7 +88,7 @@ class SpeedBenchmark {
                 }
 
                 // Packet loss
-                const lossMatch = stdout.match(/(\d+)%\s+(?:loss|perte)/i);
+                const lossMatch = stdout.match(/(\d+)\s*%/);
                 const packetLoss = lossMatch ? parseInt(lossMatch[1], 10) : 0;
 
                 resolve({

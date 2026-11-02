@@ -4,19 +4,15 @@
  * résolution NetBIOS, mDNS et identification des équipements.
  */
 
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
+const { runStatic } = require('./shell');
+const { isValidIpv4 } = require('./validators');
 const net = require('net');
 const dgram = require('dgram');
 const dns = require('dns').promises;
 const { lookupVendor, guessDeviceType } = require('./ouiDatabase');
 
-function execCommand(cmd, timeout = 10000) {
-    return new Promise((resolve) => {
-        exec(cmd, { timeout, windowsHide: true }, (err, stdout) => {
-            resolve(err ? '' : stdout.toString());
-        });
-    });
-}
+const execCommand = (cmd, timeout = 10000) => runStatic(cmd, timeout);
 
 /**
  * Envoie un paquet NetBIOS Name Query (UDP 137) pour obtenir le nom d'hôte Windows/Samba
@@ -117,11 +113,12 @@ function probeTcp(ip, port = 80, timeoutMs = 250) {
 async function measurePing(ip, timeoutMs = 800) {
     const start = Date.now();
     return new Promise((resolve) => {
-        exec(`ping -n 1 -w ${timeoutMs} ${ip}`, { timeout: timeoutMs + 200, windowsHide: true }, (err, stdout) => {
+        if (!isValidIpv4(ip)) return resolve(null);
+        execFile('ping', ['-n', '1', '-w', String(Number(timeoutMs) || 800), ip], { timeout: timeoutMs + 200, windowsHide: true }, (err, stdout) => {
             if (err || !stdout.includes('TTL=')) {
                 return resolve(null);
             }
-            const match = stdout.match(/temps[=<]\s*(\d+)ms|time[=<]\s*(\d+)ms/i);
+            const match = stdout.match(/[=<]\s*(\d+)\s*ms/i);
             if (match) {
                 const ms = parseInt(match[1] || match[2], 10);
                 resolve(ms);

@@ -1,4 +1,4 @@
-const { exec } = require('child_process');
+const { runStatic } = require('./shell');
 
 /**
  * WiFi Spectrum & Channel Congestion Analyzer
@@ -11,7 +11,7 @@ class SpectrumAnalyzer {
      */
     static analyze() {
         return new Promise((resolve) => {
-            exec('netsh wlan show networks mode=bssid', { windowsHide: true }, (err, stdout) => {
+            runStatic('netsh wlan show networks mode=bssid').then((stdout) => { const err = !stdout;
                 if (err || !stdout) {
                     return resolve(this.getFallbackData('Interface WiFi inactive ou non disponible'));
                 }
