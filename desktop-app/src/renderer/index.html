@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wifi-Watch // Cyber Sentinel</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' ws: wss:; object-src 'none'; base-uri 'none'; form-action 'none'">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -400,7 +401,7 @@
 
                 <div class="devices-grid" id="devices-grid-container"></div>
 
-                <div class="card" id="devices-table-card" style="display: none; padding: 0; overflow: hidden;">
+                <div class="card" id="devices-table-card" style="display: none; padding: 0; overflow-x: auto;">
                     <table class="device-table">
                         <thead>
                             <tr>
@@ -1158,6 +1159,11 @@
                                         <label>URL du Webhook Endpoint</label>
                                         <input type="url" class="form-control" id="setting-webhook-url" placeholder="https://hooks.slack.com/services/... ou Discord/Teams webhook">
                                     </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Clé API AbuseIPDB (optionnelle, chiffrée sur ce poste)</label>
+                                    <input type="password" class="form-control" id="setting-abuse-key" autocomplete="off" placeholder="Laissez vide pour l'analyse heuristique locale">
                                 </div>
 
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -2039,12 +2045,18 @@
     <!-- Scripts Locaux Embarqués (100% Hors-Ligne) -->
     <script src="js/vendor/chart.min.js"></script>
     <script src="js/vendor/lucide.min.js"></script>
+    <script src="js/i18n-en.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/qrGenerator.js"></script>
     <script src="js/voiceSentinel.js"></script>
     <script src="js/ruviewCanvas.js"></script>
     <script src="js/radar.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/app-state.js"></script>
+    <script src="js/app-devices.js"></script>
+    <script src="js/app-network.js"></script>
+    <script src="js/app-settings.js"></script>
+    <script src="js/app-features.js"></script>
+    <script src="js/app-core.js"></script>
 
 </body>
 </html>

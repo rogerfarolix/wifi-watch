@@ -983,7 +983,8 @@ body {
 }
 
 .channel-num {
-    width: 70px;
+    width: 96px;
+    white-space: nowrap;
     font-weight: 600;
     color: var(--text-secondary);
 }
@@ -1917,3 +1918,71 @@ body.soc-fullscreen #view-wallboard {
     font-weight: 700;
 }
 
+
+/* ─── Cartes de statistiques & tableaux génériques (Spy Hunter, Présence, RuView) ─── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--border-highlight), transparent);
+}
+
+.stat-title { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+.stat-value { font-size: 24px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
+.stat-desc { font-size: 11px; color: var(--text-muted); }
+
+.table-container { width: 100%; overflow-x: auto; }
+
+.data-table { width: 100%; border-collapse: collapse; text-align: left; }
+.data-table th {
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+}
+.data-table td {
+    padding: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(45, 62, 96, 0.25);
+}
+.data-table tbody tr:hover { background: rgba(255, 255, 255, 0.025); }
+
+.text-cyan { color: var(--accent-cyan); }
+.text-green { color: var(--accent-green); }
+.text-orange { color: var(--accent-amber); }
+.text-red { color: var(--accent-red); }
+
+.kpi-icon.blue   { color: var(--accent-blue);   background: rgba(59, 130, 246, 0.1); }
+.kpi-icon.purple { color: var(--accent-purple); background: rgba(139, 92, 246, 0.1); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 1s linear infinite; }
+
+/* Cases à cocher : couleur d'accent du thème et alignement avec leur libellé */
+input[type="checkbox"] { accent-color: var(--accent-cyan); }
+.form-group:has(> input[type="checkbox"]) { flex-direction: row !important; align-items: center; }

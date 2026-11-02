@@ -11,6 +11,9 @@ class NetworkRadar {
         this.ctx = this.canvas.getContext('2d');
 
         this.devices = [];
+        this.nodes = [];
+        this.gatewayIp = null;
+        this.wifiInfo = {};
         this.gateway = null;
         this.hoveredNode = null;
         this.animationFrameId = null;
@@ -75,6 +78,11 @@ class NetworkRadar {
         this.gatewayIp = gatewayIp;
         this.wifiInfo = wifiInfo || {};
         this.calculatePositions();
+    }
+
+    /** Texte traduit dans la langue courante (libellés dessinés sur le canvas). */
+    tr(text) {
+        return window.i18n ? window.i18n.tr(text) : text;
     }
 
     toggleMode() {
@@ -344,7 +352,7 @@ class NetworkRadar {
             // Labels de distance / latence
             ctx.fillStyle = 'rgba(100, 116, 139, 0.6)';
             ctx.font = '10px monospace';
-            const label = ring === 0.25 ? '0-5ms' : (ring === 0.5 ? 'Zone Fiable' : (ring === 0.75 ? 'Périphérie' : 'Limite Réseau'));
+            const label = (window.i18n ? window.i18n.tr.bind(window.i18n) : (x) => x)(ring === 0.25 ? '0-5ms' : (ring === 0.5 ? 'Zone Fiable' : (ring === 0.75 ? 'Périphérie' : 'Limite Réseau')));
             ctx.fillText(label, this.centerX + 6, this.centerY - r + 12);
         });
 
@@ -462,7 +470,7 @@ class NetworkRadar {
         // Nom en dessous
         ctx.fillStyle = '#f8fafc';
         ctx.font = '600 11px Inter, sans-serif';
-        ctx.fillText(node.customName || 'Passerelle', node.x, node.y + node.radius + 14);
+        ctx.fillText(window.i18n ? window.i18n.tr(node.customName || 'Passerelle') : (node.customName || 'Passerelle'), node.x, node.y + node.radius + 14);
 
         ctx.restore();
     }
@@ -520,7 +528,7 @@ class NetworkRadar {
         // Nom de l'appareil sous le cercle
         ctx.fillStyle = isHovered ? '#00f0ff' : '#94a3b8';
         ctx.font = `${isHovered ? '600' : '500'} 10px Inter, sans-serif`;
-        const displayName = (node.customName || node.hostname || node.ip).slice(0, 14);
+        const displayName = this.tr(node.customName || node.hostname || node.ip).slice(0, 16);
         ctx.fillText(displayName, node.x, node.y + node.radius + 12);
 
         ctx.restore();
@@ -559,7 +567,7 @@ class NetworkRadar {
         // Titre
         ctx.fillStyle = '#f8fafc';
         ctx.font = 'bold 12px Inter, sans-serif';
-        const title = (node.customName || node.hostname || node.mac).slice(0, 24);
+        const title = this.tr(node.customName || node.hostname || node.mac).slice(0, 24);
         ctx.fillText(title, tx + padding, ty + padding);
 
         // Détails
@@ -571,7 +579,7 @@ class NetworkRadar {
         ctx.fillText(`MAC : ${node.mac}`, tx + padding, ty + padding + 38);
 
         ctx.font = '11px Inter, sans-serif';
-        ctx.fillText(`Marque : ${node.vendor || 'Inconnu'}`, tx + padding, ty + padding + 54);
+        ctx.fillText(`${window.i18n ? window.i18n.tr('Marque :') : 'Marque :'} ${node.vendor || 'Inconnu'}`, tx + padding, ty + padding + 54);
 
         // Statut & Ping
         const statusText = node.isBlocked ? 'BLOQUÉ' : (node.isOnline ? 'EN LIGNE' : 'HORS LIGNE');
@@ -585,7 +593,7 @@ class NetworkRadar {
         // Indication de clic
         ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
         ctx.font = 'italic 9px Inter, sans-serif';
-        ctx.fillText('Cliquez pour gérer cet appareil', tx + padding, ty + padding + 90);
+        ctx.fillText(window.i18n ? window.i18n.tr('Cliquez pour gérer cet appareil') : 'Cliquez pour gérer cet appareil', tx + padding, ty + padding + 90);
 
         ctx.restore();
     }

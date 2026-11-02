@@ -227,6 +227,8 @@ const i18n = {
         if (translations[lang]) {
             currentLanguage = lang;
             this.applyToDom();
+            this.observeDynamic();
+            (this._listeners || []).forEach(fn => fn(lang));
         }
     },
 
@@ -263,6 +265,93 @@ const i18n = {
                 el.setAttribute('title', translation);
             }
         });
+
+        this.translateStatic(document.body);
+    },
+
+    /**
+     * Traduit les textes statiques et dynamiques du DOM via le dictionnaire FR → EN (i18n-en.js).
+     * Le texte français d'origine est conservé sur chaque nœud pour pouvoir revenir en français.
+     */
+    translateStatic(root) {
+        const dict = window.I18N_EN_HTML || {};
+        const toEn = currentLanguage === 'en';
+        const norm = (s) => s.replace(/\s+/g, ' ').trim();
+
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+            acceptNode: (n) => /^(SCRIPT|STYLE)$/.test(n.parentNode?.nodeName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
+        });
+        const nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+
+        for (const node of nodes) {
+            if (node.__fr === undefined) {
+                const key = norm(node.nodeValue);
+                if (!key || !this.enOf(key)) continue;
+                node.__fr = node.nodeValue;
+                node.__key = key;
+            }
+            if (toEn) {
+                const lead = node.__fr.match(/^\s*/)[0];
+                const trail = node.__fr.match(/\s*$/)[0];
+                node.nodeValue = lead + this.enOf(node.__key) + trail;
+            } else {
+                node.nodeValue = node.__fr;
+            }
+        }
+
+        const attrs = ['placeholder', 'title'];
+        root.querySelectorAll('[placeholder], [title]').forEach(el => {
+            el.__frAttr = el.__frAttr || {};
+            for (const a of attrs) {
+                if (!el.hasAttribute(a)) continue;
+                if (el.__frAttr[a] === undefined) {
+                    if (el.hasAttribute('data-i18n-' + a) || !dict[el.getAttribute(a)]) continue;
+                    el.__frAttr[a] = el.getAttribute(a);
+                }
+                el.setAttribute(a, toEn ? dict[el.__frAttr[a]] : el.__frAttr[a]);
+            }
+        });
+    },
+
+    /** Traduction anglaise d'un texte français (dictionnaire statique, textes dynamiques exacts, puis motifs). */
+    enOf(text) {
+        const stat = window.I18N_EN_HTML || {};
+        if (stat[text]) return stat[text];
+        const dyn = window.I18N_EN_DYNAMIC;
+        if (!dyn) return null;
+        if (dyn.exact[text]) return dyn.exact[text];
+        if (!dyn._compiled) dyn._compiled = dyn.patterns.map(([re, rep]) => [new RegExp(re), rep]);
+        for (const [re, rep] of dyn._compiled) {
+            if (re.test(text)) return text.replace(re, rep);
+        }
+        return null;
+    },
+
+    /** Texte français d'origine → texte dans la langue courante (pour les libellés hors DOM, ex. Chart.js). */
+    tr(frText) {
+        return currentLanguage === 'en' ? (this.enOf(frText) || frText) : frText;
+    },
+
+    onChange(fn) {
+        (this._listeners = this._listeners || []).push(fn);
+    },
+
+    /** Traduit le contenu injecté dynamiquement (listes, tableaux) quand la langue est l'anglais. */
+    observeDynamic() {
+        if (this._observer || typeof MutationObserver === 'undefined') return;
+        let pending = false;
+        this._observer = new MutationObserver(() => {
+            if (currentLanguage !== 'en' || pending) return;
+            pending = true;
+            requestAnimationFrame(() => {
+                pending = false;
+                this._observer.disconnect();
+                this.translateStatic(document.body);
+                this._observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+            });
+        });
+        this._observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     }
 };
 
