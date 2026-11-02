@@ -107,7 +107,7 @@ class RuViewVisualizer {
             ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
             ctx.font = '13px "Segoe UI", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('Périmètre vide : Aucune onde de diffusion corporelle détectée', centerX, centerY);
+            ctx.fillText(window.i18n ? window.i18n.tr('Périmètre vide : Aucune onde de diffusion corporelle détectée') : 'Périmètre vide : Aucune onde de diffusion corporelle détectée', centerX, centerY);
 
             ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
             ctx.setLineDash([4, 4]);
@@ -184,7 +184,7 @@ class RuViewVisualizer {
 
         ctx.font = 'bold 12px "Segoe UI", sans-serif';
         ctx.fillStyle = isFall ? '#ff3366' : '#00f0ff';
-        ctx.fillText(`${data.confidence}% Confiance RF // ${data.occupancy} Humain`, 26, 52);
+        ctx.fillText(`${data.confidence}% ${window.i18n ? window.i18n.tr('Confiance RF //') : 'Confiance RF //'} ${data.occupancy} ${window.i18n ? window.i18n.tr('Humain') : 'Humain'}`, 26, 52);
     }
 
     /**
@@ -230,7 +230,7 @@ class RuViewVisualizer {
         // Label Respiration
         ctx.font = '11px monospace';
         ctx.fillStyle = 'rgba(0, 240, 255, 0.8)';
-        ctx.fillText(`ONDE RESPIRATOIRE : ${data.breathingBpm || '--'} BPM`, 14, 20);
+        ctx.fillText(`${window.i18n ? window.i18n.tr('ONDE RESPIRATOIRE :') : 'ONDE RESPIRATOIRE :'} ${data.breathingBpm || '--'} BPM`, 14, 20);
 
         // Ligne de séparation
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
@@ -246,7 +246,7 @@ class RuViewVisualizer {
 
         ctx.font = '10px monospace';
         ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-        ctx.fillText('SPECTRE DE SOUS-PORTEUSES CSI (56 CANAUX OFDM)', 14, splitY + 16);
+        ctx.fillText(window.i18n ? window.i18n.tr('SPECTRE DE SOUS-PORTEUSES CSI (56 CANAUX OFDM)') : 'SPECTRE DE SOUS-PORTEUSES CSI (56 CANAUX OFDM)', 14, splitY + 16);
 
         for (let i = 0; i < spectrum.length; i++) {
             const val = spectrum[i]; // 0 à 70

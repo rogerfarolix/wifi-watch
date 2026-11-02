@@ -101,3 +101,12 @@ function escapeHtml(text) {
         .replace(/'/g, '&#039;');
 }
 
+
+/** Bloc « état vide » : icône, titre et indication d'action. Les textes sont des constantes (non échappées). */
+function emptyState(icon, title, hint = '') {
+    return `<div class="empty-state">
+        <div class="empty-state-icon"><i data-lucide="${icon}"></i></div>
+        <div class="empty-state-title">${title}</div>
+        ${hint ? `<div class="empty-state-hint">${hint}</div>` : ''}
+    </div>`;
+}

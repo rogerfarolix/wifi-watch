@@ -8,7 +8,7 @@
     "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
-    "test": "node --test test/*.test.js"
+    "test": "node --test"
   },
   "build": {
     "appId": "com.nealix.wifiwatch",

@@ -132,7 +132,8 @@ function renderDevicesView() {
         tableCard.style.display = 'none';
 
         if (filtered.length === 0) {
-            gridContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Aucun appareil correspondant aux critères de recherche.</div>`;
+            gridContainer.innerHTML = `<div style="grid-column: 1/-1;">${emptyState('search-x', 'Aucun appareil correspondant aux critères de recherche.', 'Modifiez le filtre ou lancez un nouveau scan.')}</div>`;
+            if (window.lucide) window.lucide.createIcons();
             return;
         }
 
@@ -223,7 +224,8 @@ function renderSecurityView() {
     if (!container) return;
 
     if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 50px;">Aucune alerte enregistrée dans cette catégorie.</div>`;
+        container.innerHTML = emptyState('shield-check', 'Aucune alerte enregistrée dans cette catégorie.', 'Le Sentinel surveille le réseau en continu.');
+        if (window.lucide) window.lucide.createIcons();
         return;
     }
 

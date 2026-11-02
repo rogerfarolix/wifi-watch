@@ -4,6 +4,8 @@
 
 **Next-Generation Zero-Driver WiFi & Local Network Defense Platform for Windows**
 
+[![Release](https://img.shields.io/github/v/release/rogerfarolix/wifi-watch?color=00f0ff)](https://github.com/rogerfarolix/wifi-watch/releases/latest)
+[![CI](https://github.com/rogerfarolix/wifi-watch/actions/workflows/ci.yml/badge.svg)](https://github.com/rogerfarolix/wifi-watch/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078D6?logo=windows)](https://microsoft.com)
 [![Architecture](https://img.shields.io/badge/Architecture-x64%20Portable-success)](https://github.com/rogerfarolix/wifi-watch)
@@ -26,13 +28,35 @@
 
 ---
 
+
+<p align="center">
+  <a href="#-screenshots">Screenshots</a> ·
+  <a href="#-quick-start">Quick start</a> ·
+  <a href="#-key-features">Features</a> ·
+  <a href="#-privacy--network-requests">Privacy</a> ·
+  <a href="#-known-limitations">Limitations</a> ·
+  <a href="ROADMAP.md">Roadmap</a> ·
+  <a href="CHANGELOG.md">Changelog</a>
+</p>
+
 </div>
+
+## ⚡ Quick Start
+
+1. Download **`Wifi-Watch-Portable.exe`** from the [latest release](%s/releases/latest) — no installation, no driver, no admin rights for scanning.
+2. Run it and click **Scan Network**. Within seconds you get every device on your Wi-Fi, its vendor, a trust status, and a security score.
+3. Open **Audit & NIS2** for the compliance view, **SOC Wall** (`F11`) for the big-screen mode, or press `Ctrl + K` to jump anywhere.
+
+> Windows SmartScreen may warn because the binary is not code-signed yet — click *More info → Run anyway*, or [build it from source](#option-b-run-from-source).
+> The interface follows your system language (French / English) and can be switched at any time from the top bar.
+
+---
 
 ## 🌐 English Overview
 
 **Wifi-Watch** is an enterprise-grade autonomous cyber sentinel designed for CISOs, SOC teams, IT administrators, and security auditors. Operating natively on Windows 10 & 11 without requiring risky kernel drivers (like Npcap or WinPcap), it continuously scans, audits, and shields local corporate infrastructures and WiFi networks.
 
-Integrating cutting-edge RF signal analysis inspired by [@ruvnet's RuView](https://github.com/ruvnet) research, Wifi-Watch converts raw 802.11 signal metrics into physical presence estimation and room-level device localization.
+Its RuView module (inspired by [@ruvnet's RuView](https://github.com/ruvnet) research) visualizes RF presence sensing — in simulation mode by default, or with real data from an ESP32-S3 node.
 
 ### ⚡ Why Wifi-Watch?
 
@@ -322,6 +346,35 @@ Wifi-Watch directly supports technical verification requirements of modern cyber
 | **ISO/IEC 27001:2022** | **A.8.1** — User endpoint devices | Complete asset tagging (Department, Owner, Authorized status). |
 | **ISO/IEC 27001:2022** | **A.8.20** — Network security | Multi-subnet and VLAN scanning, ARP spoofing detection. |
 | **ISO/IEC 27001:2022** | **A.8.8** — Management of technical vulnerabilities | Identification of unencrypted WEP/WPA and vulnerable IoT endpoints. |
+
+---
+
+## 🔐 Privacy & Network Requests
+
+Wifi-Watch has **no telemetry, no account, no cloud backend**. Everything is stored locally in your Windows user profile (`%APPDATA%`). The only outbound requests are optional lookups, each sending **only the IP or MAC being checked**:
+
+| Feature | Service | Data sent | Needs a key |
+| :--- | :--- | :--- | :---: |
+| Public IP / ISP (SOC wall) | ip-api.com | your public IP (implicit) | No |
+| WAN exposure audit | Shodan InternetDB | your public IP | No |
+| C2 / botnet check | ThreatFox (abuse.ch) | IP or indicator you check | No |
+| IP reputation | AbuseIPDB | IP you check | Optional |
+| Vendor lookup (fallback) | macvendors.com | first 3 bytes of a MAC | No |
+| Speed test / latency | Cloudflare, Google | standard HTTPS requests | No |
+| Alert webhooks | Your Slack / Teams / Discord URL | alert text | You provide it |
+
+Secrets you enter (webhook URL, AbuseIPDB key) are encrypted at rest with Windows DPAPI. See [SECURITY.md](SECURITY.md).
+
+---
+
+## ⚠️ Known Limitations
+
+- **Windows only** for now (relies on `netsh`, `arp`, Windows Firewall). Linux/macOS are on the [roadmap](ROADMAP.md).
+- **Quarantine** creates Windows Firewall rules on *the machine running Wifi-Watch* (it cuts that PC's traffic with the target). It does not reconfigure your router or switch. Requires administrator rights.
+- **RuView RF sensing** runs in a **simulation mode (RuSense)** unless you connect a real ESP32-S3 node; without hardware, its readings are illustrative, not measurements.
+- **Wi-Fi channel analysis** only sees what your adapter reports through `netsh`; results depend on the driver.
+- The executable is **not code-signed** yet (SmartScreen warning).
+- Some generated texts (the exported HTML audit report) are still French-only.
 
 ---
 

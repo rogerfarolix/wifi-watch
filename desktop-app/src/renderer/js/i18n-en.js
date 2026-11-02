@@ -559,6 +559,13 @@ window.I18N_EN_DYNAMIC = {
   "Simulation de sonde déclenchée ! Le port canari va intercepter un paquet test.": "Probe simulation triggered! The canary port will intercept a test packet.",
   "ESP32 Matériel Connecté": "ESP32 Hardware Connected",
   "Connexion nocturne détectée (23h - 6h)": "Night-time connection detected (11 pm - 6 am)",
+  "Confiance RF //": "RF Confidence //",
+  "Humain": "Human",
+  "ONDE RESPIRATOIRE :": "BREATHING WAVE:",
+  "SPECTRE DE SOUS-PORTEUSES CSI (56 CANAUX OFDM)": "CSI SUBCARRIER SPECTRUM (56 OFDM CHANNELS)",
+  "Périmètre vide : Aucune onde de diffusion corporelle détectée": "Empty perimeter: no body-scattering wave detected",
+  "Le Sentinel surveille le réseau en continu.": "The Sentinel monitors the network continuously.",
+  "Modifiez le filtre ou lancez un nouveau scan.": "Change the filter or run a new scan.",
   "Limite Réseau": "Network Limit",
   "Périphérie": "Periphery",
   "Zone Fiable": "Trusted Zone",
@@ -846,6 +853,10 @@ window.I18N_EN_DYNAMIC = {
   [
    "^Erreur (.*)$",
    "Error $1"
+  ],
+  [
+   "^(\\d+)% Confiance Spatiale$",
+   "$1% Spatial Confidence"
   ],
   [
    "^(\\d+) alertes?$",
