@@ -5,6 +5,18 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
+## [2.0.2] — 2026-11-02
+
+### ✨ Interface
+- États vides soignés (icône, titre, indication) pour les alertes et la recherche d'appareils.
+- Page Paramètres centrée et plus large ; survol des cartes, anneau de focus clavier, respect de « réduire les animations ».
+- RuView : textes du canvas traduits en anglais.
+
+### 📚 Documentation
+- README : Quick Start, tableau de confidentialité (requêtes sortantes), limitations connues, badges release et CI.
+
+---
+
 ## [2.0.1] — 2026-11-02
 
 ### 🛡️ Sécurité
