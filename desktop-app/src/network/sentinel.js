@@ -72,7 +72,7 @@ class Sentinel {
         }
 
         // 4. Activité nocturne sur appareil inconnu
-        const hour = new Date().getHours();
+        const hour = this.getHour ? this.getHour() : new Date().getHours();
         if (hour >= 0 && hour < 5) {
             for (const dev of scannedDevices) {
                 const existing = existingMap.get(dev.mac.toUpperCase());

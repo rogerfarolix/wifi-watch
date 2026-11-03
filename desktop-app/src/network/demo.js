@@ -117,4 +117,40 @@ function wanInfo() {
     return { ip: '203.0.113.7', country: 'France', city: 'Paris', isp: 'Example ISP', org: 'Example ISP' };
 }
 
-module.exports = { getEnvironment, scan, neighborNetworks, bandwidthSample, scanPorts, wanInfo, DEMO_SSID };
+const SPY_PORT_INFO = {
+    554: { port: 554, service: 'RTSP', protocol: 'Video Stream', desc: 'Flux vidéo en direct non chiffré (RTSP)', risk: 'high' },
+    8000: { port: 8000, service: 'Hikvision / DVR', protocol: 'Camera Control', desc: 'Port de gestion Hikvision / DVR', risk: 'high' },
+    37777: { port: 37777, service: 'Dahua', protocol: 'Camera Control', desc: 'Port propriétaire Dahua Technology', risk: 'high' }
+};
+const SPY_FINDINGS = {
+    '192.168.1.40': { level: 'CRITICAL', reason: 'Flux vidéo direct (RTSP) ouvert sans authentification requise !', brand: 'Hikvision', ports: [554, 8000] },
+    '192.168.1.41': { level: 'HIGH', reason: 'Équipement de diffusion audio/vidéo actif sur le réseau local', brand: 'Dahua', ports: [554, 37777] }
+};
+
+function spyReport(device) {
+    const f = SPY_FINDINGS[device.ip];
+    const base = { ip: device.ip, mac: device.mac, hostname: device.hostname || 'Appareil Inconnu', vendor: device.vendor || 'Inconnu', scannedAt: new Date().toISOString() };
+    if (!f) {
+        return { ...base, isSurveillanceDevice: false, threatLevel: 'SAFE', riskReason: 'Aucun flux vidéo ou micro détecté', detectedBrand: null, equipmentType: 'Équipement Standard', openSurveillancePorts: [], streamUrls: [], hasAudioCapability: false };
+    }
+    return {
+        ...base, isSurveillanceDevice: true, threatLevel: f.level, riskReason: f.reason, detectedBrand: f.brand,
+        equipmentType: 'Caméra IP', openSurveillancePorts: f.ports.map(p => SPY_PORT_INFO[p]),
+        streamUrls: [`rtsp://${device.ip}:554/live/ch0`, `rtsp://${device.ip}:554/onvif1`], hasAudioCapability: true
+    };
+}
+
+async function spyHunt(devices, onProgress) {
+    const online = devices.filter(d => d.isOnline);
+    const results = [];
+    for (let i = 0; i < online.length; i++) {
+        const dev = online[i];
+        if (onProgress) onProgress({ current: i + 1, total: online.length, currentIp: dev.ip, currentName: dev.customName || dev.hostname || dev.ip });
+        await new Promise(r => setTimeout(r, 250));
+        const report = spyReport(dev);
+        if (report.isSurveillanceDevice) results.push(report);
+    }
+    return { scannedCount: online.length, spyDevicesFound: results.length, devices: results, timestamp: new Date().toISOString() };
+}
+
+module.exports = { spyHunt, spyReport, getEnvironment, scan, neighborNetworks, bandwidthSample, scanPorts, wanInfo, DEMO_SSID };

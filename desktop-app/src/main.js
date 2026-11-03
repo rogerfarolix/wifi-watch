@@ -19,7 +19,7 @@ const { executeFullSpeedTest } = require('./network/speedtest');
 const { scanNeighborNetworks: realScanNeighborNetworks } = require('./network/channelAnalyzer');
 const { wakeDevice: realWakeDevice } = require('./network/wol');
 const { calculateSecurityScore, generateHtmlReport } = require('./network/auditReport');
-const { scanDeviceForSurveillance, huntAllSpyDevices } = require('./network/spyDetector');
+const { scanDeviceForSurveillance: realScanDeviceForSurveillance, huntAllSpyDevices: realHuntAllSpyDevices } = require('./network/spyDetector');
 const quarantine = require('./network/quarantine');
 const RuViewBridge = require('./network/ruviewBridge');
 const WebhookDispatcher = require('./network/webhookDispatcher');
@@ -46,6 +46,8 @@ const getNetworkEnvironment = DEMO ? async () => demo.getEnvironment() : realGet
 const performScan = DEMO ? async (env, onProgress) => demo.scan(onProgress) : realPerformScan;
 const scanNeighborNetworks = DEMO ? async () => demo.neighborNetworks() : realScanNeighborNetworks;
 const scanDevicePorts = DEMO ? async (ip) => demo.scanPorts(ip) : realScanDevicePorts;
+const huntAllSpyDevices = DEMO ? demo.spyHunt : realHuntAllSpyDevices;
+const scanDeviceForSurveillance = DEMO ? async (d) => demo.spyReport(d) : realScanDeviceForSurveillance;
 const wakeDevice = DEMO ? async () => ({ success: true }) : realWakeDevice;
 const isolateDevice = DEMO ? async () => ({ success: true }) : quarantine.isolateDevice;
 const unisolateDevice = DEMO ? async () => ({ success: true }) : quarantine.unisolateDevice;
@@ -186,6 +188,33 @@ async function startBackgroundServices() {
     setTimeout(() => {
         executeScan();
     }, 1000);
+
+    if (DEMO) {
+        // Démo : quelques alertes réalistes en plus de l'Evil Twin levé par le scan
+        setTimeout(() => {
+            const seeded = [
+                db.addAlert({
+                    type: 'CANARY_TRAP_TRIGGERED',
+                    title: 'ALERTE INTRUSION : Sonde suspecte sur le port canari !',
+                    description: "L'hôte 192.168.1.88 a tenté de se connecter au port leurre 4455. Risque de scan agressif ou mouvement latéral.",
+                    severity: 'critical', ip: '192.168.1.88'
+                }),
+                db.addAlert({
+                    type: 'NEW_DEVICE', title: 'Nouvel appareil détecté sur le Wi-Fi',
+                    description: "Un appareil inconnu (Inconnu) a rejoint le réseau avec l'IP 192.168.1.77 et la MAC A0:B1:C2:77:00:77.",
+                    severity: 'warning', deviceMac: 'A0:B1:C2:77:00:77', ip: '192.168.1.77'
+                }),
+                db.addAlert({
+                    type: 'NEW_DEVICE', title: 'Nouvel appareil détecté sur le Wi-Fi',
+                    description: "Un appareil inconnu (Inconnu) a rejoint le réseau avec l'IP 192.168.1.88 et la MAC A0:B1:C2:88:00:88.",
+                    severity: 'warning', deviceMac: 'A0:B1:C2:88:00:88', ip: '192.168.1.88'
+                })
+            ].filter(Boolean);
+            for (const alert of seeded) {
+                if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('alert:added', alert);
+            }
+        }, 4000);
+    }
 
     // Initialisation du canari Honeypot si activé
     const settings = db.getSettings();
@@ -404,6 +433,7 @@ app.whenReady().then(() => {
     }
     speedMonitor = new SpeedMonitor();
     sentinel = new Sentinel(db);
+    if (DEMO) sentinel.getHour = () => 14; // démo : pas d'alerte « activité nocturne » selon l'heure réelle
     ruviewBridge = new RuViewBridge(() => mainWindow);
 
     createWindow();

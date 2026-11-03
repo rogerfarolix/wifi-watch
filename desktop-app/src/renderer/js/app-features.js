@@ -719,7 +719,7 @@ async function refreshWallboard() {
                 <div class="wb-event-item ${a.severity === 'critical' ? 'critical' : (a.severity === 'warning' ? 'warning' : '')}">
                     <div>
                         <strong style="color: var(--text-primary); font-size: 11px;">${escapeHtml(a.title)}</strong>
-                        <div style="font-size: 10px; color: var(--text-muted);">${a.description ? escapeHtml(a.description.slice(0, 65)) + '...' : ''}</div>
+                        <div style="font-size: 10px; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${a.description ? escapeHtml(a.description) : ''}</div>
                     </div>
                     <span style="font-family: monospace; color: var(--text-muted); font-size: 10px; white-space: nowrap;">
                         ${new Date(a.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}

@@ -646,6 +646,10 @@ window.I18N_EN_DYNAMIC = {
   "Aucun serveur DHCP pirate ou conflit de passerelle détecté sur le segment local.": "No rogue DHCP server or gateway conflict detected on the local segment.",
   "URL WebSocket invalide (ws:// ou wss:// requis)": "Invalid WebSocket URL (ws:// or wss:// required)",
   "(à jour)": "(up to date)",
+  "Caméra IP": "IP Camera",
+  "Flux vidéo direct (RTSP) ouvert sans authentification requise !": "Direct video stream (RTSP) open with no authentication required!",
+  "Équipement de diffusion audio/vidéo actif sur le réseau local": "Active audio/video streaming device on the local network",
+  "Aucun flux vidéo ou micro détecté": "No video stream or microphone detected",
   "Quitter la démo": "Exit the demo",
   "Vous utilisez la dernière version.": "You are running the latest version."
  },
@@ -665,6 +669,10 @@ window.I18N_EN_DYNAMIC = {
   [
    "^Impossible de vérifier les mises à jour : (.+)$",
    "Unable to check for updates: $1"
+  ],
+  [
+   "^Flux : (.+)$",
+   "Stream: $1"
   ],
   [
    "^Canal : (.+)$",
