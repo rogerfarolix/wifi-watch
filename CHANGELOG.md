@@ -5,6 +5,13 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
+## [2.0.4] - 2026-11-03
+
+### Maintenance
+- Dépendances mises à jour : chart.js 4.6.1, lucide 1.65, electron-builder 26.18.
+
+---
+
 ## [2.0.3] - 2026-11-03
 
 ### Ajouts

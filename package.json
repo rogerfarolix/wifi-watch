@@ -1,6 +1,6 @@
 {
   "name": "wifi-watch",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Wifi-Watch - Enterprise Cyber Sentinel & Autonomous Network Radar",
   "private": true,
   "scripts": {
