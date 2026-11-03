@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-title-fr="Confidentialité - Wifi-Watch" data-desc-fr="Politique de confidentialité de Wifi-Watch et de son site : aucune télémétrie, aucun cookie, aucune donnée envoyée sans votre action.">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy - Wifi-Watch</title>
+<meta name="description" content="Privacy policy of Wifi-Watch and its website: no telemetry, no cookies, nothing sent unless you ask for it.">
+<link rel="canonical" href="https://rogerfarolix.github.io/wifi-watch/privacy.html">
+<meta name="theme-color" content="#05070d">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Privacy - Wifi-Watch">
+<meta property="og:description" content="No telemetry, no cookies, no account. What Wifi-Watch and its website do with your data.">
+<meta property="og:url" content="https://rogerfarolix.github.io/wifi-watch/privacy.html">
+<meta property="og:image" content="https://rogerfarolix.github.io/wifi-watch/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="index.html" aria-label="Wifi-Watch"><img src="assets/icon.webp" alt="" width="28" height="28"><span>Wifi-Watch</span></a>
+  <div class="nav-actions">
+    <a class="btn btn-ghost" href="index.html" data-i18n="doc.back">Back to home</a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="en" class="on" aria-label="English">EN</button>
+      <button type="button" data-lang="fr" aria-label="Français">FR</button>
+    </div>
+  </div>
+</header>
+
+<main class="doc">
+  <div class="l-en">
+    <h1>Privacy policy</h1>
+    <p class="updated">Last updated: 3 November 2026</p>
+    <p>Wifi-Watch is a free, open-source project. This page covers two things: the <strong>website</strong> you are reading, and the <strong>Windows application</strong>. In short: no account, no cookies, no analytics and no telemetry.</p>
+
+    <h2>The website</h2>
+    <ul>
+      <li><strong>Hosting.</strong> The site is a static page served by GitHub Pages. GitHub may log technical data such as your IP address when you load it, under <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">its own privacy statement</a>.</li>
+      <li><strong>No cookies, no analytics, no ads.</strong> I do not run any tracker.</li>
+      <li><strong>Language choice.</strong> Your choice of English or French is stored in your browser (<code>localStorage</code>, key <code>ww-lang</code>). It never leaves your device. Clear your browser data to remove it.</li>
+      <li><strong>Release information.</strong> Your browser asks the public GitHub API for the latest version, file size and download count. That request goes straight from your browser to GitHub.</li>
+      <li><strong>Links.</strong> Buttons lead to GitHub, which has its own policy.</li>
+    </ul>
+
+    <h2>The application</h2>
+    <ul>
+      <li><strong>No telemetry, no account, no cloud backend.</strong> Everything is stored on your PC, in your Windows user profile (<code>%APPDATA%</code>).</li>
+      <li><strong>Secrets are encrypted</strong> at rest with Windows DPAPI: the webhook URL and the AbuseIPDB key.</li>
+      <li><strong>Network data stays local.</strong> The device list, MAC and IP addresses, alerts and history are never uploaded.</li>
+    </ul>
+    <p>The application only contacts the services below, and only for the feature that needs it. Each sends only what the table says.</p>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Feature</th><th>Service</th><th>What is sent</th><th>Can be avoided</th></tr></thead>
+      <tbody>
+        <tr><td>Public IP and provider (SOC wall)</td><td>ip-api.com</td><td>Your public IP (implicit in the request)</td><td>Do not open the SOC wall</td></tr>
+        <tr><td>WAN exposure audit</td><td>Shodan InternetDB</td><td>Your public IP</td><td>Do not run the audit</td></tr>
+        <tr><td>C2 and botnet check</td><td>ThreatFox (abuse.ch)</td><td>The IP or indicator you check</td><td>Do not run the check</td></tr>
+        <tr><td>IP reputation</td><td>AbuseIPDB</td><td>The IP you check, with your key if you set one</td><td>Leave the key empty</td></tr>
+        <tr><td>Vendor lookup (fallback)</td><td>macvendors.com</td><td>The first 3 bytes of a MAC address</td><td>Not needed for scanning</td></tr>
+        <tr><td>Speed and latency test</td><td>Cloudflare, Google</td><td>Standard HTTPS requests</td><td>Do not run the test</td></tr>
+        <tr><td>Update check</td><td>GitHub API</td><td>A standard request, nothing else</td><td>Turn it off in Settings</td></tr>
+        <tr><td>Alert webhooks</td><td>The URL you provide</td><td>The alert text</td><td>Leave webhooks disabled</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Monitoring other people</h2>
+    <p>If you use Wifi-Watch on a network used by employees, family members or guests, you are responsible for informing them and for respecting the law that applies to you (for example the GDPR in the European Union or your national data protection law). The tool lists devices and network activity; it does not read the content of anyone's traffic.</p>
+
+    <h2>Your rights and contact</h2>
+    <p>I hold no personal data about you, so there is nothing to export or delete on my side. For any question about this policy, open an issue on <a href="https://github.com/rogerfarolix/wifi-watch/issues" rel="noopener">GitHub</a>. For a security problem, use <a href="https://github.com/rogerfarolix/wifi-watch/security/advisories/new" rel="noopener">private vulnerability reporting</a>.</p>
+    <p>If this policy changes, the date above will change and the history will be visible in the repository.</p>
+  </div>
+
+  <div class="l-fr">
+    <h1>Politique de confidentialité</h1>
+    <p class="updated">Dernière mise à jour : 3 novembre 2026</p>
+    <p>Wifi-Watch est un projet gratuit et open source. Cette page couvre deux choses : le <strong>site web</strong> que vous lisez et l'<strong>application Windows</strong>. En bref : aucun compte, aucun cookie, aucun outil d'analyse et aucune télémétrie.</p>
+
+    <h2>Le site web</h2>
+    <ul>
+      <li><strong>Hébergement.</strong> Le site est une page statique servie par GitHub Pages. GitHub peut enregistrer des données techniques comme votre adresse IP quand vous la chargez, selon <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">sa propre politique</a>.</li>
+      <li><strong>Pas de cookies, pas d'analyse d'audience, pas de publicité.</strong> Je n'utilise aucun traceur.</li>
+      <li><strong>Choix de la langue.</strong> Votre choix entre français et anglais est conservé dans votre navigateur (<code>localStorage</code>, clé <code>ww-lang</code>). Il ne quitte jamais votre appareil. Effacez les données du navigateur pour le supprimer.</li>
+      <li><strong>Informations de version.</strong> Votre navigateur interroge l'API publique de GitHub pour connaître la dernière version, la taille du fichier et le nombre de téléchargements. Cette requête va directement de votre navigateur à GitHub.</li>
+      <li><strong>Liens.</strong> Les boutons mènent à GitHub, qui a sa propre politique.</li>
+    </ul>
+
+    <h2>L'application</h2>
+    <ul>
+      <li><strong>Pas de télémétrie, pas de compte, pas de cloud.</strong> Tout est stocké sur votre PC, dans votre profil Windows (<code>%APPDATA%</code>).</li>
+      <li><strong>Les secrets sont chiffrés</strong> au repos avec Windows DPAPI : l'URL de webhook et la clé AbuseIPDB.</li>
+      <li><strong>Les données réseau restent locales.</strong> La liste des appareils, les adresses MAC et IP, les alertes et l'historique ne sont jamais envoyés.</li>
+    </ul>
+    <p>L'application ne contacte que les services ci-dessous, et seulement pour la fonction qui en a besoin. Chacun ne reçoit que ce que dit le tableau.</p>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Fonction</th><th>Service</th><th>Ce qui est envoyé</th><th>Évitable</th></tr></thead>
+      <tbody>
+        <tr><td>IP publique et fournisseur (mur SOC)</td><td>ip-api.com</td><td>Votre IP publique (implicite dans la requête)</td><td>N'ouvrez pas le mur SOC</td></tr>
+        <tr><td>Audit d'exposition WAN</td><td>Shodan InternetDB</td><td>Votre IP publique</td><td>Ne lancez pas l'audit</td></tr>
+        <tr><td>Contrôle C2 et botnet</td><td>ThreatFox (abuse.ch)</td><td>L'IP ou l'indicateur que vous vérifiez</td><td>Ne lancez pas le contrôle</td></tr>
+        <tr><td>Réputation d'une IP</td><td>AbuseIPDB</td><td>L'IP vérifiée, avec votre clé si vous en avez saisi une</td><td>Laissez la clé vide</td></tr>
+        <tr><td>Recherche du fabricant (secours)</td><td>macvendors.com</td><td>Les 3 premiers octets d'une adresse MAC</td><td>Inutile pour scanner</td></tr>
+        <tr><td>Test de débit et de latence</td><td>Cloudflare, Google</td><td>Requêtes HTTPS standard</td><td>Ne lancez pas le test</td></tr>
+        <tr><td>Vérification des mises à jour</td><td>API GitHub</td><td>Une requête standard, rien d'autre</td><td>Désactivable dans les Paramètres</td></tr>
+        <tr><td>Webhooks d'alerte</td><td>L'URL que vous fournissez</td><td>Le texte de l'alerte</td><td>Laissez les webhooks désactivés</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Surveiller d'autres personnes</h2>
+    <p>Si vous utilisez Wifi-Watch sur un réseau fréquenté par des salariés, des proches ou des invités, c'est à vous de les informer et de respecter la loi qui vous concerne (par exemple le RGPD dans l'Union européenne ou votre loi nationale sur les données personnelles). L'outil liste les appareils et l'activité du réseau ; il ne lit pas le contenu du trafic de quiconque.</p>
+
+    <h2>Vos droits et contact</h2>
+    <p>Je ne détiens aucune donnée personnelle vous concernant : il n'y a donc rien à exporter ni à supprimer de mon côté. Pour toute question sur cette politique, ouvrez un ticket sur <a href="https://github.com/rogerfarolix/wifi-watch/issues" rel="noopener">GitHub</a>. Pour un problème de sécurité, utilisez le <a href="https://github.com/rogerfarolix/wifi-watch/security/advisories/new" rel="noopener">signalement privé de vulnérabilité</a>.</p>
+    <p>Si cette politique change, la date ci-dessus changera et l'historique restera visible dans le dépôt.</p>
+  </div>
+</main>
+
+<footer>
+  <div>
+    <a class="brand" href="index.html"><img src="assets/icon.webp" alt="" width="22" height="22"><span>Wifi-Watch</span></a>
+    <p data-i18n="foot.line">Open-source network security for Windows. For networks you own or are authorized to audit.</p>
+  </div>
+  <nav aria-label="Links">
+    <a href="index.html" data-i18n="doc.back">Back to home</a>
+    <a href="privacy.html" data-i18n="foot.priv">Privacy</a>
+    <a href="terms.html" data-i18n="foot.terms">Terms of use</a>
+    <a href="https://github.com/rogerfarolix/wifi-watch" rel="noopener">GitHub</a>
+  </nav>
+</footer>
+<script src="site.js"></script>
+</body>
+</html>

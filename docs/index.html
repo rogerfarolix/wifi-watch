@@ -2,127 +2,182 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wifi-Watch - See who is on your Wi-Fi, and catch what should not be</title>
-<meta name="description" content="Wifi-Watch is a free, open-source Windows tool that inventories every device on your network and detects rogue access points, fake DHCP servers, ARP spoofing and hidden cameras. No driver, no account, no telemetry.">
-<meta property="og:title" content="Wifi-Watch - Network security for Windows">
-<meta property="og:description" content="Free and open source. See every device on your Wi-Fi and catch Evil Twin access points, rogue DHCP, ARP spoofing and hidden cameras. No driver, no telemetry.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://rogerfarolix.github.io/wifi-watch/">
-<meta property="og:image" content="https://rogerfarolix.github.io/wifi-watch/assets/soc-wallboard.png">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wifi-Watch - Free Wi-Fi security tool for Windows</title>
+<meta name="description" content="Free, open-source Windows tool that lists every device on your Wi-Fi and detects Evil Twin access points, rogue DHCP, ARP spoofing and hidden cameras.">
+<link rel="canonical" href="https://rogerfarolix.github.io/wifi-watch/">
 <meta name="theme-color" content="#05070d">
-<link rel="icon" href="assets/icon.png">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="index, follow">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Wifi-Watch">
+<meta property="og:title" content="Wifi-Watch - See who is on your Wi-Fi">
+<meta property="og:description" content="Free and open source. Catch Evil Twin access points, rogue DHCP, ARP spoofing and hidden cameras. No driver, no account, no telemetry.">
+<meta property="og:url" content="https://rogerfarolix.github.io/wifi-watch/">
+<meta property="og:image" content="https://rogerfarolix.github.io/wifi-watch/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Wifi-Watch SOC wallboard showing a network radar and live security alerts">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Wifi-Watch - See who is on your Wi-Fi">
+<meta name="twitter:description" content="Free and open source network security for Windows. No driver, no account, no telemetry.">
+<meta name="twitter:image" content="https://rogerfarolix.github.io/wifi-watch/assets/og-image.png">
+<meta name="twitter:image:alt" content="Wifi-Watch SOC wallboard showing a network radar and live security alerts">
+
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" as="image" type="image/webp" href="assets/dashboard.webp">
 <link rel="stylesheet" href="style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Wifi-Watch",
+      "applicationCategory": "SecurityApplication",
+      "operatingSystem": "Windows 10, Windows 11",
+      "description": "Free, open-source Windows tool that lists every device on your Wi-Fi and detects Evil Twin access points, rogue DHCP servers, ARP spoofing and hidden cameras.",
+      "url": "https://rogerfarolix.github.io/wifi-watch/",
+      "downloadUrl": "https://github.com/rogerfarolix/wifi-watch/releases/latest/download/Wifi-Watch-Portable.exe",
+      "license": "https://opensource.org/licenses/MIT",
+      "image": "https://rogerfarolix.github.io/wifi-watch/assets/og-image.png",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is Wifi-Watch really free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. It is open source under the MIT license: free to use, read, modify and share, with no account and no paid tier." } },
+        { "@type": "Question", "name": "Does it work on Mac, Linux or a phone?", "acceptedAnswer": { "@type": "Answer", "text": "Not yet. Wifi-Watch is built for Windows 10 and 11. Cross-platform support is on the roadmap." } },
+        { "@type": "Question", "name": "Can it tell me who downloads movies or games?", "acceptedAnswer": { "@type": "Answer", "text": "No. A PC on Wi-Fi only sees its own traffic, and most traffic is encrypted. For per-device usage you need a router or firewall that reports it." } },
+        { "@type": "Question", "name": "Does it send my data anywhere?", "acceptedAnswer": { "@type": "Answer", "text": "No telemetry, no account and no cloud. Your data stays on your PC. A few optional lookups send only the IP or MAC address you are checking, and the privacy page lists each one." } },
+        { "@type": "Question", "name": "Why does Windows SmartScreen warn me?", "acceptedAnswer": { "@type": "Answer", "text": "The executable is not code-signed yet, because a signing certificate is paid. Click More info, then Run anyway, or build the app from source." } },
+        { "@type": "Question", "name": "Is it legal to scan a network?", "acceptedAnswer": { "@type": "Answer", "text": "Only scan networks you own or have written permission to audit. Wifi-Watch is a defensive tool, not an attack tool." } }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-download" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></symbol>
+    <symbol id="i-github" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-radar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 12 19 7"/></g></symbol>
+    <symbol id="i-wifi-off" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12.5a10 10 0 0 1 14 0M8 15.5a6 6 0 0 1 8 0M11 18.5a2 2 0 0 1 2 0M4 4l16 16"/></g></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></g></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/></g></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="7" width="12" height="10" rx="2"/><path d="m15 11 6-3v8l-6-3"/></g></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M10 12h6M10 16h6"/></g></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></g></symbol>
+    <symbol id="i-bars" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4 18V9m5 9V5m5 13v-7m5 7V8"/></symbol>
+    <symbol id="i-ban" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/></g></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-bug" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="8" height="11" rx="4"/><path d="M9 8a3 3 0 0 1 6 0M4 13h4M16 13h4M5 7l3 3M19 7l-3 3M5 19l3-3M19 19l-3-3"/></g></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></g></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m8 8-4 4 4 4m8-8 4 4-4 4m-3-10-2 12"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#main" data-i18n="a11y.skip">Skip to content</a>
+
 <header class="nav" id="top">
-  <a class="brand" href="#top"><img src="assets/icon.png" alt="" width="28" height="28"><span>Wifi-Watch</span></a>
-  <nav class="nav-links" aria-label="Main">
+  <a class="brand" href="#top" aria-label="Wifi-Watch"><img src="assets/icon.webp" alt="" width="28" height="28"><span>Wifi-Watch</span></a>
+  <nav class="nav-links" id="nav-links" aria-label="Main">
     <a href="#preview" data-i18n="nav.preview">Preview</a>
     <a href="#features" data-i18n="nav.features">Features</a>
     <a href="#private" data-i18n="nav.private">Privacy</a>
     <a href="#demo" data-i18n="nav.demo">Demo</a>
-    <a href="#news" data-i18n="nav.news">What's new</a>
+    <a href="#faq" data-i18n="nav.faq">FAQ</a>
     <a href="#download" data-i18n="nav.download">Download</a>
+    <a href="#contact" data-i18n="nav.contact">Contact</a>
   </nav>
   <div class="nav-actions">
-    <a class="btn btn-ghost" href="https://github.com/rogerfarolix/wifi-watch" rel="noopener">
-      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-      GitHub
-    </a>
+    <a class="btn btn-ghost nav-gh" href="https://github.com/rogerfarolix/wifi-watch" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-github"/></svg>GitHub</a>
     <div class="lang" role="group" aria-label="Language">
-      <button type="button" data-lang="en" class="on">EN</button>
-      <button type="button" data-lang="fr">FR</button>
+      <button type="button" data-lang="en" class="on" aria-label="English">EN</button>
+      <button type="button" data-lang="fr" aria-label="Français">FR</button>
     </div>
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">
+      <svg class="ico" aria-hidden="true"><use href="#i-menu"/></svg>
+    </button>
   </div>
 </header>
 
-<main>
+<main id="main">
   <section class="hero">
     <p class="pill" data-i18n="hero.pill">Free and open source for Windows 10 and 11</p>
     <h1 data-i18n="hero.title">See who is on your <span class="nb">Wi-Fi</span>.</h1>
     <p class="lead" data-i18n="hero.lead">Wifi-Watch lists every device on your network and warns you about fake access points, rogue DHCP servers, ARP spoofing and hidden cameras. No driver, no account, nothing sent to the cloud.</p>
     <div class="cta">
       <a class="btn btn-primary" id="dl-main" href="https://github.com/rogerfarolix/wifi-watch/releases/latest/download/Wifi-Watch-Portable.exe">
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>
+        <svg class="ico" aria-hidden="true"><use href="#i-download"/></svg>
         <span data-i18n="hero.download">Download for Windows</span>
       </a>
       <a class="btn btn-outline" href="#demo" data-i18n="hero.try">Try the demo</a>
     </div>
-    <p class="meta"><span id="rel-version">Latest release</span><span id="rel-size"></span><span id="rel-count"></span></p>
+    <p class="meta"><span id="rel-version"></span><span id="rel-size"></span><span id="rel-count"></span></p>
   </section>
 
-  <section class="shot-wrap" id="preview" aria-label="Preview">
+  <section class="shot-wrap reveal" id="preview" aria-label="Preview">
     <div class="tabs" role="tablist" id="shot-tabs">
-      <button role="tab" class="on" data-shot="dashboard" data-i18n="tab.dashboard">Dashboard</button>
-      <button role="tab" data-shot="radar" data-i18n="tab.radar">Radar</button>
-      <button role="tab" data-shot="soc-wallboard" data-i18n="tab.soc">SOC wall</button>
-      <button role="tab" data-shot="audit-nis2" data-i18n="tab.audit">NIS2 audit</button>
-      <button role="tab" data-shot="spy-hunter" data-i18n="tab.spy">Spy hunter</button>
-      <button role="tab" data-shot="wifi-channels" data-i18n="tab.channels">Channels</button>
+      <button role="tab" class="on" aria-selected="true" data-shot="dashboard" data-i18n="tab.dashboard">Dashboard</button>
+      <button role="tab" aria-selected="false" data-shot="radar" data-i18n="tab.radar">Radar</button>
+      <button role="tab" aria-selected="false" data-shot="soc-wallboard" data-i18n="tab.soc">SOC wall</button>
+      <button role="tab" aria-selected="false" data-shot="audit-nis2" data-i18n="tab.audit">NIS2 audit</button>
+      <button role="tab" aria-selected="false" data-shot="spy-hunter" data-i18n="tab.spy">Spy hunter</button>
+      <button role="tab" aria-selected="false" data-shot="wifi-channels" data-i18n="tab.channels">Channels</button>
     </div>
     <div class="window">
       <div class="window-bar"><i></i><i></i><i></i><span>Wifi-Watch</span></div>
-      <img id="shot" src="assets/dashboard.png" width="1280" height="840" alt="Wifi-Watch dashboard in demo mode">
+      <img id="shot" src="assets/dashboard.webp" width="1280" height="840" alt="Wifi-Watch dashboard in demo mode">
     </div>
     <p class="note" data-i18n="shot.note">Screenshots come from the built-in demo mode: a fictional network, no real data.</p>
   </section>
 
-  <section class="band" id="features">
+  <section class="band reveal" id="features">
     <h2 data-i18n="feat.title">Everything a network check should cover.</h2>
     <p class="sub" data-i18n="feat.sub">One portable app. Open it, scan, and read the result.</p>
     <div class="grid">
-      <article class="card">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 12 19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <article class="card"><svg class="ico" aria-hidden="true"><use href="#i-radar"/></svg>
         <h3 data-i18n="f1.t">Device inventory and radar</h3>
-        <p data-i18n="f1.p">Every device on the network with its vendor, trust status and an owner you assign. Unknown devices stand out right away.</p>
-      </article>
-      <article class="card">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5a10 10 0 0 1 14 0M8 15.5a6 6 0 0 1 8 0M11 18.5a2 2 0 0 1 2 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <p data-i18n="f1.p">Every device on the network with its vendor, trust status and an owner you assign. Unknown devices stand out right away.</p></article>
+      <article class="card"><svg class="ico" aria-hidden="true"><use href="#i-wifi-off"/></svg>
         <h3 data-i18n="f2.t">Evil Twin detection</h3>
-        <p data-i18n="f2.p">Spots a fake access point that copies the name of your Wi-Fi, and shows its channel and signal.</p>
-      </article>
-      <article class="card">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p data-i18n="f2.p">Spots a fake access point that copies the name of your Wi-Fi, and shows its channel and signal.</p></article>
+      <article class="card"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>
         <h3 data-i18n="f3.t">Rogue DHCP and ARP spoofing</h3>
-        <p data-i18n="f3.p">Warns when a second DHCP server answers or when your router's MAC address suddenly changes.</p>
-      </article>
-      <article class="card">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/></svg>
+        <p data-i18n="f3.p">Warns when a second DHCP server answers or when your router's MAC address suddenly changes.</p></article>
+      <article class="card"><svg class="ico" aria-hidden="true"><use href="#i-target"/></svg>
         <h3 data-i18n="f4.t">Canary honeypot</h3>
-        <p data-i18n="f4.p">A decoy port that nobody should touch. If something probes it, you get a critical alert.</p>
-      </article>
-      <article class="card">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="12" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m15 11 6-3v8l-6-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <p data-i18n="f4.p">A decoy port that nobody should touch. If something probes it, you get a critical alert.</p></article>
+      <article class="card"><svg class="ico" aria-hidden="true"><use href="#i-camera"/></svg>
         <h3 data-i18n="f5.t">Hidden camera hunter</h3>
-        <p data-i18n="f5.p">Finds IP cameras and open video streams (RTSP) on your network, and flags the ones with no authentication.</p>
-      </article>
-      <article class="card">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 12h6M10 16h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <p data-i18n="f5.p">Finds IP cameras and open video streams (RTSP) on your network, and flags the ones with no authentication.</p></article>
+      <article class="card"><svg class="ico" aria-hidden="true"><use href="#i-file"/></svg>
         <h3 data-i18n="f6.t">NIS2 and ISO 27001 view</h3>
-        <p data-i18n="f6.p">A security score, a compliance table and an HTML report you can hand to a manager or an auditor.</p>
-      </article>
-      <article class="card">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 20h8M12 16v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <p data-i18n="f6.p">A security score, a compliance table and an HTML report you can hand to a manager or an auditor.</p></article>
+      <article class="card"><svg class="ico" aria-hidden="true"><use href="#i-monitor"/></svg>
         <h3 data-i18n="f7.t">Full-screen SOC wall</h3>
-        <p data-i18n="f7.p">A wallboard for a meeting-room screen: radar, alerts and network health at a glance.</p>
-      </article>
-      <article class="card">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18V9m5 9V5m5 13v-7m5 7V8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <p data-i18n="f7.p">A wallboard for a meeting-room screen: radar, alerts and network health at a glance.</p></article>
+      <article class="card"><svg class="ico" aria-hidden="true"><use href="#i-bars"/></svg>
         <h3 data-i18n="f8.t">Channels and speed</h3>
-        <p data-i18n="f8.p">See which Wi-Fi channel is crowded, get a recommendation, and measure latency, jitter and throughput.</p>
-      </article>
-      <article class="card">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m8 8 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <p data-i18n="f8.p">See which Wi-Fi channel is crowded, get a recommendation, and measure latency, jitter and throughput.</p></article>
+      <article class="card"><svg class="ico" aria-hidden="true"><use href="#i-ban"/></svg>
         <h3 data-i18n="f9.t">One-click isolation</h3>
-        <p data-i18n="f9.p">Block a suspicious device with a Windows Firewall rule on this PC. Easy to undo, and no router access needed.</p>
-      </article>
+        <p data-i18n="f9.p">Block a suspicious device with a Windows Firewall rule on this PC. Easy to undo, and no router access needed.</p></article>
     </div>
   </section>
 
-  <section class="split" id="private">
+  <section class="split reveal" id="private">
     <div>
       <h2 data-i18n="priv.title">Light, local and quiet.</h2>
       <p class="sub left" data-i18n="priv.sub">Wifi-Watch does its work on your PC and keeps what it finds there.</p>
@@ -130,9 +185,10 @@
         <li data-i18n="priv.1">No driver to install: it uses what Windows already provides.</li>
         <li data-i18n="priv.2">No account, no cloud backend, no telemetry.</li>
         <li data-i18n="priv.3">Webhook URL and API keys are encrypted with Windows DPAPI.</li>
-        <li data-i18n="priv.4">Optional lookups send only the IP or MAC you are checking. The README lists every outbound request.</li>
+        <li data-i18n="priv.4">Optional lookups send only the IP or MAC you are checking. The privacy page lists every outbound request.</li>
         <li data-i18n="priv.5">MIT license. Read the code, build it yourself, change it.</li>
       </ul>
+      <p class="note" style="text-align:left"><a href="privacy.html" data-i18n="priv.link">Read the privacy policy</a></p>
     </div>
     <div class="facts">
       <div><b>0</b><span data-i18n="fact.1">drivers to install</span></div>
@@ -142,7 +198,7 @@
     </div>
   </section>
 
-  <section class="band" id="demo">
+  <section class="band reveal" id="demo">
     <h2 data-i18n="demo.title">Try it in 30 seconds.</h2>
     <p class="sub" data-i18n="demo.sub">No suspicious network at hand? Demo mode loads a fictional office with 14 devices, a rogue access point and live alerts.</p>
     <div class="code-row">
@@ -152,7 +208,7 @@
     <p class="note" data-i18n="demo.note">You can also start it from Settings. Nothing is scanned, no firewall rule is created, and your real data is never touched.</p>
   </section>
 
-  <section class="split" id="honest">
+  <section class="split reveal" id="honest">
     <div>
       <h2 data-i18n="hon.title">Honest about its limits.</h2>
       <p class="sub left" data-i18n="hon.sub">A free tool should say what it cannot do.</p>
@@ -166,9 +222,9 @@
     </ul>
   </section>
 
-  <section class="band" id="news">
+  <section class="band reveal" id="news">
     <h2 data-i18n="news.title">What's new</h2>
-    <div class="timeline" id="timeline">
+    <div class="timeline">
       <div class="entry"><b>2.0.4</b><p data-i18n="news.204">Dependency updates and a demo mode that fills the app with a fictional network.</p></div>
       <div class="entry"><b>2.0.3</b><p data-i18n="news.203">Built-in update check: the app tells you when a new version is out. It never installs anything by itself.</p></div>
       <div class="entry"><b>2.0.2</b><p data-i18n="news.202">Cleaner interface, nicer empty states, and a clearer README with a privacy table.</p></div>
@@ -177,12 +233,26 @@
     <p class="note"><a href="https://github.com/rogerfarolix/wifi-watch/blob/master/CHANGELOG.md" rel="noopener" data-i18n="news.all">Full changelog on GitHub</a></p>
   </section>
 
-  <section class="download" id="download">
+  <section class="band reveal" id="faq">
+    <h2 data-i18n="faq.title">Questions, answered.</h2>
+    <div class="faq">
+      <details><summary data-i18n="q1">Is Wifi-Watch really free?</summary><p data-i18n="a1">Yes. It is open source under the MIT license: free to use, read, modify and share, with no account and no paid tier.</p></details>
+      <details><summary data-i18n="q2">Does it work on Mac, Linux or a phone?</summary><p data-i18n="a2">Not yet. Wifi-Watch is built for Windows 10 and 11. Cross-platform support is on the roadmap.</p></details>
+      <details><summary data-i18n="q3">Can it tell me who downloads movies or games?</summary><p data-i18n="a3">No. A PC on Wi-Fi only sees its own traffic, and most traffic is encrypted. For per-device usage you need a router or firewall that reports it.</p></details>
+      <details><summary data-i18n="q4">Does it send my data anywhere?</summary><p data-i18n="a4">No telemetry, no account and no cloud. Your data stays on your PC. A few optional lookups send only the IP or MAC address you are checking, and the privacy page lists each one.</p></details>
+      <details><summary data-i18n="q5">Why does Windows SmartScreen warn me?</summary><p data-i18n="a5">The executable is not code-signed yet, because a signing certificate is paid. Click More info, then Run anyway, or build the app from source.</p></details>
+      <details><summary data-i18n="q6">Do I need administrator rights?</summary><p data-i18n="a6">Not to scan. Only isolating a device with a firewall rule needs an administrator session.</p></details>
+      <details><summary data-i18n="q7">Is it legal to scan a network?</summary><p data-i18n="a7">Only scan networks you own or have written permission to audit. Wifi-Watch is a defensive tool, not an attack tool. See the terms of use.</p></details>
+      <details><summary data-i18n="q8">How do I update it?</summary><p data-i18n="a8">The app checks for a new version at startup and tells you. Download the new file from the releases page; nothing is installed behind your back.</p></details>
+    </div>
+  </section>
+
+  <section class="download reveal" id="download">
     <h2 data-i18n="dl.title">Ready when you are.</h2>
     <p class="sub" data-i18n="dl.sub">One portable file. No installer, no admin rights needed to scan.</p>
     <div class="cta">
       <a class="btn btn-primary" id="dl-bottom" href="https://github.com/rogerfarolix/wifi-watch/releases/latest/download/Wifi-Watch-Portable.exe">
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>
+        <svg class="ico" aria-hidden="true"><use href="#i-download"/></svg>
         <span data-i18n="hero.download">Download for Windows</span>
       </a>
       <a class="btn btn-outline" href="https://github.com/rogerfarolix/wifi-watch" rel="noopener" data-i18n="dl.src">View the source</a>
@@ -193,16 +263,37 @@
       <li data-i18n="dl.s3">Click <em>Scan Network</em> and read your security score.</li>
     </ol>
   </section>
+
+  <section class="band reveal" id="contact">
+    <h2 data-i18n="ct.title">Get in touch.</h2>
+    <p class="sub" data-i18n="ct.sub">Wifi-Watch is a community project. The fastest way to reach it is on GitHub.</p>
+    <div class="grid">
+      <a class="card" href="https://github.com/rogerfarolix/wifi-watch/issues/new/choose" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-bug"/></svg>
+        <h3 data-i18n="ct.1t">Report a bug or ask for a feature</h3>
+        <p data-i18n="ct.1p">Open an issue. Say what you did, what you expected and what happened.</p>
+        <span class="more"><span data-i18n="ct.open">Open</span><svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a>
+      <a class="card" href="https://github.com/rogerfarolix/wifi-watch/security/advisories/new" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg>
+        <h3 data-i18n="ct.2t">Report a security issue</h3>
+        <p data-i18n="ct.2p">Use private vulnerability reporting, so the problem is not public before it is fixed.</p>
+        <span class="more"><span data-i18n="ct.open">Open</span><svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a>
+      <a class="card" href="https://github.com/rogerfarolix/wifi-watch/blob/master/CONTRIBUTING.md" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-code"/></svg>
+        <h3 data-i18n="ct.3t">Contribute</h3>
+        <p data-i18n="ct.3p">Code, translations and documentation are welcome. The guide explains how to start.</p>
+        <span class="more"><span data-i18n="ct.read">Read the guide</span><svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></a>
+    </div>
+  </section>
 </main>
 
 <footer>
   <div>
-    <a class="brand" href="#top"><img src="assets/icon.png" alt="" width="22" height="22"><span>Wifi-Watch</span></a>
+    <a class="brand" href="#top"><img src="assets/icon.webp" alt="" width="22" height="22"><span>Wifi-Watch</span></a>
     <p data-i18n="foot.line">Open-source network security for Windows. For networks you own or are authorized to audit.</p>
   </div>
   <nav aria-label="Links">
     <a href="https://github.com/rogerfarolix/wifi-watch" rel="noopener">GitHub</a>
     <a href="https://github.com/rogerfarolix/wifi-watch/releases" rel="noopener" data-i18n="foot.rel">Releases</a>
+    <a href="privacy.html" data-i18n="foot.priv">Privacy</a>
+    <a href="terms.html" data-i18n="foot.terms">Terms of use</a>
     <a href="https://github.com/rogerfarolix/wifi-watch/blob/master/SECURITY.md" rel="noopener" data-i18n="foot.sec">Security policy</a>
     <a href="https://github.com/rogerfarolix/wifi-watch/blob/master/LICENSE" rel="noopener" data-i18n="foot.lic">MIT license</a>
   </nav>

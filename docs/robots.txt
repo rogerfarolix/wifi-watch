@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rogerfarolix.github.io/wifi-watch/sitemap.xml
