@@ -21,6 +21,10 @@ contextBridge.exposeInMainWorld('api', {
     auditDns: (customServers) => ipcRenderer.invoke('dns:audit', customServers),
     testWebhook: (config) => ipcRenderer.invoke('webhook:test', config),
 
+    // Mode démo
+    isDemo: () => ipcRenderer.invoke('app:is-demo'),
+    toggleDemo: () => ipcRenderer.invoke('app:toggle-demo'),
+
     // Mises à jour
     getAppVersion: () => ipcRenderer.invoke('app:get-version'),
     checkUpdate: () => ipcRenderer.invoke('app:check-update'),

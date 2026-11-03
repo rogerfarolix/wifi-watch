@@ -5,6 +5,13 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
+## [Non publié]
+
+### Ajouts
+- **Mode démo** (`--demo` ou Paramètres) : réseau fictif de 14 appareils, faux point d'accès (Evil Twin), alertes et graphiques préremplis. Aucun scan réel, aucune règle de pare-feu, données stockées à part.
+
+---
+
 ## [2.0.4] - 2026-11-03
 
 ### Maintenance

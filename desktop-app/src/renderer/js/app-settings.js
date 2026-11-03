@@ -17,6 +17,15 @@ function showUpdateState(info) {
     }
 }
 
+async function initDemoSettings() {
+    const isDemo = await window.api.isDemo();
+    const badge = document.getElementById('demo-badge');
+    const btn = document.getElementById('btn-toggle-demo');
+    if (badge) badge.style.display = isDemo ? '' : 'none';
+    if (btn && isDemo) btn.querySelector('span').textContent = window.i18n ? window.i18n.tr('Quitter la démo') : 'Quitter la démo';
+    btn?.addEventListener('click', () => window.api.toggleDemo());
+}
+
 function initUpdateSettings(settings) {
     const check = document.getElementById('setting-check-updates');
     const btn = document.getElementById('btn-check-update');
@@ -89,6 +98,7 @@ async function initSettingsEvents() {
     });
 
     initUpdateSettings(settings);
+    initDemoSettings();
 
     // Multi-Sous-Réseaux & VLANs
     const customSubnetsInput = document.getElementById('setting-custom-subnets');

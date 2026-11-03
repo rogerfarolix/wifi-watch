@@ -10,17 +10,17 @@ const V = require('./network/validators');
 const fs = require('fs');
 
 const Database = require('./data/database');
-const { getNetworkEnvironment } = require('./network/detector');
-const { performScan } = require('./network/scanner');
-const { scanDevicePorts } = require('./network/portScanner');
+const { getNetworkEnvironment: realGetNetworkEnvironment } = require('./network/detector');
+const { performScan: realPerformScan } = require('./network/scanner');
+const { scanDevicePorts: realScanDevicePorts } = require('./network/portScanner');
 const SpeedMonitor = require('./network/speedMonitor');
 const Sentinel = require('./network/sentinel');
 const { executeFullSpeedTest } = require('./network/speedtest');
-const { scanNeighborNetworks } = require('./network/channelAnalyzer');
-const { wakeDevice } = require('./network/wol');
+const { scanNeighborNetworks: realScanNeighborNetworks } = require('./network/channelAnalyzer');
+const { wakeDevice: realWakeDevice } = require('./network/wol');
 const { calculateSecurityScore, generateHtmlReport } = require('./network/auditReport');
 const { scanDeviceForSurveillance, huntAllSpyDevices } = require('./network/spyDetector');
-const { isolateDevice, unisolateDevice, checkQuarantineStatus } = require('./network/quarantine');
+const quarantine = require('./network/quarantine');
 const RuViewBridge = require('./network/ruviewBridge');
 const WebhookDispatcher = require('./network/webhookDispatcher');
 const DnsGuard = require('./network/dnsGuard');
@@ -33,6 +33,27 @@ const SpectrumAnalyzer = require('./network/spectrumAnalyzer');
 const SpeedBenchmark = require('./network/speedBenchmark');
 const ThreatIntelligenceApis = require('./network/threatIntelligenceApis');
 const { checkForUpdate, RELEASES_URL } = require('./network/updateChecker');
+const demo = require('./network/demo');
+
+// Mode démo (`--demo`) : réseau fictif, données isolées, aucune règle de pare-feu réelle
+const DEMO = process.argv.includes('--demo');
+if (DEMO) {
+    const demoDir = path.join(app.getPath('appData'), 'wifi-watch-demo');
+    fs.rmSync(demoDir, { recursive: true, force: true });
+    app.setPath('userData', demoDir);
+}
+const getNetworkEnvironment = DEMO ? async () => demo.getEnvironment() : realGetNetworkEnvironment;
+const performScan = DEMO ? async (env, onProgress) => demo.scan(onProgress) : realPerformScan;
+const scanNeighborNetworks = DEMO ? async () => demo.neighborNetworks() : realScanNeighborNetworks;
+const scanDevicePorts = DEMO ? async (ip) => demo.scanPorts(ip) : realScanDevicePorts;
+const wakeDevice = DEMO ? async () => ({ success: true }) : realWakeDevice;
+const isolateDevice = DEMO ? async () => ({ success: true }) : quarantine.isolateDevice;
+const unisolateDevice = DEMO ? async () => ({ success: true }) : quarantine.unisolateDevice;
+const checkQuarantineStatus = DEMO ? async () => false : quarantine.checkQuarantineStatus;
+if (DEMO) {
+    ThreatIntelligenceApis.getPublicIpAndIsp = async () => demo.wanInfo();
+    ThreatIntelligenceApis.auditWanWithShodan = async (ip) => ({ ip: ip || demo.wanInfo().ip, isExposed: false, openPorts: [], cves: [], tags: [], hostnames: [], rating: 'SÉCURISÉ' });
+}
 
 let mainWindow = null;
 let tray = null;
@@ -155,7 +176,7 @@ async function startBackgroundServices() {
             if (!mainWindow || mainWindow.isDestroyed()) return;
             try {
                 const gatewayIp = currentEnv?.gatewayIp || '192.168.1.254';
-                const sample = await speedMonitor.getSample(gatewayIp);
+                const sample = DEMO ? demo.bandwidthSample() : await speedMonitor.getSample(gatewayIp);
                 db.addBandwidthSample(sample);
                 mainWindow.webContents.send('bandwidth:update', sample);
             } catch (_) {}
@@ -372,6 +393,14 @@ app.whenReady().then(() => {
     if (isFirstRun) {
         // Première exécution : langue de l'interface alignée sur celle du système
         db.updateSettings({ language: app.getLocale().toLowerCase().startsWith('fr') ? 'fr' : 'en' });
+    }
+    if (DEMO) {
+        // Historique de débit prérempli pour que le graphique ne démarre pas à vide
+        for (let i = 60; i > 0; i--) {
+            const sample = demo.bandwidthSample();
+            sample.timestamp = new Date(Date.now() - i * 2000).toISOString();
+            db.addBandwidthSample(sample);
+        }
     }
     speedMonitor = new SpeedMonitor();
     sentinel = new Sentinel(db);
@@ -638,6 +667,16 @@ ipcMain.handle('db:update-settings', (_, patch) => {
     if (patch && patch.language) updateTrayMenu();
     resetAutoScanTimer();
     return updated;
+});
+
+// ─── Mode démo ──────────────────────────────────────────────────────────────
+ipcMain.handle('app:is-demo', () => DEMO);
+
+ipcMain.handle('app:toggle-demo', () => {
+    const args = process.argv.slice(1).filter(a => a !== '--demo');
+    if (!DEMO) args.push('--demo');
+    app.relaunch({ args });
+    app.exit(0);
 });
 
 // ─── Mises à jour ───────────────────────────────────────────────────────────

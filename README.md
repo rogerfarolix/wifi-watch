@@ -47,6 +47,8 @@
 2. Run it and click **Scan Network**. Within seconds you get every device on your Wi-Fi, its vendor, a trust status, and a security score.
 3. Open **Audit & NIS2** for the compliance view, **SOC Wall** (`F11`) for the big-screen mode, or press `Ctrl + K` to jump anywhere.
 
+**Just want to look around?** Start the app in demo mode: `Wifi-Watch-Portable.exe --demo` (or *Settings → Start the demo*). It loads a fictional office network with 14 devices, a rogue access point and live alerts. Nothing is scanned, no firewall rule is created, and your real data is never touched.
+
 > Windows SmartScreen may warn because the binary is not code-signed yet - click *More info → Run anyway*, or [build it from source](#option-b-run-from-source).
 > The interface follows your system language (French / English) and can be switched at any time from the top bar.
 

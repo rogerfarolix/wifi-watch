@@ -252,6 +252,23 @@ function initCharts() {
             }
         });
     }
+
+    // Démo uniquement : les graphiques démarrent avec l'historique préparé par le processus principal
+    window.api.isDemo().then(async (isDemo) => {
+        if (!isDemo) return;
+        const history = await window.api.getBandwidthHistory();
+        const fill = (chart, series) => {
+            if (!chart) return;
+            series.forEach((values, i) => {
+                const data = chart.data.datasets[i].data;
+                const tail = values.slice(-data.length);
+                chart.data.datasets[i].data = Array(data.length - tail.length).fill(0).concat(tail);
+            });
+            chart.update();
+        };
+        fill(appState.liveChart, [history.map(h => h.rxMbps), history.map(h => h.txMbps), history.map(h => h.pingGatewayMs || 0)]);
+        fill(appState.monitorChart, [history.map(h => h.rxMbps), history.map(h => h.txMbps)]);
+    });
 }
 
 // ─── Écouteurs IPC Temps Réel ───────────────────────────────────────────────

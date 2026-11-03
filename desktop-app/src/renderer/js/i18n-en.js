@@ -208,6 +208,10 @@ window.I18N_EN_HTML = {
  "Version installée :": "Installed version:",
  "Télécharger": "Download",
  "Vérifier maintenant": "Check now",
+ "Mode démo": "Demo mode",
+ "Redémarre l'application avec un réseau fictif (14 appareils, un faux point d'accès, des alertes). Vos vraies données ne sont pas touchées.": "Restarts the app with a fictional network (14 devices, a rogue access point, alerts). Your real data is not touched.",
+ "Lancer la démo": "Start the demo",
+ "MODE DÉMO": "DEMO MODE",
  "Affichage & Langue": "Display & Language",
  "Langue de l'Interface": "Interface Language",
  "Thème Graphique": "Graphic Theme",
@@ -642,6 +646,7 @@ window.I18N_EN_DYNAMIC = {
   "Aucun serveur DHCP pirate ou conflit de passerelle détecté sur le segment local.": "No rogue DHCP server or gateway conflict detected on the local segment.",
   "URL WebSocket invalide (ws:// ou wss:// requis)": "Invalid WebSocket URL (ws:// or wss:// required)",
   "(à jour)": "(up to date)",
+  "Quitter la démo": "Exit the demo",
   "Vous utilisez la dernière version.": "You are running the latest version."
  },
  "patterns": [
